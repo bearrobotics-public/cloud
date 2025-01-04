@@ -1,0 +1,491 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/cloud/config.proto";
+import "bearrobotics/api/v0/cloud/profiles.proto";
+import "bearrobotics/api/v0/cloud/robot_settings.proto";
+import "bearrobotics/api/v0/cloud/robot_status.proto";
+import "bearrobotics/api/v0/common/annotations.proto";
+import "bearrobotics/api/v0/location/annotation.proto";
+import "bearrobotics/api/v0/location/location.proto";
+import "bearrobotics/api/v0/location/map.proto";
+import "bearrobotics/api/v0/robot/localization.proto";
+import "bearrobotics/api/v0/robot/mission.proto";
+import "bearrobotics/api/v0/robot/robot.proto";
+import "bearrobotics/api/v0/robot/status.proto";
+import "google/api/annotations.proto";
+
+package bearrobotics.api.v0.cloud;
+
+// CloudAPIService.
+//
+// The definition of Bear Cloud API service.
+service CloudAPIService {
+  // === Fleet Management =====================================================
+
+  // List all robot IDs that you have permissions for and satisfies the given
+  // filter options regardless of robot status.
+  rpc ListRobotIDs(ListRobotIDsRequest) returns (ListRobotIDsResponse) {
+    option (google.api.http) = {post: "/v0/robot-ids/list"};
+  }
+
+  // === Map ==================================================================
+
+  // Retrieve the current map content data, which is loaded on the robot.
+  rpc GetCurrentMapContent(GetCurrentMapContentRequest) 
+      returns (GetCurrentMapContentResponse) {
+    option (google.api.http) = {
+      post: "/v0/map-content/get"
+    };
+  }
+
+  // Retrieve the current location data to which the robot is connected.
+  //
+  // If the robot is offline, it uses the cached Location data.
+  rpc GetLocation(GetLocationRequest) returns (GetLocationResponse) {
+    option (google.api.http) = {post: "/v0/location/get"};
+  }
+
+  // Retrieve the map corresponding to a given map_id.
+  //
+  // If offline, it uses the cached MapData data.
+  rpc GetMap(GetMapRequest) returns (GetMapResponse) {
+    option (google.api.http) = {post: "/v0/map/get"};
+  }
+
+  // Retrieve annotation data for a specified annotation_id.
+  //
+  // If offline, it uses the cached Annotation data.
+  rpc GetMapAnnotation(GetMapAnnotationRequest)
+      returns (GetMapAnnotationResponse) {
+    option (google.api.http) = {
+      post: "/v0/annotation/get"
+    };
+  }
+
+  // Retrieve map data for a specified map_data_id.
+  //
+  // If offline, it uses the cached MapData data.
+  rpc GetMapData(GetMapDataRequest) returns (GetMapDataResponse) {
+    option (google.api.http) = {post: "/v0/map-data/get"};
+  }
+
+  // Switch the current map to a specified map.
+  //
+  // The request should specify a floor level and section index to be used.
+  // Returns the map_id of the switched map.
+  rpc SwitchMap(SwitchMapRequest) returns (SwitchMapResponse) {
+    option (google.api.http) = {post: "/v0/map/switch"};
+  }
+
+  // === Mission ===============================================================
+
+  // Append the given mission to the end of the queue.
+  // The mission will be added in the order it is received.
+  rpc AppendMission(AppendMissionRequest) returns (AppendMissionResponse) {
+    option (google.api.http) = {post: "/v0/mission/append"};
+  }
+
+  // Create a mission to go charge a robot regardless of battery state.
+  //
+  // The call will fail if the robot is already on a different mission.
+  // The current mission needs to be canceled before the robot can be charged.
+  rpc ChargeRobot(ChargeRobotRequest) returns (ChargeRobotResponse) {
+    option (google.api.http) = {post: "/v0/robot/charge"};
+  }
+
+  // Create a mission for a given type.
+  //
+  // The call will fail if the robot cannot go on the requested mission.
+  rpc CreateMission(CreateMissionRequest) returns (CreateMissionResponse) {
+    option (google.api.http) = {post: "/v0/mission/create"};
+  }
+
+  // Subscribe to robot's mission status.
+  //
+  // Upon subscription, the server immediately sends the latest known
+  // mission status, followed by updates whenever the mission status changes.
+  rpc SubscribeMissionStatus(SubscribeMissionStatusRequest)
+      returns (stream SubscribeMissionStatusResponse) {
+    option (google.api.http) = {
+      post: "/v0/mission-status/subscribe"
+    };
+  }
+
+  // Update the specified mission with the given command.
+  //
+  // The call will fail if the robot is not on the specified mission
+  // or cannot execute the command.
+  rpc UpdateMission(UpdateMissionRequest) returns (UpdateMissionResponse) {
+    option (google.api.http) = {post: "/v0/mission/update"};
+  }
+
+  // === Navigation ============================================================
+
+  // Localize the robot to a localization goal.
+  //
+  // If the goal is accepted, subcribe to SubscribeLocalizationStatus to get the
+  // localization status.
+  rpc LocalizeRobot(LocalizeRobotRequest) returns (LocalizeRobotResponse) {
+    option (google.api.http) = {post: "/v0/robot/localize"};
+  }
+
+  // Manually set the robot pose given a pose on the map and a covariance matrix.
+  rpc SetRobotPose(SetRobotPoseRequest) returns (SetRobotPoseResponse) {
+    option (google.api.http) = {post: "/v0/robot/set-pose"};
+  }
+
+  // Subscribe to the robot's localization status.
+  //
+  // Upon subscription, the latest known localization status will be sent.
+  // If the robot is actively localizing, statuses will be published upon changes.
+  rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest)
+      returns (stream SubscribeLocalizationStatusResponse) {
+    option (google.api.http) = {
+      post: "/v0/localization-status/subscribe"
+    };
+  }
+
+  // Subscribe to the robot's pose.
+  //
+  // Upon subscription, the server provides regular updates (5Hz) of the
+  // robot's estimated position.
+  rpc SubscribeRobotPose(SubscribeRobotPoseRequest) 
+      returns (stream SubscribeRobotPoseResponse) {
+    option (google.api.http) = {
+      post: "/v0/robot-pose/subscribe"
+    };
+  }
+
+  // === Settings ==============================================================
+
+  // Retrieve user-defined profile with customizable settings for a profile_id.
+  rpc GetProfile (GetProfileRequest) returns (GetProfileResponse) {
+    option (google.api.http) = {
+      post: "/v0/profile/get"
+    };
+  }
+
+  // Retrieve a set of user-defined profiles for a specific robot_id.
+  rpc GetRobotProfiles (GetRobotProfilesRequest) 
+      returns (GetRobotProfilesResponse) {
+    option (google.api.http) = {
+        post: "/v0/robot-profiles/get"
+      };
+  }
+
+  // Retrieve the sound file upload URL for specific sound_id.
+  rpc GetSoundFileUploadURL (GetSoundFileUploadURLRequest) 
+      returns (GetSoundFileUploadURLResponse) {
+    option (google.api.http) = {
+        post: "/v0/sound-file-upload-url/get"
+      };
+  }
+
+  // List all profile IDs for a specific location_id.
+  rpc ListProfileIds (ListProfileIdsRequest) 
+      returns (ListProfileIdsResponse) {
+    option (google.api.http) = {
+        post: "/v0/profile-id/list"
+      };
+  }
+
+  // === Robot Status ==========================================================
+
+  // Subscribe to the robots' battery status.
+  //
+  // Upon subscription, the server immediately sends the latest known
+  // battery status, followed by updates whenever the battery status changes.
+  rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest)
+      returns (stream SubscribeBatteryStatusResponse) {
+    option (google.api.http) = {
+      post: "/v0/battery-status/subscribe"
+    };
+  }
+
+  // Subscribe to connection and operation state of the robot
+  //
+  // Upon subscription, the server immediately sends the latest known operation
+  // status, followed by updates whenever the operation status changes.
+  rpc SubscribeRobotStatus(SubscribeRobotStatusRequest)
+      returns (stream SubscribeRobotStatusResponse) {
+    option (google.api.http) = {
+      post: "/v0/robot-status/subscribe"
+    };
+  }
+
+  // Subscribe for high level tray status.
+  //
+  // This is only available for robots with trays (e.g. Servi, Plus).
+  // Upon subscription, the latest known tray status will be sent, followed by
+  // snapshot updates of all tray states when any state is updated.
+  // Weight changes are updated at a 10g granularity threshold. Robots with
+  // trays that does not have weight sensor will have an UNKNOWN load state and
+  // no weight data streamed.
+  rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest) 
+      returns (stream SubscribeTrayStatusesResponse) {
+    option (google.api.http) = {
+      post: "/v0/tray-status/subscribe"
+    };
+  }
+
+  // === Robot System ==========================================================
+
+  // Get the overall robot system information.
+  //
+  // When called, the server returns robot system information. The system info
+  // tends to be static and does not change often.
+  rpc GetRobotSystemInfo(GetRobotSystemInfoRequest) 
+      returns (GetRobotSystemInfoResponse) {
+    option (google.api.http) = {
+      post: "/v0/robot-system-info/get"
+    };
+  }
+}
+
+message AppendMissionRequest {
+  string robot_id = 1;
+  robot.Mission mission = 2;
+}
+
+message AppendMissionResponse {
+  string mission_id = 1;
+}
+
+message ChargeRobotRequest {
+  string robot_id = 1;
+}
+
+message ChargeRobotResponse {
+  string mission_id = 1;
+}
+
+message CreateMissionRequest {
+  string robot_id = 1;
+  robot.Mission mission = 2;
+}
+message CreateMissionResponse {
+  string mission_id = 1;
+}
+
+message GetCurrentMapContentRequest {
+  string robot_id = 1;
+}
+
+message GetCurrentMapContentResponse {
+  location.MapContent map_content = 1;
+}
+
+// GetLocationRequest represents the request message for retrieving
+// information about a specific location by a unique location ID.
+message GetLocationRequest {
+  // The unique identifier of the location.
+  // The ID is typically a string of uppercase letters and numbers.
+  //
+  // Example: "QSVS"
+  string location_id = 1;
+}
+
+// GetLocationResponse contains the detailed information about a location,
+// returned in response to a GetLocationRequest.
+message GetLocationResponse {
+  // Information about the specified location, as represented by a
+  // location.Location message.
+  // This includes all relevant details about the location, including
+  // display name, floor and section info.
+  location.Location location = 1;
+}
+
+message GetMapRequest {
+  string map_id = 1;
+}
+
+message GetMapResponse {
+  // Contains all relevant information about the requested map,
+  // including its metadata and configuration details.
+  location.Map map = 1;
+}
+
+message GetMapAnnotationRequest {
+  string annotation_id = 1;
+}
+
+message GetMapAnnotationResponse {
+  location.Annotation annotation = 1;
+}
+
+// GetMapDataRequest represents the request message for retrieving
+// map data by a unique map data ID.
+message GetMapDataRequest {
+  string map_data_id = 1;
+}
+
+// GetMapDataResponse contains the map data for the requested map data ID.
+message GetMapDataResponse {
+  // Information about the map data which includes all relevant details about
+  // the map data, especially the map.
+  location.MapData map_data = 1;
+}
+
+message GetProfileRequest {
+  string profile_id = 1;
+}
+
+message GetProfileResponse {
+  Profile profile = 1;
+}
+
+message GetRobotProfilesRequest {
+  string robot_id = 1;
+}
+
+message GetRobotProfilesResponse {
+  repeated Profile profiles = 1;
+}
+
+message GetRobotSystemInfoRequest {
+  string robot_id = 1;
+}
+
+message GetRobotSystemInfoResponse {
+  // robot_system_info contains ID, display name, family, and software version
+  // of the robot.
+  RobotSystemInfo robot_system_info = 1;
+}
+
+message GetSoundFileUploadURLRequest {
+  string sound_id = 1;
+}
+
+message GetSoundFileUploadURLResponse {
+  string upload_url = 1;
+}
+
+message ListProfileIdsRequest {
+  string location_id = 1;
+}
+
+message ListProfileIdsResponse {
+  repeated string profile_ids = 1;
+}
+
+message ListRobotIDsRequest {
+  RobotFilter filter = 1;
+}
+
+// In API v0, this might not have all the robot IDs if there are too many.
+// The total number of robots will still be returned in the total_robots field.
+message ListRobotIDsResponse {
+  int32 total_robots = 1;
+
+  // This might not have all the robot IDs if there are too many.
+  // It will have all the robot IDs if the number of robot_ids is same as
+  // total_robots.
+  repeated string robot_ids = 2;
+}
+
+message LocalizeRobotRequest {
+  string robot_id = 1;
+  robot.LocalizationGoal goal = 2;
+}
+
+message LocalizeRobotResponse {}
+
+message SetRobotPoseRequest {
+  string robot_id = 1;
+  robot.PoseWithCovariance pose_with_covariance = 2;
+}
+
+message SetRobotPoseResponse {}
+
+message SubscribeBatteryStatusRequest {
+  RobotSelector selector = 1;
+}
+
+message SubscribeBatteryStatusResponse {
+  common.EventMetadata metadata = 1;
+  string robot_id = 2;
+  robot.BatteryState battery_state = 3;
+}
+
+message SubscribeLocalizationStatusRequest {
+  RobotSelector selector = 1;
+}
+
+message SubscribeLocalizationStatusResponse {
+  common.EventMetadata metadata = 1;
+  string robot_id = 2;
+  robot.LocalizationState localization_state = 3;
+}
+
+message SubscribeMissionStatusRequest {
+  string robot_id = 1;
+}
+
+message SubscribeMissionStatusResponse {
+  common.EventMetadata metadata = 1;
+  robot.MissionState mission_state = 2;
+}
+
+message SubscribeRobotPoseRequest {
+  string robot_id = 1;
+}
+
+message SubscribeRobotPoseResponse {
+  common.EventMetadata metadata = 1;
+  robot.Pose pose = 2;
+}
+
+message SubscribeRobotStatusResponse {
+  common.EventMetadata metadata = 1;
+  // Robot state is not available when robot connection shows disconnected.
+  repeated RobotState robot_state = 2;
+}
+
+message SubscribeRobotStatusRequest {
+  RobotSelector selector = 1;
+}
+
+message SubscribeTrayStatusesRequest {
+  string robot_id = 1;
+}
+
+message SubscribeTrayStatusesResponse {
+  common.EventMetadata metadata = 1;
+  // State of enabled trays, ordered from the top-most tray on the robot to the
+  // bottom. This state is only available for robots with trays.
+  repeated robot.TrayState tray_states = 2;
+}
+
+// SwitchMapRequest represents the request message for
+// switching the current map of a target robot to the map
+// corresponding to the given floor level and section index. 
+message SwitchMapRequest {
+  string robot_id = 1;
+  // Positive integer floor_level is the first key used to index the map dict.
+  // SwitchMap will raise an exception if there is no matching map.
+  // Floor level begins at 1. 
+  int32 floor_level = 2;
+  // Non-negative integer section_index is the second key used to index the map dict.
+  // SwitchMap will raise an exception if there is no matching map.
+  // Section index begins at 0.
+  int32 section_index = 3;
+}
+
+message SwitchMapResponse {
+  string map_id = 1;
+}
+
+message UpdateMissionRequest {
+  string robot_id = 1;
+  robot.MissionCommand mission_command = 2;
+}
+
+message UpdateMissionResponse {}

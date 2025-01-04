@@ -1,0 +1,149 @@
+// File: mission.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package bearrobotics.api.v0.robot;
+
+// Point on the map.
+message Destination {
+  string destination_id = 1;
+}
+
+// Place on the map where the robot can be set to navigate towards.
+message Goal {
+  oneof goal {
+    Destination destination = 1;
+  }
+}
+
+message MissionParams {
+  enum Mode {
+    MODE_UNKNOWN = 0;
+    MODE_DEFAULT = 1;
+    MODE_BUSSING = 2;
+  }
+
+  message TraverseParams {
+    Mode mode = 1;
+  }
+
+  message LoopParams {
+    Mode mode = 1;
+  }
+
+  oneof params {
+    TraverseParams traverse_params = 1;
+    LoopParams loop_params = 2;
+  }
+}
+
+// Represents a mission.
+message Mission {
+  enum Type {
+    // Default value, indicates an unknown or unspecified mission type.
+    TYPE_UNKNOWN = 0;
+
+    // A single-goal mission.
+    TYPE_ONEOFF = 1;
+
+    // An automated single-goal mission that selects the best
+    // available goal from a list.
+    TYPE_ONEOFF_AUTO = 2;
+
+    // A mission that involves multiple destinations
+    // until a specified condition, such as a weight limit, is met.
+    TYPE_TRAVERSE = 3;
+
+    // A mission that repeatedly visits multiple destinations
+    // until a specified condition, such as a weight limit, is met.
+    TYPE_LOOP = 4;
+
+    // A mission that remains at a specific location until it is
+    // triggered to proceed by an external event, such as a button press.
+    TYPE_WAIT = 5;
+  }
+
+  Type type = 1;
+
+  // The list of goals or destinations for the mission.
+  repeated Goal goals = 2;
+
+  // Override parameters for the mission settings, allowing
+  // specific configuration for this mission instance.
+  MissionParams override_params = 3;
+}
+
+
+// Action to update a current mission.
+message MissionCommand {
+  string mission_id = 1;
+
+  enum Command {
+    COMMAND_UNKNOWN = 0;
+    COMMAND_CANCEL = 1;
+    COMMAND_PAUSE = 2;
+    COMMAND_RESUME = 3;
+    COMMAND_FINISH = 4;
+  }
+
+  Command command = 2;
+}
+
+// Represents a mission state.
+message MissionState {
+  string mission_id = 1;
+
+  enum State {
+    STATE_UNKNOWN = 0;
+    // Initial state when no mission has been run (e.g. empty feedback).
+    STATE_DEFAULT = 1;
+    STATE_RUNNING = 2;
+    STATE_PAUSED = 3;
+    STATE_CANCELED = 4;
+    STATE_SUCCEEDED = 5;
+    STATE_FAILED = 6;
+  }
+  State state = 2;
+
+  // All goals for a given mission.
+  repeated Goal goals = 3;
+
+  int32 current_goal_index = 4;
+
+  enum NavigationStatus {
+    // Default value, indicates an unknown or undefined navigation status.
+    NAVIGATION_STATUS_UNKNOWN = 0;
+
+    // Indicates that the robot has successfully arrived at its goal.
+    NAVIGATION_STATUS_FINISHED = 1;
+
+    // Indicates that the robot failed to reach its goal.
+    NAVIGATION_STATUS_FAILED = 2;
+
+    // Indicates that the robot is temporarily stuck but has not yet failed.
+    NAVIGATION_STATUS_STUCK = 3;
+
+    // Indicates that the robot is in the process of docking at a charger or station.
+    NAVIGATION_STATUS_DOCKING = 4;
+
+    // Indicates that the robot is in the process of undocking at a charger or station.
+    NAVIGATION_STATUS_UNDOCKING = 5;
+
+    // Indicates that the robot is navigating to a destination but is not currently docking or undocking.
+    NAVIGATION_STATUS_NAVIGATING = 6;
+  }
+  
+  // The current navigation status of the mission, reflecting
+  // the robot's progress toward or at its destination.
+  NavigationStatus navigation_status = 5;
+
+  google.protobuf.Any feedback = 6;
+}

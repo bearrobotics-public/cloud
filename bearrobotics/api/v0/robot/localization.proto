@@ -1,0 +1,40 @@
+// File: localization.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/robot/robot.proto";
+
+package bearrobotics.api.v0.robot;
+
+// The robot must be placed within a 5x5 meter window
+// from the localization goal
+message LocalizationGoal {
+  oneof goal_type {
+    Pose pose = 1;
+  }
+}
+
+message LocalizationState {
+  enum State {
+    STATE_UNKNOWN = 0;
+
+    // Happens when the localization process
+    // is preempted before completion
+    STATE_PREEMPTED = 1;
+
+    STATE_FAILED = 2;
+
+    STATE_SUCCEEDED = 3;
+
+    // The robot is actively performing localization
+    STATE_LOCALIZING = 4;
+  }
+
+  State state = 1;
+}

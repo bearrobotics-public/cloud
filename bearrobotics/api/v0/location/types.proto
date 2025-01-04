@@ -1,0 +1,23 @@
+// File: types.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/common/math.proto";
+
+package bearrobotics.api.v0.location;
+
+// GraphNodes are used to define key positions
+// or waypoints in the robot's navigation graph.
+message GraphNode {
+  string graph_node_id = 1;
+  // Point with orientation of the GraphNode.
+  common.PointWithOrientation graph_node_pose = 2;
+  // Adjacent GraphNode IDs that robot can navigate from the current GraphNode.
+  repeated string adjacent_graph_node_ids = 3;
+}

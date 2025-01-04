@@ -1,0 +1,155 @@
+// File: annotation.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/common/math.proto";
+import "bearrobotics/api/v0/location/topology_map.proto";
+import "bearrobotics/api/v0/location/types.proto";
+import "bearrobotics/api/v0/location/zones.proto";
+import "google/protobuf/timestamp.proto";
+
+package bearrobotics.api.v0.location;
+
+// Destinations are used to define the single point of interest.
+message Destination {
+  string destination_id = 1;
+  string display_name = 2;
+
+  // Position on the map where the robot would try to navigate to
+  // and orient itself along that direction.
+  common.PointWithOrientation destination_pose = 3;
+
+  enum Type {
+    TYPE_UNKNOWN = 0;
+
+    // The default destination type.
+    // The robot will try to navigate to this point.
+    TYPE_DEFAULT = 1;
+
+    // The contact-type charger.
+    // The robot can charge through docking.
+    TYPE_CONTACT_CHARGER = 2;
+
+    // The inductive-type charger.
+    // The robot can charge through docking, but no physical contact is needed.
+    TYPE_INDUCTIVE_CHARGER = 3;
+  }
+  Type type = 4;
+
+  message DockingParam {
+    enum Type {
+      TYPE_UNKNOWN = 0;
+     
+      // The robot will run the default docking process at the destination.
+      TYPE_DEFAULT = 1;
+    }
+    Type type = 1;
+
+    // The reference is used to specify the docking position.
+    enum Reference {
+      REFERENCE_UNKNOWN = 0;
+
+      // The default reference is different for each destination type.
+      // For example, the default reference for TYPE_CONTACT_CHARGER is
+      // VL Marker.
+      REFERENCE_DEFAULT = 1;
+
+      // The QR code reference is used to specify the docking position.
+      REFERENCE_QR_CODE = 2;
+
+      // The VL marker reference is used to specify the docking position.
+      REFERENCE_VL_MARKER = 3;
+    }
+    Reference reference = 2;
+    string reference_id = 3;
+
+    // The tuning parameters are used to define relative docking pose to the reference.
+    common.Point2D tuning_params = 4; 
+  }
+  
+  // DockingParam is used to specify the docking process at the destination.
+  // If docking_param exists, docking is needed.
+  // If docking_param does not exist, no docking is needed.
+  DockingParam docking_param = 5;
+
+  // StringMapData should only be used for default type data.
+  message StringMapData {
+    map<string, string> data = 1;
+  }
+
+  oneof type_data {
+    // Data specific to the destination type.
+    // The robot will use this data to interact with the destination.
+    StringMapData default_type_data = 6;
+  }
+}
+
+// Obstacles are used to define the area that the robot should avoid.
+message Obstacle {
+  string obstacle_id = 1;
+
+  // Points that define a polygon where the robot should avoid entering.
+  // The minimum number of points is 3.
+  repeated common.Point2D points = 2;
+
+  enum Type {
+    TYPE_UNKNOWN = 0;
+
+    // Soft obstacle that the robot will try to avoid,
+    // but can still drive through if necessary.
+    TYPE_SOFT_OBSTACLE = 1;
+
+    // Restricted obstacle that the robot cannot enter and cannot exit
+    // if it becomes stuck inside this zone.
+    TYPE_RESTRICTED_OBSTACLE = 2;
+  }
+  Type type = 3;
+}
+
+// Preferred paths are used to define the desired route for the robot.
+message PreferredPath {
+  string preferred_path_id = 1;
+  // List of graph nodes that make up the preferred path.
+  repeated GraphNode graph_nodes = 2;
+}
+
+// Queues are used to define the waiting area.
+message Queue {
+  string queue_id = 1;
+  // Represents a list of queuing points where the robot will wait.
+  repeated GraphNode queue_poses = 2;
+  // These are end destinations that a queue can dequeue the robot to.
+  repeated string destination_ids = 3;
+}
+
+// Annotations are used to define the areas on the map with specific parameters.
+message Annotation {
+  // Example: "67305"
+  string annotation_id = 1;
+
+  google.protobuf.Timestamp created_time = 2;
+
+  // Example: "ITCT annotation A"
+  string display_name = 3;
+  // Areas on the map that the robot will try to avoid.
+  repeated Obstacle obstacles = 4;
+  // Areas on the map that have specific parameters.
+  repeated ParameterZone parameter_zones = 5;
+  // Destinations are used to define the single point of interest.
+  repeated Destination destinations = 6;
+
+  // Directional and Bi-Directional paths
+  // which robots will try to follow when nearby.
+  repeated PreferredPath preferred_paths = 7;
+  // Queues are used to define the waiting area.
+  repeated Queue queues = 8;
+
+  // Topology map for AMR navigation.
+  TopologyMap topology_map = 9;
+}

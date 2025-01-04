@@ -1,0 +1,41 @@
+// File: topology_map.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/common/math.proto";
+
+package bearrobotics.api.v0.location;
+
+// Topology map consists of nodes and edges in the mapped environment. 
+// The robot can stay at nodes or pass over them. 
+// Edges define paths the robot can follow and they connect nodes. 
+// If there is no edge between two nodes, the robot can't move from one node
+// to the other node.
+message TopologyMap {
+  // Node is used to define the key positions in the map.
+  message Node {
+    string node_id = 1;
+    string display_name = 2;
+    common.Point2D position = 3;
+  }
+  repeated Node nodes = 1;
+
+  // Edge is used to define the connection between two nodes
+  message Edge {
+    string start_node_id = 1;
+    string end_node_id = 2;
+  }
+  message EdgeList {
+    repeated Edge edges = 1;
+  }
+
+  // Edges grouped by their type.
+  // The key values can be any string, e.g. "loaded", "unloaded".
+  map<string, EdgeList> edges = 2;
+}

@@ -1,0 +1,81 @@
+// File: zones.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/common/math.proto";
+
+package bearrobotics.api.v0.location;
+
+// DirectionZone defines a zone where a specific movement direction is enforced.
+message DirectionZone {
+
+  // The direction vector's angle in radians,
+  // relative to the map's origin and measured from the x-axis.
+  float heading_radians = 1;
+
+  // The magnitude of the direction vector.
+  // typically set to 254 for hard direction zones.
+  // The larger the magnitude, 
+  // the more the robot will try to align with the direction.
+  int32 magnitude = 2;
+}
+
+// ExclusiveZone defines a zone where the number of robots is limited.
+message ExclusiveZone {
+  // Maximum number of robots allowed to enter the zone.
+  int32 max_robots = 1;
+}
+
+// RampZone defines a zone with ramp conditions.
+// This zone has an incline or decline that the robot must traverse.
+message RampZone {
+  // No additional fields are needed.
+}
+
+// SoundZone defines a zone where a sound is played.
+// If a robot enters this zone, it will randomly play an audio 
+// from the sound zone list defined in the sound customization feature.
+message SoundZone {
+  // No additional fields are needed.
+}
+
+// SpeedZone defines a zone where speed restrictions are applied.
+message SpeedZone {
+  // Speed limit in the zone.
+  float max_speed_m_per_sec = 1;
+}
+
+// ElevatorZone defines a zone where an elevator is located.
+message ElevatorZone {
+  string elevator_id = 1;
+}
+
+// ElevatorDoorZone defines a zone where an elevator door is located.
+message ElevatorDoorZone {
+  string elevator_id = 1;
+}
+
+// ParameterZone defines a zone with specific parameters.
+message ParameterZone {
+  string zone_id = 1;
+
+  // Polygon defining the zone.
+  // The minimum number of points is 3.
+  repeated common.Point2D points = 2;
+
+  oneof type {
+    DirectionZone direction_zone = 3;
+    ExclusiveZone exclusive_zone = 4;
+    RampZone ramp_zone = 5;
+    SoundZone sound_zone = 6;
+    SpeedZone speed_zone = 7;
+    ElevatorZone elevator_zone = 8;
+    ElevatorDoorZone elevator_door_zone = 9;
+  }
+}

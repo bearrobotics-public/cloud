@@ -1,0 +1,31 @@
+// File: robot.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v0.robot;
+
+// Represents the robot pose.
+message Pose {
+  // x, y coordinate inside the Map.
+  float x_meters = 1;
+  float y_meters = 2;
+
+  // The heading of the robot in radians. Ranges from -PI to PI, with
+  // 0.0 pointing along the x-axis.
+  float heading_radians = 3;
+}
+
+message PoseWithCovariance {
+  Pose pose = 1;
+
+  // A 36-element array, which is a flattened 6×6 covariance matrix in
+  // row-major order. Each element represents the covariance between state
+  // variables (X, Y, Z, X-axis rotation, Y-axis rotation, Z-axis rotation).
+  repeated double covariance = 2;
+}

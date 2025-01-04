@@ -1,0 +1,87 @@
+// File: map.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/location/annotation.proto";
+import "google/protobuf/timestamp.proto";
+
+package bearrobotics.api.v0.location;
+
+// Represents a map within the robot's operational environment.
+message Map {
+  // Example: "9578"
+  string map_id = 1;
+
+  google.protobuf.Timestamp created_time = 2;
+  google.protobuf.Timestamp modified_time = 3;
+
+  // Example: "ITCT SEOUL"
+  string display_name = 4;
+  // Current map data identifier that represents this map.
+  string map_data_id = 5;
+  // List of annotation identifiers associated with this map.
+  repeated string annotation_ids = 6;
+  // Current annotation identifier.
+  string current_annotation_id = 7;
+}
+
+// The 2D pose of the map's origin (x, y, yaw) in meters and radians.
+// This value is equivalent to the origin defined in the ROS map server.
+// https://wiki.ros.org/map_server
+message Origin {
+  // This is the (x, y) coordinate of the origin of the map in the world frame.
+  float x_m = 1;
+  // This is the y-coordinate of the origin of the map in the world frame.
+  float y_m = 2;
+
+  // This is the rotation around the z-axis (counterclockwise)
+  // of the map with respect to the world frame. A yaw of 0 means no rotation.
+  float yaw_radians = 3;
+}
+
+// Represents the data of a map which includes the url,
+// origin, and resolution.
+message MapData {
+  string map_data_id = 1;
+  // URL to the image data for the map.
+  string url = 2;
+
+  // The Origin of the map.
+  Origin origin = 3;
+
+  // Maps real-world size to pixelated size (meters per pixel)
+  // This value is equivalent to the "resolution" defined in the ROS map server 
+  // https://wiki.ros.org/map_server
+  float m_per_pixel = 4;
+}
+
+// Represents the content of a map which includes the map data and annotation.
+message MapContent {
+  string map_id = 1;
+
+  message MapData {
+    // The image PNG data for the map.
+    bytes data = 1;
+
+    Origin origin = 2;
+
+    // Maps real-world size to pixelated size. (meters per pixel)
+    // This value is equivalent to the resolution defined in the ROS map server. 
+    // https://wiki.ros.org/map_server
+    float m_per_pixel = 3;
+  }
+
+  MapData map_data = 2;
+
+  message Annotation {
+    repeated Destination destinations = 1;
+  }
+
+  Annotation annotation = 3;
+}

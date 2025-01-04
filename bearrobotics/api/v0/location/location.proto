@@ -1,0 +1,49 @@
+// File: location.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package bearrobotics.api.v0.location;
+
+// Represents a specific location within the robot's operational environment.
+message Location {
+  // Example: "4RVF"
+  string location_id = 1;
+
+  google.protobuf.Timestamp created_time = 2;
+  google.protobuf.Timestamp modified_time = 3;
+
+  // Examples: "City Deli & Grill", "KNTH"
+  string display_name = 4;
+
+  message Floor {
+    // Example: "Ground"
+    string display_name = 1;
+    
+    // Represents a section of a floor.
+    // Each Section corresponds to an area on a floor that may have its own map(s).
+    // We assume sections are disconnected; if connected sections are needed in the future,
+    // additional information will be added to represent the connections.
+    message Section {
+      // Usually display_name will be empty if the section is not named.
+      string display_name = 1;
+      // List of map identifiers associated with this section.
+      repeated string map_ids = 2;
+      // Current map identifier.
+      string current_map_id = 3;
+    }
+
+    repeated Section sections = 2;
+  }
+
+  // Map of floor identifiers to floor information.
+  // The key is the floor level, and the value is the floor information.
+  map<int32, Floor> floors = 5;
+}

@@ -1,0 +1,82 @@
+// File: profiles.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v0.cloud;
+
+// SoundProfile defines commands and related sound data.
+message SoundProfile {
+  // SoundData represents metadata for an individual sound file.
+  message SoundData {
+    string sound_id = 1;
+    string display_name = 2;
+    // The URL to download the sound file from.
+    string url = 3;
+  }
+
+  // Command represents a specific action and the associated sound data.
+  message Command {
+    // Type defines the type of sound command as an enumeration.
+    enum Type {
+      TYPE_UNKNOWN = 0;
+      TYPE_HELLO = 1;
+      TYPE_ARRIVED_HOSTING = 2;
+      TYPE_LEAVING_HOSTING = 3;
+      TYPE_TAKE_FOOD = 4;
+
+      // A sound is played when the robot unloads and returns to the 
+      // return point.
+      TYPE_ENJOY = 5;
+      TYPE_LOAD_DISHES = 6;
+      TYPE_THANK_YOU = 7;
+      TYPE_ARRIVED_PATROL_SERVING = 8;
+      TYPE_LEAVING_PATROL_SERVING = 9;
+      TYPE_ARRIVED_PATROL_BUSSING = 10;
+      TYPE_LEAVING_PATROL_BUSSING = 11;
+      TYPE_ARRIVED_BIRTHDAY = 12;
+      TYPE_ARRIVED_ANNIVERSARY = 13;
+      TYPE_ARRIVED_CELEBRATION = 14;
+
+      // A sound that the user can manually trigger when the robot arrives
+      // at a destination.
+      TYPE_ARRIVED_CUSTOM = 15;
+      TYPE_EXCUSE_ME = 16;
+
+      // A sound made when arriving at the destination in birthday mode.
+      TYPE_HAPPY_BIRTHDAY = 17;
+      // A sound made when moving in birthday mode.
+      TYPE_HAPPY_BIRTHDAY_MOVEMENT = 18;
+
+      // A sound that continues to be made while the robot is within the
+      // sound zone until it leaves.
+      TYPE_SOUND_ZONE = 19;
+      TYPE_DISINFECT_START = 20;
+      TYPE_DISINFECT_CANCELLED = 21;
+      TYPE_DISINFECT_FINISHED = 22;
+      TYPE_DISINFECT_RETURNED = 23;
+    }
+    Type type = 1;
+    // List of sound files associated with the command. Robot will play the
+    // sound randomly when it runs into a specific situation.
+    repeated SoundData sound_data = 2;
+  }
+
+  // List of commands in the sound profile.
+  repeated Command commands = 1;
+}
+
+// Profile represents a user-defined profile with customizable settings.
+message Profile {
+  string profile_id = 1;
+  string display_name = 2;
+  oneof profile {
+    // Profile for sound-related settings.
+    SoundProfile sound_profile = 3;
+  }
+}

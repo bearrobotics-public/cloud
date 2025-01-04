@@ -1,0 +1,31 @@
+// File: robot_status.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v0.cloud;
+
+// State of online connection from the cloud to the robot.
+message RobotConnection {
+  enum Connection {
+    CONNECTION_UNKNOWN = 0;
+    // Whether the robot is connected to Bear cloud services.
+    CONNECTION_CONNECTED = 1;
+    // Robot is unreachable/offline.
+    CONNECTION_DISCONNECTED = 2;
+  }
+  // Connection availability of the robot.
+  Connection connection = 1;
+}
+
+// State of info related to a robot connection.
+message RobotState {
+  string robot_id = 1;
+  // Connection availability of the robot.
+  RobotConnection robot_connection = 2;
+}

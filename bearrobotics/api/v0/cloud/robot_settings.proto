@@ -1,0 +1,37 @@
+// File: robot_settings.proto
+//
+// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v0.cloud;
+
+// RobotSystemInfo represents data about a robot's current system
+message RobotSystemInfo {
+  // The distribution version currently installed and running on the robot.
+  // e.g. "servi-24.03"
+  string software_version = 1;
+
+  // RobotFamily defines the classification or family of the robot.
+  enum RobotFamily {
+    ROBOT_FAMILY_UNKNOWN = 0;
+    ROBOT_FAMILY_SERVI = 1;
+    ROBOT_FAMILY_SERVI_MINI = 2;
+    ROBOT_FAMILY_SERVI_AIR = 3;
+    ROBOT_FAMILY_SERVI_PLUS = 4;
+    ROBOT_FAMILY_SERVI_LIFT = 5;
+    ROBOT_FAMILY_CARTI_100 = 6;
+    ROBOT_FAMILY_CARTI_600 = 7;
+  }
+  RobotFamily robot_family = 2;
+
+  // Unique identifier for the robot. e.g. "pennybot-abc123"
+  string robot_id = 3;
+
+  // A user-friendly name for the robot, typically used for display purposes.
+  string display_name = 4;
+}
