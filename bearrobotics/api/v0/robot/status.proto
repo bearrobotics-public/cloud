@@ -1,6 +1,6 @@
 // File: status.proto
 //
-// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,99 +36,6 @@ message BatteryState {
     CHARGE_METHOD_WIRELESS = 3;
   }
   ChargeMethod charge_method = 3;
-}
-
-message EmergencyStopState {
-  enum Emergency {
-    EMERGENCY_UNKNOWN = 0;
-
-    // Triggers an emergency stop.
-    // Overrides and sets navigation-related velocity command to 0 to the motor.
-    EMERGENCY_ENGAGED = 1;
-
-    // Wheels will resume acting up on software navigation commands.
-    EMERGENCY_DISENGAGED = 2;
-  }
-
-  Emergency emergency = 1;
-}
-
-// High-level representation of various operating behavior on the robot.
-message OperationState {
-  // Represents overall health of the robot.
-  // (e.g. whether a hardware device is reachable)
-  // User may listen to SubscribeSystemStatus for more details.
-  enum System {
-    SYSTEM_UNKNOWN = 0;
-
-    // No faults are detected in system operation.
-    SYSTEM_OK = 1;
-
-    // One or more errors are present on the robot.
-    // This could be software-related or hardware communication.
-    // The robot may not be operable depending on the nature of the error.
-    SYSTEM_ERROR = 2;
-  }
-  System system = 1;
-
-  // Optional message for human readability. Could be empty.
-  string system_message = 2;
-
-  // Represents the robot's current emergency state.
-  // Based on the physical e-stop button and software e-stop.
-  enum Emergency {
-    EMERGENCY_UNKNOWN = 0;
-
-    // Either robot's physical e-stop button is presses or a software e-stop has
-    // been triggered. Wheels are locked in a halted state and will not respond
-    // to software navigation commands.
-    EMERGENCY_ENGAGED = 1;
-
-    // Both physical e-stop button is released and software e-stop is not
-    // triggred. Wheels will resume acting up on software navigation commands.
-    EMERGENCY_DISENGAGED = 2;
-  }
-  Emergency emergency = 3;
-
-  // Optional message for human readability. Could be empty.
-  string emergency_message = 4;
-
-  // Represents the robot's current charging behavior.
-  // Certain charging methods may limit what actions the robot is able to take.
-  // User may listen to SubscribeBatteryStatus for more details.
-  enum Charging {
-    CHARGING_UNKNOWN = 0;
-
-    // No charging method is detected.
-    // The robot is able to navigate freely in this state.
-    CHARGING_DISCHARGING = 1;
-
-    // The robot is connected to a cable charger.
-    // Navigation-related commands will be ignored until the cable charger is
-    // unplugged.
-    CHARGING_WIRED = 2;
-
-    // The robot is charging without being plugged into a cable charger.
-    // (i.e. inductive or contact charger)
-    // It is possible to navigate freely during this charging state.
-    CHARGING_WIRELESS = 3;
-  }
-  Charging charging = 5;
-
-  // Represents any mission-related action being in progress on the robot.
-  // User may listen to SubscribeMissionStatus for more details.
-  enum Mission {
-    MISSION_UNKNOWN = 0;
-
-    // Indicates no mission is currently in progress irrespective of other
-    // states.
-    MISSION_IDLE = 1;
-
-    // The robot is currently on a mission.
-    // Robot cannot accept any new mission.
-    MISSION_IN_PROGRESS = 2;
-  }
-  Mission mission = 6;
 }
 
 // Represents a single tray state.

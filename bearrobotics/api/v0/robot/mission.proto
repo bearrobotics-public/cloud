@@ -1,6 +1,6 @@
 // File: mission.proto
 //
-// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,15 +12,28 @@ import "google/protobuf/any.proto";
 
 package bearrobotics.api.v0.robot;
 
-// Point on the map.
 message Destination {
   string destination_id = 1;
+}
+
+// Area on the map with one or more points where any one point is a valid
+// goal for the robot.
+message Zone {
+  string zone_id = 1;
+}
+
+message Position {
+  float x_meters = 1;
+  float y_meters = 2;
+  float heading_radians = 3;
 }
 
 // Place on the map where the robot can be set to navigate towards.
 message Goal {
   oneof goal {
     Destination destination = 1;
+    Zone zone = 2;
+    Position position = 3;
   }
 }
 
@@ -131,13 +144,16 @@ message MissionState {
     // Indicates that the robot is temporarily stuck but has not yet failed.
     NAVIGATION_STATUS_STUCK = 3;
 
-    // Indicates that the robot is in the process of docking at a charger or station.
+    // Indicates that the robot is in the process 
+    // of docking at a charger or station.
     NAVIGATION_STATUS_DOCKING = 4;
 
-    // Indicates that the robot is in the process of undocking at a charger or station.
+    // Indicates that the robot is in the process 
+    // of undocking at a charger or station.
     NAVIGATION_STATUS_UNDOCKING = 5;
 
-    // Indicates that the robot is navigating to a destination but is not currently docking or undocking.
+    // Indicates that the robot is navigating to a destination 
+    // but is not currently docking or undocking.
     NAVIGATION_STATUS_NAVIGATING = 6;
   }
   

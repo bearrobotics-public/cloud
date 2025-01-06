@@ -1,6 +1,6 @@
 // File: cloud_api_service.proto
 //
-// Copyright 2024 Bear Robotics, Inc. All rights reserved.
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -271,6 +271,7 @@ message CreateMissionRequest {
   string robot_id = 1;
   robot.Mission mission = 2;
 }
+
 message CreateMissionResponse {
   string mission_id = 1;
 }

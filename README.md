@@ -5,7 +5,7 @@ Welcome to the Bear's **Cloud** respository. This repository contains:
 - Protocol Buffers (`.proto` files) defining the API specifications.
 - Documentation for integrating and using the Cloud API service. 
 
-Tge Bear Cloud API service is a gRPC-based API for third parties to:
+The Bear Cloud API service is a gRPC-based API for third parties to:
 - **Send commands** to control the robots,
 - **Receive status updates** from robots, such as mission and battery status. 
 - **Retrieve robot information**.
