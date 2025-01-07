@@ -51,16 +51,6 @@ message SpeedZone {
   float max_speed_m_per_sec = 1;
 }
 
-// ElevatorZone defines a zone where an elevator is located.
-message ElevatorZone {
-  string elevator_id = 1;
-}
-
-// ElevatorDoorZone defines a zone where an elevator door is located.
-message ElevatorDoorZone {
-  string elevator_id = 1;
-}
-
 // ParameterZone defines a zone with specific parameters.
 message ParameterZone {
   string zone_id = 1;
@@ -75,7 +65,5 @@ message ParameterZone {
     RampZone ramp_zone = 5;
     SoundZone sound_zone = 6;
     SpeedZone speed_zone = 7;
-    ElevatorZone elevator_zone = 8;
-    ElevatorDoorZone elevator_door_zone = 9;
   }
 }

@@ -149,7 +149,4 @@ message Annotation {
   repeated PreferredPath preferred_paths = 7;
   // Queues are used to define the waiting area.
   repeated Queue queues = 8;
-
-  // Topology map for AMR navigation.
-  TopologyMap topology_map = 9;
 }
