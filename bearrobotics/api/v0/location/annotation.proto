@@ -9,7 +9,6 @@
 syntax = "proto3";
 
 import "bearrobotics/api/v0/common/math.proto";
-import "bearrobotics/api/v0/location/topology_map.proto";
 import "bearrobotics/api/v0/location/types.proto";
 import "bearrobotics/api/v0/location/zones.proto";
 import "google/protobuf/timestamp.proto";

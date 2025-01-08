@@ -10,20 +10,38 @@ syntax = "proto3";
 
 package bearrobotics.api.v0.common;
 
+// Represents a 2D point in space with x and y coordinates.
 message Point2D {
+  // The x coordinate of the point in a 2D plane
   float x = 1;
+
+  // The y coordinate of the point in a 2D plane
   float y = 2;
 }
 
+// Represents a rotation in 3D space using four components (x, y, z, w).
 message Quaternion {
+  // The x component of the quaternion (imaginary part)
   float x = 1;
+  
+  // The y component of the quaternion (imaginary part)
   float y = 2;
+  
+  // The z component of the quaternion (imaginary part)
   float z = 3;
+  
+  // The real (scalar) component of the quaternion
   float w = 4;
 }
 
+// Defines a 2D point (x, y) with a 3D orientation.
 message PointWithOrientation {
+  // The x coordinate of the point
   float x = 1;
+  
+  // The y coordinate of the point
   float y = 2;
+  
+  // The orientation represented as a quaternion
   Quaternion orientation = 3;
 }

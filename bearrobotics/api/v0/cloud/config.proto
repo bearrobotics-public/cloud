@@ -23,9 +23,14 @@ message RobotSelector {
     repeated string ids = 1;
   }
 
+  // Specifies the target identification for an operation. This can be either:
+  // - A specific set of robot IDs, allowing operations to be targeted at individual robots.
+  // - A location ID, which represents all robots associated with a specific location.
   oneof target_id {
+    // A list of specific robot IDs to target.
     RobotIDs robot_ids = 1;
-    // All robots for the location.
+
+    // An identifier for a location, representing all robots associated with this location.
     string location_id = 2;
   }
 }
