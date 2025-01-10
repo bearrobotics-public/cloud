@@ -13,7 +13,7 @@ import "bearrobotics/api/v0/robot/robot.proto";
 package bearrobotics.api.v0.robot;
 
 // The robot must be placed within a 5x5 meter window
-// from the localization goal
+// from the localization goal.
 message LocalizationGoal {
   oneof goal_type {
     Pose pose = 1;
@@ -25,16 +25,15 @@ message LocalizationState {
     STATE_UNKNOWN = 0;
 
     // Happens when the localization process
-    // is preempted before completion
+    // is preempted before completion.
     STATE_PREEMPTED = 1;
 
     STATE_FAILED = 2;
 
     STATE_SUCCEEDED = 3;
 
-    // The robot is actively performing localization
+    // The robot is actively performing localization.
     STATE_LOCALIZING = 4;
   }
-
   State state = 1;
 }

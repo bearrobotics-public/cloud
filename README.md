@@ -15,7 +15,7 @@ For a comprehensive overview of the API capabilities, refer to the **Public Clou
 ---
 
 ## Overview
-The Bear Base API facilitates communication between third-party clients and robots via the gRPC framework. It employs:
+The Bear Cloud API facilitates communication between third-party clients and robots via the gRPC framework. It employs:
 - **Unary RPC**: For request/response-type communications.
 - **Server-streaming RPC**: For continuous updates from robots.
 

@@ -12,6 +12,7 @@ package bearrobotics.api.v0.cloud;
 
 // State of online connection from the cloud to the robot.
 message RobotConnection {
+  // Connection availability of the robot.
   enum Connection {
     CONNECTION_UNKNOWN = 0;
     // Whether the robot is connected to Bear cloud services.
@@ -19,7 +20,6 @@ message RobotConnection {
     // Robot is unreachable/offline.
     CONNECTION_DISCONNECTED = 2;
   }
-  // Connection availability of the robot.
   Connection connection = 1;
 }
 

@@ -20,7 +20,7 @@ message DirectionZone {
   float heading_radians = 1;
 
   // The magnitude of the direction vector.
-  // typically set to 254 for hard direction zones.
+  // Typically set to 254 for hard direction zones.
   // The larger the magnitude, 
   // the more the robot will try to align with the direction.
   int32 magnitude = 2;

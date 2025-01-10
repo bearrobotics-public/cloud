@@ -24,7 +24,7 @@ import "google/api/annotations.proto";
 
 package bearrobotics.api.v0.cloud;
 
-// CloudAPIService.
+// Cloud API Service.
 //
 // The definition of Bear Cloud API service.
 service CloudAPIService {
@@ -42,7 +42,7 @@ service CloudAPIService {
   rpc GetCurrentMapContent(GetCurrentMapContentRequest) 
       returns (GetCurrentMapContentResponse) {
     option (google.api.http) = {
-      post: "/v0/map-content/get"
+      post: "/v0/current-map-content/get"
     };
   }
 
@@ -66,7 +66,7 @@ service CloudAPIService {
   rpc GetMapAnnotation(GetMapAnnotationRequest)
       returns (GetMapAnnotationResponse) {
     option (google.api.http) = {
-      post: "/v0/annotation/get"
+      post: "/v0/map-annotation/get"
     };
   }
 
@@ -95,8 +95,8 @@ service CloudAPIService {
 
   // Create a mission to go charge a robot regardless of battery state.
   //
-  // The call will fail if the robot is already on a different mission.
-  // The current mission needs to be canceled before the robot can be charged.
+  // The call will fail if the robot is already on a different mission,
+  // which needs to be canceled before the robot can be charged.
   rpc ChargeRobot(ChargeRobotRequest) returns (ChargeRobotResponse) {
     option (google.api.http) = {post: "/v0/robot/charge"};
   }
@@ -139,7 +139,7 @@ service CloudAPIService {
 
   // Manually set the robot pose given a pose on the map and a covariance matrix.
   rpc SetRobotPose(SetRobotPoseRequest) returns (SetRobotPoseResponse) {
-    option (google.api.http) = {post: "/v0/robot/set-pose"};
+    option (google.api.http) = {post: "/v0/robot-pose/set"};
   }
 
   // Subscribe to the robot's localization status.
@@ -193,7 +193,7 @@ service CloudAPIService {
   rpc ListProfileIds (ListProfileIdsRequest) 
       returns (ListProfileIdsResponse) {
     option (google.api.http) = {
-        post: "/v0/profile-id/list"
+        post: "/v0/profile-ids/list"
       };
   }
 
@@ -232,7 +232,7 @@ service CloudAPIService {
   rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest) 
       returns (stream SubscribeTrayStatusesResponse) {
     option (google.api.http) = {
-      post: "/v0/tray-status/subscribe"
+      post: "/v0/tray-statuses/subscribe"
     };
   }
 
@@ -284,8 +284,6 @@ message GetCurrentMapContentResponse {
   location.MapContent map_content = 1;
 }
 
-// GetLocationRequest represents the request message for retrieving
-// information about a specific location by a unique location ID.
 message GetLocationRequest {
   // The unique identifier of the location.
   // The ID is typically a string of uppercase letters and numbers.
@@ -294,8 +292,6 @@ message GetLocationRequest {
   string location_id = 1;
 }
 
-// GetLocationResponse contains the detailed information about a location,
-// returned in response to a GetLocationRequest.
 message GetLocationResponse {
   // Information about the specified location, as represented by a
   // location.Location message.
@@ -322,13 +318,10 @@ message GetMapAnnotationResponse {
   location.Annotation annotation = 1;
 }
 
-// GetMapDataRequest represents the request message for retrieving
-// map data by a unique map data ID.
 message GetMapDataRequest {
   string map_data_id = 1;
 }
 
-// GetMapDataResponse contains the map data for the requested map data ID.
 message GetMapDataResponse {
   // Information about the map data which includes all relevant details about
   // the map data, especially the map.
@@ -381,8 +374,6 @@ message ListRobotIDsRequest {
   RobotFilter filter = 1;
 }
 
-// In API v0, this might not have all the robot IDs if there are too many.
-// The total number of robots will still be returned in the total_robots field.
 message ListRobotIDsResponse {
   int32 total_robots = 1;
 
@@ -465,9 +456,6 @@ message SubscribeTrayStatusesResponse {
   repeated robot.TrayState tray_states = 2;
 }
 
-// SwitchMapRequest represents the request message for
-// switching the current map of a target robot to the map
-// corresponding to the given floor level and section index. 
 message SwitchMapRequest {
   string robot_id = 1;
   // Positive integer floor_level is the first key used to index the map dict.

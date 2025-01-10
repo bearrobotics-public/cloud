@@ -83,7 +83,6 @@ message Mission {
     // triggered to proceed by an external event, such as a button press.
     TYPE_WAIT = 5;
   }
-
   Type type = 1;
 
   // The list of goals or destinations for the mission.
@@ -93,7 +92,6 @@ message Mission {
   // specific configuration for this mission instance.
   MissionParams override_params = 3;
 }
-
 
 // Action to update a current mission.
 message MissionCommand {
@@ -106,7 +104,6 @@ message MissionCommand {
     COMMAND_RESUME = 3;
     COMMAND_FINISH = 4;
   }
-
   Command command = 2;
 }
 
@@ -131,6 +128,8 @@ message MissionState {
 
   int32 current_goal_index = 4;
 
+  // The current navigation status of the mission, reflecting
+  // the robot's progress toward or at its destination.
   enum NavigationStatus {
     // Default value, indicates an unknown or undefined navigation status.
     NAVIGATION_STATUS_UNKNOWN = 0;
@@ -156,9 +155,6 @@ message MissionState {
     // but is not currently docking or undocking.
     NAVIGATION_STATUS_NAVIGATING = 6;
   }
-  
-  // The current navigation status of the mission, reflecting
-  // the robot's progress toward or at its destination.
   NavigationStatus navigation_status = 5;
 
   google.protobuf.Any feedback = 6;
