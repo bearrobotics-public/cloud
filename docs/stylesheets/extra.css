@@ -1,0 +1,60 @@
+:root {
+    --md-primary-fg-color:        #15B7FF;
+    --md-primary-fg-color--light: #D7F2FF;
+    --md-primary-fg-color--dark:  #001D51;
+}
+
+/* Override for level 1 headings in MkDocs Material */
+.md-typeset h1 {
+  display: none
+}
+
+/* Override for level 4 headings in MkDocs Material */
+.md-typeset h3 {
+  font-size: 1.4em; 
+  margin-top: 2.0em;
+}
+
+
+/* Override for level 5 headings in MkDocs Material */
+.md-typeset h5 {
+  text-transform: none; /* Prevents all caps */
+  font-size: 1.1em; 
+}
+
+
+.message_table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse; /* Consistent spacing between cells */
+}
+
+.message_table th, .table td {
+    padding: 8px; /* Adds padding for readability */
+    text-align: left; /* Aligns text to the left by default */
+    border: 1px solid #ccc; /* Optional: Adds borders to the table */
+}
+
+.message_table thead th {
+    background-color: #f9f9f9; /* Optional: Light background for headers */
+}
+
+/* First column width */
+.message_table thead th:first-child, 
+.message_table tbody td:first-child {
+    width: 30%;
+    white-space: nowrap;
+}
+
+/* Second column width */
+.message_table thead th:nth-child(2), 
+.message_table tbody td:nth-child(2) {
+    width: 20%;
+}
+
+/* Third column width */
+.message_table thead th:nth-child(3), 
+.message_table tbody td:nth-child(3) {
+    width: 50%;
+}
+

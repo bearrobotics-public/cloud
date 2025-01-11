@@ -1,0 +1,65 @@
+site_name: Bear Cloud API
+site_url: https://bearrobotics-public.github.io/cloud/
+copyright: Copyright 2025 Bear Robotics, Inc. All rights reserved.
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.top
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - toc.follow
+  palette:
+    primary: custom
+  favicon: assets/favicon.png
+  logo: assets/bear_logo_white.png
+extra_css:
+    - stylesheets/extra.css
+markdown_extensions:
+  - toc:
+      permalink: True
+      toc_depth: 4
+  - tables
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+nav:
+  - Home: index.md
+  - API Reference:
+    - v0.1:
+      - Services:
+        - CloudAPIService: v0.1/cloud/CloudApiService.md
+      - Message Types:
+        - Cloud:
+          - Config: v0.1/cloud/Config.md
+          - Profiles: v0.1/cloud/Profiles.md
+          - RobotSettings: v0.1/cloud/RobotSettings.md
+          - RobotStatus: v0.1/cloud/RobotStatus.md
+        - Common:
+          - Annotations: v0.1/common/Annotations.md
+          - Math: v0.1/common/Math.md
+        - Location:
+          - Annotation: v0.1/location/Annotation.md
+          - Location: v0.1/location/Location.md
+          - Map: v0.1/location/Map.md
+          - Types: v0.1/location/Types.md
+          - Zones: v0.1/location/Zones.md
+        - Robot:
+          - Localization: v0.1/robot/Localization.md
+          - Mission: v0.1/robot/Mission.md
+          - Robot: v0.1/robot/Robot.md
+          - Status: v0.1/robot/Status.md
+  - Guides:
+    - Setup:
+      - Authentication: guides/setup/authentication.md
+      - Examples: 
+        - Python: guides/examples/python.md
+        - Golang: guides/examples/golang.md
+    - Troubleshooting: guides/troubleshooting.md
+  - Changelog: changelog.md
+  - Roadmap: roadmap.md
