@@ -1,3 +1,4 @@
 google/*
-custom_format.tmpl
+*.tmpl
 *.sh
+site/
