@@ -4,11 +4,6 @@
     --md-primary-fg-color--dark:  #001D51;
 }
 
-/* Override for level 1 headings in MkDocs Material */
-.md-typeset h1 {
-  display: none
-}
-
 /* Override for level 4 headings in MkDocs Material */
 .md-typeset h3 {
   font-size: 1.4em; 

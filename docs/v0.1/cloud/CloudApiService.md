@@ -1,4 +1,4 @@
-## Cloud API Service
+# Cloud API Service
 The definition of Bear Cloud API service.
 
 ### Fleet Management
