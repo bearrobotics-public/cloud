@@ -1,6 +1,6 @@
 ## Introduction
 
-This document describes the gRPC-based Bear Cloud API Service for third-party clients. The Bear Cloud API service enables third parties to:
+This document describes the [gRPC-based](https://grpc.io/) Bear Cloud API Service for third-party clients. The Bear Cloud API service enables third parties to:
 
 1. Send commands to control the robots
 2. Receive status updates from robots (e.g., tray status, battery status)
