@@ -190,8 +190,8 @@ service CloudAPIService {
   }
 
   // List all profile IDs for a specific location_id.
-  rpc ListProfileIds (ListProfileIdsRequest) 
-      returns (ListProfileIdsResponse) {
+  rpc ListProfileIDs (ListProfileIDsRequest) 
+      returns (ListProfileIDsResponse) {
     option (google.api.http) = {
         post: "/v0/profile-ids/list"
       };
@@ -362,11 +362,11 @@ message GetSoundFileUploadURLResponse {
   string upload_url = 1;
 }
 
-message ListProfileIdsRequest {
+message ListProfileIDsRequest {
   string location_id = 1;
 }
 
-message ListProfileIdsResponse {
+message ListProfileIDsResponse {
   repeated string profile_ids = 1;
 }
 

@@ -8,6 +8,7 @@
 
 syntax = "proto3";
 
+import "bearrobotics/api/v0/robot/robot.proto";
 import "google/protobuf/any.proto";
 
 package bearrobotics.api.v0.robot;
@@ -22,18 +23,12 @@ message Zone {
   string zone_id = 1;
 }
 
-message Position {
-  float x_meters = 1;
-  float y_meters = 2;
-  float heading_radians = 3;
-}
-
 // Place on the map where the robot can be set to navigate towards.
 message Goal {
   oneof goal {
     Destination destination = 1;
     Zone zone = 2;
-    Position position = 3;
+    Pose pose = 3;
   }
 }
 

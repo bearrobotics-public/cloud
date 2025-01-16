@@ -112,9 +112,9 @@ robot's estimated position.
 - **Response Type:** [GetSoundFileUploadURLResponse](#getsoundfileuploadurlresponse)
 - **Description:**
   Retrieve the sound file upload URL for specific sound_id.
-#### ListProfileIds
-- **Request Type:** [ListProfileIdsRequest](#listprofileidsrequest)
-- **Response Type:** [ListProfileIdsResponse](#listprofileidsresponse)
+#### ListProfileIDs
+- **Request Type:** [ListProfileIDsRequest](#listprofileidsrequest)
+- **Response Type:** [ListProfileIDsResponse](#listprofileidsresponse)
 - **Description:**
   List all profile IDs for a specific location_id.
 
@@ -274,12 +274,12 @@ tends to be static and does not change often.
 |-------------|--------|-------------|
 | `upload_url` | string |             |
 
-##### ListProfileIdsRequest
+##### ListProfileIDsRequest
 | Field         | Type   | Description |
 |---------------|--------|-------------|
 | `location_id` | string |             |
 
-##### ListProfileIdsResponse
+##### ListProfileIDsResponse
 | Field        | Type   | Description |
 |--------------|--------|-------------|
 | `profile_ids` | string |             |

@@ -10,13 +10,6 @@
 |----------|--------|-------------|
 | `zone_id`| string |             |
 
-#### Position
-| Field            | Type  | Description |
-|------------------|-------|-------------|
-| `x_meters`       | float |             |
-| `y_meters`       | float |             |
-| `heading_radians`| float |             |
-
 #### Goal
 `Goal` allows one of the following goals
 
@@ -24,7 +17,7 @@
 |-------------|-----------------|-------------|
 | `destination` | [Destination](#destination) |             |
 | `zone`       | [Zone](#zone)   |             |
-| `position`   | [Position](#position) |             |
+| `pose`       | [Pose](../robot/Robot.md/#pose) |             |
 
 #### Mission
 | Field             | Type                     | Description    |

@@ -65,7 +65,7 @@ message MapData {
 message MapContent {
   string map_id = 1;
 
-  message MapData {
+  message Data {
     // The image PNG data for the map.
     bytes data = 1;
 
@@ -77,7 +77,7 @@ message MapContent {
     float m_per_pixel = 3;
   }
 
-  MapData map_data = 2;
+  Data data = 2;
 
   message Annotation {
     repeated Destination destinations = 1;
