@@ -35,9 +35,9 @@ protoc --proto_path=. --go_out="$PROTO_OUT" --go_opt=paths=source_relative \
 
 ## List Robot IDs
 
-**Prerequisites:**
+#### Prerequisites:
 - Compiled pb.go files for `cloud_api_service`
-- API key JWT
+- API key JWT (See the [Authentication Guide](../setup/authentication.md))
 
 ```go
 package main
@@ -67,16 +67,12 @@ const (
 
 func loadBearerToken() (string, error) {
 	// Read your API key token from JWT into a string.
+	// See the example Go client code in the Authentication Guide.
 }
 
 func createChannelWithCredentials() (*grpc.ClientConn, error) {
 	// Create a secure connection with SSL credentials.
-	creds := credentials.NewTLS(nil) // Use the appropriate TLS configuration if needed.
-	conn, err := grpc.NewClient(BEAR_API_ENDPOINT, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
+	// See the example Go client code in the Authentication Guide.
 }
 
 func listRobotIDs() {
@@ -128,9 +124,9 @@ func main() {
 
 ## Subscribe To Battery Status
 
-**Prerequisites:**
+#### Prerequisites:
 - Compiled pb.go files for `cloud_api_service`
-- API key JWT
+- API key JWT (See the [Authentication Guide](../setup/authentication.md))
 
 ```go
 package main
@@ -161,16 +157,12 @@ const (
 
 func loadBearerToken() (string, error) {
 	// Read your API key token from JWT into a string.
+	// See the example Go client code in the Authentication Guide.
 }
 
 func createChannelWithCredentials() (*grpc.ClientConn, error) {
 	// Create a secure connection with SSL credentials.
-	creds := credentials.NewTLS(nil) // Use the appropriate TLS configuration if needed.
-	conn, err := grpc.NewClient(BEAR_API_ENDPOINT, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
+	// See the example Go client code in the Authentication Guide.
 }
 
 func subscribeBatteryStatus() {

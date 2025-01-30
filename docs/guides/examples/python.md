@@ -26,9 +26,9 @@ python3 -m grpc_tools.protoc -I . --python_out="$PROTO_OUT" --grpc_python_out="$
 
 ## List Robot IDs
 
-**Prerequisites:**
+#### Prerequisites:
 - Compiled pb2 files for `cloud_api_service`
-- API key JWT
+- API key JWT (See the [Authentication Guide](../setup/authentication.md))
 
 ```python
 import grpc
@@ -40,20 +40,18 @@ from cloud_api_service_pb2_grpc import CloudAPIServiceStub
 
 BEAR_API_ENDPOINT = "your.endpoint.bearrobotics.ai:port"
 
-# Load Bearer token
-with open("/path/to/api-key.jwt", "r") as token_file:
-    token = token_file.read().strip()
+def load_bearer_token():
+    # Read your API key token from JWT into a string.
+	# See the example Python client code in the Authentication Guide.
 
-# Create a channel with the Bearer token in the metadata
 def create_channel_with_credentials():
-    credentials = grpc.ssl_channel_credentials()
-    channel = grpc.secure_channel(BEAR_API_ENDPOINT, credentials)
+    # Create a secure connection with SSL credentials.
+	# See the example Python client code in the Authentication Guide.
 
-    return channel
-
-# Create the stub
 def list_robot_ids():
     try:
+        # Create the stub
+        token = load_bearer_token()
         channel = create_channel_with_credentials()
         stub = CloudAPIServiceStub(channel)
         
@@ -77,9 +75,9 @@ if __name__ == "__main__":
 
 ## Subscribe To Battery Status
 
-**Prerequisites:**
+#### Prerequisites:
 - Compiled pb2 files for `cloud_api_service`
-- API key JWT
+- API key JWT (See the [Authentication Guide](../setup/authentication.md))
 
 ```python
 import grpc
@@ -96,20 +94,18 @@ BEAR_ROBOT_IDS    = [
     "your-robot-id 2",
 ]
 
-# Load Bearer token
-with open("/path/to/api-key.jwt", "r") as token_file:
-    token = token_file.read().strip()
+def load_bearer_token():
+    # Read your API key token from JWT into a string.
+	# See the example Python client code in the Authentication Guide.
 
-# Create a channel with the Bearer token in the metadata
 def create_channel_with_credentials():
-    credentials = grpc.ssl_channel_credentials()
-    channel = grpc.secure_channel(BEAR_API_ENDPOINT, credentials)
-    
-    return channel
+    # Create a secure connection with SSL credentials.
+	# See the example Python client code in the Authentication Guide.
 
 def subscribe_battery_status():
     try:
         # Create the stub
+        token = load_bearer_token()
         channel = create_channel_with_credentials()
         stub = CloudAPIServiceStub(channel)
         
