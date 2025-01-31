@@ -13,7 +13,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 ## Defining Import Paths
 
-In order to compile protocol buffers into Go code, you must provide Go import paths. Please refer to the [Protocol Buffers Documentation](https://protobuf.dev/reference/go/go-generated/#package).
+In order to compile protocol buffers into Go code, you must first provide Go import paths. Please refer to the [Protocol Buffers Documentation](https://protobuf.dev/reference/go/go-generated/#package).
 
 ## Compiling Protocol Buffers into Go
 
@@ -26,55 +26,43 @@ cd "$REPO_ROOT"
 PROTO_OUT="examples/go/generated_protos"
 mkdir -p "$PROTO_OUT"
 
-# If you did not specify import paths in the proto files with `option go_package`,
-# then you must add another --go_opt=M${PROTO_FILE}=${GO_IMPORT_PATH} flag for each proto.
+# If you did not specify import paths in each proto file with `option go_package`,
+# then you must add another --go_opt=M${PROTO_FILE}=${GO_IMPORT_PATH} flag for each here.
 protoc --proto_path=. --go_out="$PROTO_OUT" --go_opt=paths=source_relative \
        --go-grpc_out="$PROTO_OUT" --go-grpc_opt=paths=source_relative \
        bearrobotics/api/v0/**/*.proto google/api/*.proto
 ```
 
-## List Robot IDs
-
-#### Prerequisites:
-- Compiled pb.go files for `cloud_api_service`
-- API key JWT (See the [Authentication Guide](../setup/authentication.md))
+## Importing Compiled Protos
 
 ```go
-package main
+import compiled_pb "path/to/compiled/protos"
+```
 
-import (
-	"context"
-	"fmt"
-	"log"
+## Connecting to the API with Credentials
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
+#### Prerequisites:
+- API key (See the [Authentication Guide](../setup/authentication.md))
 
-	// Import your compiled protobuf files here.
-	cloud_api_service_pb "path/to/compiled/protos"
-)
-
-const (
-	BEAR_API_ENDPOINT = "target.endpoint.bearrobotics.ai:port"
-	BEAR_ROBOT_IDS    = []string{
-		"your-robot-id-1",
-		"your-robot-id 2",
-	}
-)
-
-func loadBearerToken() (string, error) {
-	// Read your API key token from JWT into a string.
+```go
+func GetToken() (string, error) {
+	// Fetch your API key JWT and return it as a string.
 	// See the example Go client code in the Authentication Guide.
 }
 
-func createChannelWithCredentials() (*grpc.ClientConn, error) {
+func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
 	// Create a secure connection with SSL credentials.
 	// See the example Go client code in the Authentication Guide.
 }
+```
 
+## List Robot IDs
+
+#### Prerequisites:
+- [Compiled pb.go files](#compiling-protocol-buffers-into-go) for `cloud_api_service`
+- [API connection with credentials](#connecting-to-the-api-with-credentials)
+
+```go
 func listRobotIDs() {
 	// Load the Bearer token from file.
 	token, err := loadBearerToken()
@@ -83,10 +71,11 @@ func listRobotIDs() {
 	}
 
 	// Create the gRPC channel.
-	conn, err := createChannelWithCredentials()
+	conn, cancelRefresher, err := createChannelWithCredentials()
 	if err != nil {
 		log.Fatalf("Failed to create channel: %v", err)
 	}
+	defer cancelRefresher()
 	defer conn.Close()
 
 	// Create the stub.
@@ -116,55 +105,15 @@ func listRobotIDs() {
 	// Handle the response.
 	fmt.Println("Listing robot IDs:", resp)
 }
-
-func main() {
-	listRobotIDs()
-}
 ```
 
 ## Subscribe To Battery Status
 
 #### Prerequisites:
-- Compiled pb.go files for `cloud_api_service`
-- API key JWT (See the [Authentication Guide](../setup/authentication.md))
+- [Compiled pb.go files](#compiling-protocol-buffers-into-go) for `cloud_api_service`
+- [API connection with credentials](#connecting-to-the-api-with-credentials)
 
 ```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"log"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
-
-	// Import your compiled protobuf files here.
-	cloud_api_service_pb "path/to/compiled/protos"
-)
-
-const (
-	BEAR_API_ENDPOINT = "target.endpoint.bearrobotics.ai:port"
-	BEAR_ROBOT_IDS    = []string{
-		"your-robot-id-1",
-		"your-robot-id 2",
-	}
-)
-
-func loadBearerToken() (string, error) {
-	// Read your API key token from JWT into a string.
-	// See the example Go client code in the Authentication Guide.
-}
-
-func createChannelWithCredentials() (*grpc.ClientConn, error) {
-	// Create a secure connection with SSL credentials.
-	// See the example Go client code in the Authentication Guide.
-}
-
 func subscribeBatteryStatus() {
 	// Load the Bearer token from file.
 	token, err := loadBearerToken()
@@ -173,10 +122,11 @@ func subscribeBatteryStatus() {
 	}
 
 	// Create the gRPC channel.
-	conn, err := createChannelWithCredentials()
+	conn, cancelRefresher, err := createChannelWithCredentials()
 	if err != nil {
 		log.Fatalf("Failed to create channel: %v", err)
 	}
+	defer cancelRefresher()
 	defer conn.Close()
 
 	// Create the stub.
@@ -187,7 +137,11 @@ func subscribeBatteryStatus() {
 		Selector: &cloud_api_service_pb.RobotSelector{
 			TargetId: &cloud_api_service_pb.RobotSelector_RobotIds{
 				RobotIds: &cloud_api_service_pb.RobotSelector_RobotIDs{
-					Ids: BEAR_ROBOT_IDS,
+					Ids: []string{
+						"your-robot-id-1",
+						"your-robot-id-2",
+						"your-robot-id-etc",
+					},
 				},
 			},
 		},
@@ -223,9 +177,5 @@ func subscribeBatteryStatus() {
 		}
 		log.Printf("Message received: %v", msg)
 	}
-}
-
-func main() {
-	subscribeBatteryStatus()
 }
 ```
