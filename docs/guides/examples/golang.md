@@ -36,7 +36,7 @@ protoc --proto_path=. --go_out="$PROTO_OUT" --go_opt=paths=source_relative \
 ## Importing Compiled Protos
 
 ```go
-import compiled_pb "path/to/compiled/protos"
+import compiled_pb "path/to/compiled/proto"
 ```
 
 ## Connecting to the API with Credentials

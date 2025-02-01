@@ -72,6 +72,8 @@ mission status, followed by updates whenever the mission status changes.
 - **Description:**
   Update the specified mission with the given command.<br>The call will fail if the robot is not on the specified mission
 or cannot execute the command.
+
+### Navigation
 #### LocalizeRobot
 - **Request Type:** [LocalizeRobotRequest](#localizerobotrequest)
 - **Response Type:** [LocalizeRobotResponse](#localizerobotresponse)
