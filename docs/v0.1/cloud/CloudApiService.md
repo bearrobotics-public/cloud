@@ -325,7 +325,7 @@ tends to be static and does not change often.
 |----------------|-------------------------------------|-------------|
 | `metadata`     | [EventMetadata](../common/Annotations.md/#eventmetadata) |             |
 | `robot_id`     | string                              |             |
-| `battery_state` | BatteryState                       |             |
+| `battery_state` | [BatteryState](../robot/Status.md/#batterystate)                       |             |
 
 ##### SubscribeLocalizationStatusRequest
 | Field      | Type                                    | Description |
@@ -359,7 +359,7 @@ tends to be static and does not change often.
 | Field      | Type                                | Description |
 |------------|-------------------------------------|-------------|
 | `metadata` | [EventMetadata](../common/Annotations.md/#eventmetadata) |             |
-| `pose`     | Pose                                |             |
+| `pose`     | [Pose](../robot/Robot.md/#pose)                                |             |
 
 ##### SubscribeRobotStatusRequest
 | Field      | Type                                    | Description |
