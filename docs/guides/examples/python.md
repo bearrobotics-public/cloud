@@ -27,7 +27,7 @@ python3 -m grpc_tools.protoc -I . --python_out="$PROTO_OUT" --grpc_python_out="$
 ## Importing Compiled Protos
 
 ```python
-from cloud_api_service_pb2 import ListRobotIdsRequest
+from cloud_api_service_pb2 import ListRobotIDsRequest
 from cloud_api_service_pb2_grpc import CloudAPIServiceStub
 ```
 
