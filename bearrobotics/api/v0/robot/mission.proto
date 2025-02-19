@@ -13,48 +13,54 @@ import "google/protobuf/any.proto";
 
 package bearrobotics.api.v0.robot;
 
-message Destination {
-  string destination_id = 1;
+message Mission {
+  oneof mission {
+    robot.BaseMission base = 1;
+    robot.GenericMission generic = 2;
+    robot.serving.LoopMission serving_loop = 3;
+    robot.serving.TraverseMission serving_traverse = 4;
+    robot.delivery.AutoOneOffMission delivery_auto_oneoff = 5;
+  }
 }
 
-// Area on the map with one or more points where any one point is a valid
-// goal for the robot.
-message Zone {
-  string zone_id = 1;
+// A flexible goal definition used in generic missions.
+message GenericGoal {
+  // The type of the goal (e.g., "Pickup", "Dropoff").
+  string goal_type = 1;
+
+  // Any optional parameters for the goal in a key-value format.
+  map<string, string> parameters = 2;
+}
+
+// A generic mission that supports string-typed mission names and flexible
+// goals.
+message GenericMission {
+  // The type of the generic mission (e.g., "Traverse", "Loop").
+  string type = 1;
+
+  // A list of generic goals associated with the mission.
+  // Each goal includes its type and other relevant information.
+  repeated GenericGoal goals = 2;
+
+  // A map of key-value pairs for overriding default mission parameters.
+  // This provides flexibility to customize the mission's behavior.
+  map<string, string> override_params = 3;
+}
+
+message Destination {
+  string destination_id = 1;
 }
 
 // Place on the map where the robot can be set to navigate towards.
 message Goal {
   oneof goal {
     Destination destination = 1;
-    Zone zone = 2;
-    Pose pose = 3;
-  }
-}
-
-message MissionParams {
-  enum Mode {
-    MODE_UNKNOWN = 0;
-    MODE_DEFAULT = 1;
-    MODE_BUSSING = 2;
-  }
-
-  message TraverseParams {
-    Mode mode = 1;
-  }
-
-  message LoopParams {
-    Mode mode = 1;
-  }
-
-  oneof params {
-    TraverseParams traverse_params = 1;
-    LoopParams loop_params = 2;
+    Pose pose = 2;
   }
 }
 
 // Represents a mission.
-message Mission {
+message BaseMission {
   enum Type {
     // Default value, indicates an unknown or unspecified mission type.
     TYPE_UNKNOWN = 0;
@@ -62,30 +68,12 @@ message Mission {
     // A single-goal mission.
     TYPE_ONEOFF = 1;
 
-    // An automated single-goal mission that selects the best
-    // available goal from a list.
-    TYPE_ONEOFF_AUTO = 2;
-
-    // A mission that involves multiple destinations
-    // until a specified condition, such as a weight limit, is met.
-    TYPE_TRAVERSE = 3;
-
-    // A mission that repeatedly visits multiple destinations
-    // until a specified condition, such as a weight limit, is met.
-    TYPE_LOOP = 4;
-
-    // A mission that remains at a specific location until it is
-    // triggered to proceed by an external event, such as a button press.
-    TYPE_WAIT = 5;
   }
   Type type = 1;
 
   // The list of goals or destinations for the mission.
   repeated Goal goals = 2;
 
-  // Override parameters for the mission settings, allowing
-  // specific configuration for this mission instance.
-  MissionParams override_params = 3;
 }
 
 // Action to update a current mission.

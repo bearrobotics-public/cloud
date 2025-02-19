@@ -1,0 +1,39 @@
+// File: mission.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+import "bearrobotics/api/v0/robot/robot.proto";
+import "google/protobuf/any.proto";
+
+package bearrobotics.api.v0.robot.serving;
+
+enum LoopMissionParam {
+  UNKNOWN = 0;
+  LOOP = 1;
+  TRAVERSE = 2;
+  WAIT = 3;
+}
+
+// Represents a mission type specific to serving robots.
+message LoopMission {
+  robot.Mission base = 1;
+  LoopMissionParam params = 2; 
+}
+
+enum TraverseMissionParam {
+  UNKNOWN = 0;
+  LOOP = 1;
+  DOWHATEVER = 3;
+}
+
+// Represents a mission type specific to serving robots.
+message TraverseMission {
+  robot.Mission base = 1;
+  TraverseMissionParam params = 2; 
+}

@@ -37,23 +37,3 @@ message BatteryState {
   }
   ChargeMethod charge_method = 3;
 }
-
-// Represents a single tray state.
-message TrayState {
-  enum LoadState {
-    LOAD_STATE_UNKNOWN = 0;
-    LOAD_STATE_LOADED = 1;
-    LOAD_STATE_EMPTY = 2;
-    LOAD_STATE_OVERLOADED = 3;
-  }
-  LoadState load_state = 1;
-
-  // Tray load in kilograms. The minimum precision is 10g.
-  float weight_kg = 2;
-
-  // Ratio of the load to the maximum load capacity of the tray.
-  // The value could exceed 1.0 if the tray is overloaded.
-  // Caveats: If the maximum load is not configured correctly (e.g. 0.0),
-  // NaN can be returned.
-  float load_ratio = 3;
-}
