@@ -15,9 +15,8 @@ package bearrobotics.api.v0.robot.serving;
 
 enum LoopMissionParam {
   UNKNOWN = 0;
-  LOOP = 1;
-  TRAVERSE = 2;
-  WAIT = 3;
+  DEFAULT = 1;
+  BUSSING = 2;
 }
 
 // Represents a mission type specific to serving robots.
