@@ -1,0 +1,48 @@
+:root {
+    --md-primary-fg-color:        #15B7FF;
+    --md-primary-fg-color--light: #D7F2FF;
+    --md-primary-fg-color--dark:  #001D51;
+}
+
+.md-typeset body{
+  line-height: 0.4em;
+}
+
+/* Override for level 4 headings in MkDocs Material */
+.md-typeset h3 {
+  font-size: 1.4em; 
+  margin-top: 2.0em;
+  line-height: 1.2em;
+}
+
+/* Override for level 4 headings in MkDocs Material */
+.md-typeset h4 {
+  line-height: 1.2em;
+}
+
+/* Override for level 5 headings in MkDocs Material */
+.md-typeset h5 {
+  text-transform: none; /* Prevents all caps */
+  font-size: 1.1em; 
+}
+
+.tag-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag {
+  padding: 2px 8px;
+  background-color: none; 
+  border: #999 0.5px solid; 
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+.tag.feature {
+  background-color: #15B7FF; 
+  border: none;
+  font-weight: bold;
+}
