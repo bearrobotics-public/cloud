@@ -387,7 +387,7 @@ tends to be static and does not change often.
 | Field          | Type   | Description |
 |----------------|--------|-------------|
 | `robot_id`     | string |             |
-| `floor_level`  | int32  | Positive integer floor_level is the first key used to index the map dict.<br> SwitchMap will raise an exception if there is no matching map.<br>Floor level begins at 1. |
+| `floor_level`  | int32  | Non-negative integer floor_level is the first key used to index the map dict.<br> SwitchMap will raise an exception if there is no matching map.<br>Floor level 0 denotes the lowest reachable floor. |
 | `section_index` | int32 | Non-negative integer section_index is the second key used to <br> index the map dict.<br> SwitchMap will raise an exception if there is no matching map.<br> Section index begins at 0. |
 
 ##### SwitchMapResponse
