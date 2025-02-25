@@ -8,6 +8,8 @@
 
 syntax = "proto3";
 
+package bearrobotics.api.v0.cloud;
+
 import "bearrobotics/api/v0/cloud/config.proto";
 import "bearrobotics/api/v0/cloud/profiles.proto";
 import "bearrobotics/api/v0/cloud/robot_settings.proto";
@@ -21,8 +23,6 @@ import "bearrobotics/api/v0/robot/mission.proto";
 import "bearrobotics/api/v0/robot/robot.proto";
 import "bearrobotics/api/v0/robot/status.proto";
 import "google/api/annotations.proto";
-
-package bearrobotics.api.v0.cloud;
 
 // Cloud API Service.
 //
@@ -458,9 +458,9 @@ message SubscribeTrayStatusesResponse {
 
 message SwitchMapRequest {
   string robot_id = 1;
-  // Positive integer floor_level is the first key used to index the map dict.
+  // Non-negative integer floor_level is the first key used to index the map dict.
   // SwitchMap will raise an exception if there is no matching map.
-  // Floor level begins at 1. 
+  // Floor level 0 denotes the lowest reachable floor. 
   int32 floor_level = 2;
   // Non-negative integer section_index is the second key used to index the map dict.
   // SwitchMap will raise an exception if there is no matching map.
