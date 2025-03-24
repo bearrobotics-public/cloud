@@ -1,0 +1,82 @@
+// File: mission_status.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core.mission;
+
+import "bearrobotics/api/v1/carti/mission/mission.proto";
+import "bearrobotics/api/v1/core/location/annotation.proto";
+import "bearrobotics/api/v1/servi/mission/mission.proto";
+
+// BaseFeedback provides a simple status update for navigation or mission progress.
+message BaseFeedback {
+  enum Status {
+    STATUS_UNKNOWN = 0;
+
+    // The robot is currently navigating to its target.
+    STATUS_NAVIGATING = 1;
+  }
+
+  // Current status of the robot.
+  Status status = 1;
+}
+
+// MissionState represents the current state of a mission assigned to a robot.
+message MissionState {
+  // Unique identifier for the mission.
+  string id = 1;
+
+  // State indicates the current lifecycle status of the mission.
+  enum State {
+    STATE_UNKNOWN = 0;
+
+    // Initial state when no mission has been run (e.g., feedback is empty).
+    STATE_DEFAULT = 1;
+
+    // The mission is actively running.
+    STATE_RUNNING = 2;
+
+    // The mission is paused.
+    STATE_PAUSED = 3;
+
+    // The mission was canceled before completion.
+    STATE_CANCELED = 4;
+
+    // The mission completed successfully.
+    STATE_SUCCEEDED = 5;
+
+    // The mission encountered an error or failure.
+    STATE_FAILED = 6;
+  }
+
+  State state = 2;
+
+  // All destinations associated with the mission, in the order the request was given.
+  repeated location.Destination destinations = 3;
+
+  // Index of the currently active goal in the goals list.
+  int32 current_goal_index = 4;
+
+  // Feedback provides mission-specific runtime information.
+  message Feedback {
+    oneof feedback {
+      // Generic feedback applicable to base mission types. e,g., NavigateMission.
+      BaseFeedback base_feedback = 1;
+
+      // Feedback specific to Servi missions.
+      servi.mission.Feedback servi_feedback = 2;
+
+      // Feedback specific to Carti missions.
+      carti.mission.Feedback carti_feedback = 3;
+    }
+  }
+
+  // Latest feedback for the mission.
+  Feedback feedback = 5;
+}

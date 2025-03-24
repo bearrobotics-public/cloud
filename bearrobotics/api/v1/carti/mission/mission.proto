@@ -1,0 +1,55 @@
+// File: mission.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.carti.mission;
+
+import "bearrobotics/api/v1/core/location/annotation.proto";
+
+// Feedback for Carti robot family missions.
+message Feedback {
+  enum Status {
+    STATUS_UNKNOWN = 0;
+
+    // The robot is navigating to a goal.
+    STATUS_NAVIGATING = 1;
+
+    // The robot has arrived at a goal.
+    STATUS_ARRIVED = 2;
+
+    // The robot is performing a docking maneuver.
+    STATUS_DOCKING = 3;
+
+    // The robot is performing an undocking maneuver.
+    STATUS_UNDOCKING = 4;
+  }
+
+  // Current status of the robot.
+  Status status = 1;
+}
+
+// Parameters for a traverse mission (reserved for future use).
+message TraverseParam {}
+
+// A traverse mission that navigates to one or more destinations.
+// The robot does not respond to weight sensors or external triggers.
+message TraverseMission {
+  repeated core.location.Destination destinations = 1;
+  TraverseParam param = 2;
+}
+
+// Carti missions are specific to the Carti robot family.
+// Attempting to run a Carti mission on a Servi robot will result in an error.
+message CartiMission {
+  oneof mission {
+    // A traverse mission that follows a sequence of goals
+    // without reacting to triggers such as weight sensors.
+    TraverseMission traverse_mission = 1;
+  }
+}

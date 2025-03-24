@@ -1,0 +1,92 @@
+// File: mission.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.servi.mission;
+
+import "bearrobotics/api/v1/core/location/annotation.proto";
+
+/// Feedback for Servi robot family missions.
+message Feedback {
+  enum Status {
+    STATUS_UNKNOWN = 0;
+
+    // The robot is navigating to a goal.
+    STATUS_NAVIGATING = 1;
+
+    // The robot has arrived at a goal.
+    STATUS_ARRIVED = 2;
+
+    // The robot is performing a docking maneuver.
+    STATUS_DOCKING = 3;
+
+    // The robot is performing an undocking maneuver.
+    STATUS_UNDOCKING = 4;
+  }
+
+  // Current status of the robot.
+  Status status = 1;
+}
+
+// Servi missions are specific to the Servi robot family.
+message ServiMission {
+  oneof mission {
+    // A delivery mission with stop conditions based on time or weight removal.
+    DeliveryMission delivery_mission = 1;
+
+    // A bussing mission with stop conditions based on time or weight addition.
+    BussingMission bussing_mission = 2;
+
+    // A delivery patrol mission that loops until all weight is removed.
+    DeliveryPatrolMission delivery_patrol_mission = 3;
+
+    // A bussing patrol mission that loops until weight exceeds a threshold.
+    BussingPatrolMission bussing_patrol_mission = 4;
+  }
+}
+
+// Parameters for a delivery mission (reserved for future use).
+message DeliveryParams {}
+
+// A delivery mission that navigates to one or more goals,
+// stopping at each for a time limit or until weight is removed.
+message DeliveryMission {
+  repeated core.location.Destination destinations = 1;
+  DeliveryParams params = 2;
+}
+
+// Parameters for a bussing mission (reserved for future use).
+message BussingParams {}
+
+// A bussing mission that navigates to one or more goals,
+// stopping at each for a time limit or until weight is added.
+message BussingMission {
+  repeated core.location.Destination destinations = 1;  
+  BussingParams params = 2;
+}
+
+// Parameters for a delivery patrol mission (reserved for future use).
+message DeliveryPatrolParams {}
+
+// A delivery patrol mission that continuously loops through goals,
+// stopping at each for a time limit until all weight is removed.
+message DeliveryPatrolMission {
+  repeated core.location.Destination destinations = 1;  
+  DeliveryPatrolParams params = 2;
+}
+
+// Parameters for a bussing patrol mission (reserved for future use).
+message BussingPatrolParams {}
+
+// A bussing patrol mission that continuously loops through goals,
+// stopping at each for a time limit until weight exceeds a threshold.
+message BussingPatrolMission {
+  repeated core.location.Destination destinations = 1;
+  BussingPatrolParams params = 2;
+}

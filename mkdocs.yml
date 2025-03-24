@@ -33,10 +33,40 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
+  - Concepts:
+    - Overview: concepts/overview.md
+    - Mission: concepts/mission.md
   - API Reference:
+    - v1.0:
+      - Services:
+        - API Service: v1.0/services/ApiService.md
+      - Message Types:
+        - Mission Commands:
+          - Goal: v1.0/core/mission/Goal.md
+          - Mission: v1.0/core/mission/Mission.md
+          - Mission Status: v1.0/core/mission/MissionStatus.md
+        - Maps & Locations:
+          - Annotation: v1.0/core/location/Annotation.md
+          - Map: v1.0/core/location/Map.md
+        - Navigation & Localization:
+          - Localization: v1.0/core/navigation/Localization.md
+          - Pose: v1.0/core/navigation/Pose.md
+        - Robot Status:
+          - Battery: v1.0/core/status/Battery.md
+          - Status: v1.0/core/status/Status.md
+        - Fleet Management:
+          - Selector: v1.0/core/fleet/Selector.md
+        - Common:
+          - Metadata: v1.0/core/common/Metadata.md
+      - Extension:
+        - Carti robot family:
+          - Mission: v1.0/carti/mission/Mission.md
+        - Servi robot family:
+          - Mission: v1.0/servi/mission/Mission.md
+          - Tray: v1.0/servi/tray/Status.md  
     - v0.1:
       - Services:
-        - Cloud API Service: v0.1/cloud/CloudApiService.md
+        - API Service: v0.1/cloud/CloudApiService.md
       - Message Types:
         - Cloud:
           - Config: v0.1/cloud/Config.md

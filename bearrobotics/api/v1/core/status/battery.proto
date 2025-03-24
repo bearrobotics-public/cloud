@@ -1,0 +1,47 @@
+// File: battery.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core.status;
+
+// Represents the state of the robot's battery system.
+message BatteryState {
+  // State of charge, from 0 (empty) to 100 (fully charged).
+  int32 charge_percent = 1;
+
+  // High-level charging state of the battery.
+  enum State {
+    STATE_UNKNOWN = 0;
+
+    // Battery is currently charging.
+    STATE_CHARGING = 1;
+
+    // Robot is not connected to a charger and is consuming battery power.
+    STATE_DISCHARGING = 2;
+
+    // Battery is fully charged while connected to a charger; no additional energy is being stored.
+    STATE_FULL = 3;
+  }
+  State state = 2;
+
+  // Method by which the robot is being charged.
+  enum ChargeMethod {
+    CHARGE_METHOD_UNKNOWN = 0;
+
+    // No charging method is currently active or applicable.
+    CHARGE_METHOD_NONE = 1;
+
+    // Charging via a wired connection.
+    CHARGE_METHOD_WIRED = 2;
+
+    // Charging via contact-based interface (e.g., docking station).
+    CHARGE_METHOD_CONTACT = 3;
+  }
+  ChargeMethod charge_method = 3;
+}

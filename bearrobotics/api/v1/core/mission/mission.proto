@@ -1,0 +1,70 @@
+// File: mission.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core.mission;
+
+import "bearrobotics/api/v1/carti/mission/mission.proto";
+import "bearrobotics/api/v1/core/location/annotation.proto";
+import "bearrobotics/api/v1/servi/mission/mission.proto";
+
+// A mission consisting of a single, explicitly defined goal.
+message NavigateMission {
+  location.Destination destination = 1;
+}
+
+// A mission that automatically selects the best available goal 
+// from the provided list.
+// For example, when sending a robot to one of several possible destinations,
+// the system will automatically choose an available one, 
+// avoiding destinations currently occupied by other robots.
+message NavigateAutoMission {
+  repeated location.Destination destinations = 1;
+}
+
+// Wrapper for all supported mission types.
+// Only one mission type can be set per Mission instance.
+message Mission {
+  oneof mission {
+    // A simple mission with a predefined goal.
+    NavigateMission navigate_mission = 1;
+
+    // A mission that automatically selects the optimal goal from a list.
+    NavigateAutoMission navigate_auto_mission = 2;
+
+    // Servi and Carti missions are specific to their respective robot families.
+    servi.mission.ServiMission servi_mission = 10;
+    carti.mission.CartiMission carti_mission = 11;
+  }
+}
+
+// Command message used to update the state of an active mission.
+message MissionCommand {
+  // ID of the mission to control.
+  string id = 1;
+
+  // Command defines the action to apply to the mission.
+  enum Command {
+    COMMAND_UNKNOWN = 0;
+
+    // Cancel the mission.
+    COMMAND_CANCEL = 1;
+
+    // Pause the mission.
+    COMMAND_PAUSE = 2;
+
+    // Resume a paused mission.
+    COMMAND_RESUME = 3;
+
+    // Mark the mission as completed.
+    COMMAND_FINISH = 4;
+  }
+
+  Command command = 2;
+}

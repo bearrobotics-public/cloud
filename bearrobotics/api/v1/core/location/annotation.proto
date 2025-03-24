@@ -1,0 +1,46 @@
+// File: annotation.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core.location;
+
+import "bearrobotics/api/v1/core/navigation/pose.proto";
+import "google/protobuf/timestamp.proto";
+
+// Destination represents a single point of interest on the map
+// that a robot can navigate to and align itself with.
+message Destination {
+  // Unique identifier for the destination.
+  string id = 1;
+
+  // Human-readable name for the destination.
+  string name = 2;
+
+  // Position on the map where the robot should navigate to,
+  // including orientation (heading) at that location.
+  navigation.Pose pose = 3;
+}
+
+// Annotation defines a specific area on the map, often used to 
+// group destinations or assign special parameters.
+message Annotation {
+  // Unique identifier for the annotation.
+  // Example: "67305"
+  string id = 1;
+
+  // Descriptive name for the annotation.
+  // Example: "ITCT annotation A"
+  string name = 2;
+
+  // Timestamp indicating when the annotation was created.
+  google.protobuf.Timestamp created_time = 3;
+
+  // A collection of destinations associated with this annotation.
+  map<string, Destination> destinations = 4;
+}
