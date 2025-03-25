@@ -15,7 +15,7 @@ theme:
   favicon: assets/favicon.png
   logo: assets/bear_logo_white.png
 extra_css:
-    - stylesheets/extra.css
+  - stylesheets/extra.css
 markdown_extensions:
   - toc:
       permalink: True
@@ -34,35 +34,40 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
   - API Reference:
-    - v0.1:
-      - Services:
-        - Cloud API Service: v0.1/cloud/CloudApiService.md
-      - Message Types:
-        - Cloud:
-          - Config: v0.1/cloud/Config.md
-          - Profiles: v0.1/cloud/Profiles.md
-          - Robot Settings: v0.1/cloud/RobotSettings.md
-          - Robot Status: v0.1/cloud/RobotStatus.md
-        - Common:
-          - Annotations: v0.1/common/Annotations.md
-          - Math: v0.1/common/Math.md
-        - Location:
-          - Annotation: v0.1/location/Annotation.md
-          - Location: v0.1/location/Location.md
-          - Map: v0.1/location/Map.md
-          - Types: v0.1/location/Types.md
-          - Zones: v0.1/location/Zones.md
-        - Robot:
-          - Localization: v0.1/robot/Localization.md
-          - Mission: v0.1/robot/Mission.md
-          - Robot: v0.1/robot/Robot.md
-          - Status: v0.1/robot/Status.md
+      - v0.1:
+          - Services:
+              - Cloud API Service: v0.1/cloud/CloudApiService.md
+          - Message Types:
+              - Cloud:
+                  - Config: v0.1/cloud/Config.md
+                  - Profiles: v0.1/cloud/Profiles.md
+                  - Robot Settings: v0.1/cloud/RobotSettings.md
+                  - Robot Status: v0.1/cloud/RobotStatus.md
+              - Common:
+                  - Annotations: v0.1/common/Annotations.md
+                  - Math: v0.1/common/Math.md
+              - Location:
+                  - Annotation: v0.1/location/Annotation.md
+                  - Location: v0.1/location/Location.md
+                  - Map: v0.1/location/Map.md
+                  - Types: v0.1/location/Types.md
+                  - Zones: v0.1/location/Zones.md
+              - Robot:
+                  - Localization: v0.1/robot/Localization.md
+                  - Mission: v0.1/robot/Mission.md
+                  - Robot: v0.1/robot/Robot.md
+                  - Status: v0.1/robot/Status.md
+  - Concepts:
+      - Localization: concepts/localization.md
+      - Location: concepts/location.md
+      - Mission: concepts/mission.md
+      - Status: concepts/status.md
   - Guides:
-    - Setup:
-      - Authentication: guides/setup/authentication.md
-      - Examples: 
-        - Python: guides/examples/python.md
-        - Golang: guides/examples/golang.md
-    - Troubleshooting: guides/troubleshooting.md
+      - Setup:
+          - Authentication: guides/setup/authentication.md
+          - Examples:
+              - Python: guides/examples/python.md
+              - Golang: guides/examples/golang.md
+      - Troubleshooting: guides/troubleshooting.md
   - Changelog: changelog.md
   - Roadmap: roadmap.md
