@@ -134,7 +134,9 @@ A response message has 2 fields: <br/>
 
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "filter": {
           "locationId": "location-123",

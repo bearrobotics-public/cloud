@@ -141,7 +141,9 @@ The ID of the robot that the localization command is sent to.
 
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "robot_id": "pennybot-123123",
         "goal": {

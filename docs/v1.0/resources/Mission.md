@@ -303,7 +303,9 @@ The ID of the mission created.
     ```
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "robot_id": "pennybot-123abc",
         "mission": {
@@ -318,7 +320,9 @@ The ID of the mission created.
       }' \
       api-test.bearrobotics.api:443 bearrobotics.api.v1.services.CreateMission
 
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "robot_id": "pennybot-abc123",
         "mission": {
@@ -604,7 +608,9 @@ The ID of the robot that will receive this command.
     ```
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "robot_id": "pennybot-123abc",
         "mission_command": {
@@ -832,7 +838,9 @@ The robotID the message is associated with.
 
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "selector": {
           "robotIds": {

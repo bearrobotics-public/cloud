@@ -181,7 +181,9 @@ The ID of the mission created.
 
 === "gRPCurl"
     ```bash
-    grpcurl -plaintext \
+    grpcurl \
+      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
+      -import-path protos \
       -d '{
         "robot_id": "robot-123",
         "mission": {
