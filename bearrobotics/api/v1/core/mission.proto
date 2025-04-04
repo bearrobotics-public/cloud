@@ -1,0 +1,81 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/carti/mission.proto";
+import "bearrobotics/api/v1/core/annotation.proto";
+import "bearrobotics/api/v1/servi/mission.proto";
+
+
+// A mission that automatically selects the best available goal 
+// from the provided list.
+// For example, when sending a robot to one of several possible goals,
+// the system will automatically choose an available one, 
+// avoiding goals currently occupied by other robots.
+message NavigateAutoMission {
+  repeated Goal goals = 1;
+}
+
+// A mission consisting of a single, explicitly defined goal.
+message NavigateMission {
+  Goal goal = 1;
+}
+
+// Base missions are applicable to all robot families.
+message BaseMission {
+  oneof mission {
+    // A simple mission with a predefined goal.
+    NavigateMission navigate_mission = 1;
+
+    // A mission that automatically selects the optimal goal from a list.
+    NavigateAutoMission navigation_auto_mission = 2;
+  }
+}
+
+
+// Wrapper for all supported mission types.
+// Only one mission type can be set per Mission instance.
+message Mission {
+  oneof mission {
+    // Base missions are applicable to all robot families.
+    BaseMission base_mission = 1;
+
+    // Servi missions are specific to their respective robot families.
+    servi.Mission servi_mission = 2;
+
+    // Carti missions are specific to the Carti robot family.
+    carti.Mission carti_mission = 3;
+  }
+}
+
+// Command message used to update the state of an active mission.
+message MissionCommand {
+  // ID of the mission to control.
+  string mission_id = 1;
+
+  // Command defines the action to apply to the mission.
+  enum Command {
+    COMMAND_UNKNOWN = 0;
+
+    // Cancel the mission.
+    COMMAND_CANCEL = 1;
+
+    // Pause the mission.
+    COMMAND_PAUSE = 2;
+
+    // Resume a paused mission.
+    COMMAND_RESUME = 3;
+
+    // Mark the mission as completed.
+    COMMAND_FINISH = 4;
+  }
+  Command command = 2;
+}

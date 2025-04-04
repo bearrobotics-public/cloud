@@ -1,0 +1,33 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/pose.proto";
+
+
+// Represents the current state of the localization process.
+message LocalizationState {
+
+  // Current state of the localization process.
+  enum State {
+    STATE_UNKNOWN = 0;
+
+    // Localization failed.
+    STATE_FAILED = 1;
+
+    // Localization completed successfully.
+    STATE_SUCCEEDED = 2;
+
+    // The robot is actively attempting to localize.
+    STATE_LOCALIZING = 3;
+  }
+  State state = 2;
+}

@@ -5,25 +5,34 @@
 }
 
 .md-typeset body{
-  line-height: 0.4em;
+  line-height: 0.4rem;
 }
 
-/* Override for level 4 headings in MkDocs Material */
+/* Override for level 2 headings in MkDocs Material */
+.md-typeset h2 {
+  margin-top: 1.0rem;
+  font-size: 1.4rem; 
+}
+
+/* Override for level 3 headings in MkDocs Material */
 .md-typeset h3 {
-  font-size: 1.4em; 
-  margin-top: 2.0em;
-  line-height: 1.2em;
+  font-size: 1.2rem; 
+  margin-top: 2.0rem;
+  line-height: 1.2rem;
 }
 
 /* Override for level 4 headings in MkDocs Material */
 .md-typeset h4 {
-  line-height: 1.2em;
+  line-height: 1.2rem;
 }
 
 /* Override for level 5 headings in MkDocs Material */
 .md-typeset h5 {
   text-transform: none; /* Prevents all caps */
-  font-size: 1.1em; 
+  font-size: 1.0rem; 
+  line-height: 0rem;
+  padding-top: 1rem;
+  padding-bottom: 0rem;
 }
 
 .tag-container {
@@ -45,4 +54,14 @@
   background-color: #15B7FF; 
   border: none;
   font-weight: bold;
+}
+
+.tag.breaking {
+  background-color: #FF0000; 
+  border: none;
+  font-weight: bold;
+}
+
+hr {
+  padding-top: 1.6rem; 
 }

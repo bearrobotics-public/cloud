@@ -3,17 +3,17 @@
 Missions are the main way we tell our robot to do work. They describe a set of
 actions and behaviors (move, wait for trigger, play sound, etc) that define how
 a robot accomplishes a workflow. Missions handle both simple workflows (navigate
-to destination) and complex workflows (navigate to multiple destinations,
+to goal) and complex workflows (navigate to multiple goals,
 waiting at each one for certain triggers), depending on the mission type.
 
-## Destinations
+## Goals
 
-Most missions utilize destinations supplied by the user. A destination defines a
+Most missions utilize goals supplied by the user. A goal defines a
 place in the robot’s map that we want the robot to either go to, or do some
-action with. This destination at the least will define a coordinate place in the
+action with. This goal at the least will define a coordinate place in the
 map, and may also include more information detailing some of the work the
-mission has to do there. Some mission types only support a single destination,
-while other more complex missions support multiple destinations.
+mission has to do there. Some mission types only support a single goal,
+while other more complex missions support multiple goals.
 
 ## Mission Types
 
@@ -29,8 +29,8 @@ family.
 
 For example, a user wanting a Servi-family robot to complete a restaurant
 delivery workflow could make use of a DeliveryMission. This has logic to take
-several destinations (positions in the map), navigate to each one, and wait for
-food to be removed before moving onto the next destination. It also includes
+several goals (positions in the map), navigate to each one, and wait for
+food to be removed before moving onto the next goal. It also includes
 things like prompting the customer to remove food, and other quality-of-life
 behaviors for the restaurant delivery use-case. This is useful for things like
 touchscreen control apps, allowing your application to send simple mission
@@ -39,9 +39,9 @@ application itself.
 
 Alternatively, you may want more control over the robot’s behavior, and want to
 trigger things through your own app instead. Using a simpler mission like
-NavigateMission (which just navigates to a single destination before finishing),
-you can tell the robot to just move to a destination, and have your app decide
-when to send the next navigation to a destination. This is useful for when you
+NavigateMission (which just navigates to a single goals before finishing),
+you can tell the robot to just move to a goal, and have your app decide
+when to send the next navigation to a goal. This is useful for when you
 have a fleet manager dispatching robots, and need full control of the exact
 actions and timings for the robots.
 
