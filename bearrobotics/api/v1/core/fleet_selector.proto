@@ -1,0 +1,39 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+
+// RobotFilter defines the conditions for selecting robots.
+// All specified fields are combined using an AND condition.
+message RobotFilter {
+  // An empty location_id matches all locations.
+  string location_id = 1;
+
+  // An empty distributor_id defaults to the distributor assigned to the API key user.
+  string distributor_id = 2;
+}
+
+// RobotSelector defines a filter for selecting specific robots.
+// It supports selection by a list of robot IDs or all robots at a given location.
+message RobotSelector {
+  // RobotIDs holds a list of robot identifiers.
+  message RobotIDs {
+    repeated string ids = 1;
+  }
+
+  oneof target_id {
+    // Selects robots by their specific IDs.
+    RobotIDs robot_ids = 1;
+
+    // Selects all robots at the specified location.
+    string location_id = 2;
+  }
+}

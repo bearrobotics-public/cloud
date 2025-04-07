@@ -1,0 +1,59 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.servi;
+
+import "bearrobotics/api/v1/core/metadata.proto";
+
+
+// Represents the state of a single tray.
+message TrayState {
+  
+  // Current load state of the tray.
+  enum LoadState {
+    LOAD_STATE_UNKNOWN = 0;
+
+    // The tray has a valid load.
+    LOAD_STATE_LOADED = 1;
+
+    // The tray is empty.
+    LOAD_STATE_EMPTY = 2;
+
+    // The tray is carrying more than its maximum capacity.
+    LOAD_STATE_OVERLOADED = 3;
+  }
+  LoadState load_state = 1;
+
+  // Weight on the tray in kilograms. Minimum precision is 10g.
+  float weight_kg = 2;
+
+  // Ratio of the current load to the tray’s maximum load capacity.
+  // This value may exceed 1.0 if the tray is overloaded.
+  //
+  // Caveats:
+  // - If the maximum load is misconfigured (e.g., set to 0.0),
+  //   this value may return NaN.
+  float load_ratio = 3;
+}
+
+// A map of tray states reported by individual trays.
+// Each entry pairs a tray name (Key) with its corresponding tray state.
+// TODO: link to Tray name definitions.
+message TrayStates {
+  map<string, TrayState> tray_states = 1;
+}
+
+message TrayStatesWithMetadata {
+  // Metadata associated with the tray states.
+  core.EventMetadata metadata = 1;
+
+  // The tray states reported by the robot.
+  TrayStates tray_states = 2;
+}

@@ -1,0 +1,55 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/pose.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// Destination represents a single point of interest on the map
+// that a robot can navigate to and align itself with.
+message Destination {
+  // Unique identifier for the destination.
+  string destination_id = 1;
+
+  // Human-readable name for the destination.
+  string display_name = 2;
+
+}
+
+// Annotation defines a specific area on the map, often used to 
+// group destinations or assign special parameters.
+message Annotation {
+  // Unique identifier for the annotation.
+  // Example: "67305"
+  string annotation_id = 1;
+
+  // Descriptive name for the annotation.
+  // Example: "ITCT annotation A"
+  string display_name = 2;
+
+  // Timestamp indicating when the annotation was created.
+  google.protobuf.Timestamp created_time = 3;
+
+  // A collection of destinations associated with this annotation.
+  // Each entry pairs a destination ID (key) with its 
+  // corresponding Destination message (value).
+  map<string, Destination> destinations = 4;
+}
+
+
+// Goal represents a target destination or pose for the robot to navigate to.
+message Goal {
+  oneof goal {
+    string destination_id = 1;
+    Pose pose = 2;
+  }
+}

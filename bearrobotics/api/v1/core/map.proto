@@ -1,0 +1,35 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/annotation.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// Map represents a navigable map used by robots, including metadata and associated annotations.
+message Map {
+  // Unique identifier for the map.
+  // Example: "9578"
+  string map_id = 1;
+
+  // Timestamp indicating when the map was created.
+  google.protobuf.Timestamp created_time = 2;
+
+  // Timestamp indicating the last time the map was modified.
+  google.protobuf.Timestamp modified_time = 3;
+
+  // Display name of the map, matching the name used in Bear Universe.
+  // Example: "ITCT SEOUL"
+  string display_name = 4;
+
+  // Annotation associated with this map, defining specific areas and destinations.
+  Annotation annotation = 5;
+}

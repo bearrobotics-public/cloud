@@ -1,8 +1,11 @@
-site_name: Bear Cloud API
+site_name: Bear API
 site_url: https://bearrobotics-public.github.io/cloud/
 copyright: Copyright 2025 Bear Robotics, Inc. All rights reserved.
 theme:
   name: material
+  font:
+    text: Roboto
+    code: Roboto Mono
   features:
     - content.code.copy
     - content.tooltips
@@ -10,6 +13,7 @@ theme:
     - navigation.tracking
     - navigation.tabs
     - toc.follow
+    - content.tabs.link
   palette:
     primary: custom
   favicon: assets/favicon.png
@@ -17,6 +21,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
+  - admonition
   - toc:
       permalink: True
       toc_depth: 4
@@ -25,6 +30,7 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - pymdownx.details
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
@@ -32,9 +38,25 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
 nav:
-  - API Reference:
-      - v0.1:
+  - Core Concepts:
+      - Mission: concepts/mission.md
+      - Localization: concepts/localization.md
+      - Location: concepts/location.md
+      - Status: concepts/status.md
+  - Cloud API Reference:
+      - v1.0:
+          - Core resources:
+              - Mission: v1.0/resources/Mission.md
+              - Map: v1.0/resources/LocationsAndMaps.md
+              - Localization: v1.0/resources/Localization.md
+              - Robot Status: v1.0/resources/RobotStatus.md
+              - Fleet Management: v1.0/resources/FleetManagement.md
+          - Carti: v1.0/resources/Carti.md
+          - Servi: v1.0/resources/Servi.md
+      - v0.1Beta:
           - Services:
               - Cloud API Service: v0.1/cloud/CloudApiService.md
           - Message Types:
@@ -57,17 +79,13 @@ nav:
                   - Mission: v0.1/robot/Mission.md
                   - Robot: v0.1/robot/Robot.md
                   - Status: v0.1/robot/Status.md
-  - Concepts:
-      - Localization: concepts/localization.md
-      - Location: concepts/location.md
-      - Mission: concepts/mission.md
-      - Status: concepts/status.md
   - Guides:
       - Setup:
           - Authentication: guides/setup/authentication.md
           - Examples:
               - Python: guides/examples/python.md
               - Golang: guides/examples/golang.md
-      - Troubleshooting: guides/troubleshooting.md
-  - Changelog: changelog.md
-  - Roadmap: roadmap.md
+      - Errors and Troubleshooting: guides/errors.md
+  - Changelog: 
+    - v1.0: changelog/v1.0.md
+    - v0.1Beta: changelog/v0.1beta.md

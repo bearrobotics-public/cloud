@@ -1,0 +1,69 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.carti;
+
+import "bearrobotics/api/v1/core/annotation.proto";
+
+
+// Feedback provides status updates on mission progress,
+// specific to Carti Family robot missions.
+message Feedback {
+  
+  // Current status of the robot.
+  enum Status {
+    STATUS_UNKNOWN = 0;
+
+    // The robot is navigating to a goal.
+    STATUS_NAVIGATING = 1;
+
+    // The robot has arrived at a goal.
+    STATUS_ARRIVED = 2;
+
+    // The robot is performing a docking maneuver.
+    STATUS_DOCKING = 3;
+
+    // The robot is performing an undocking maneuver.
+    STATUS_UNDOCKING = 4;
+  }
+  Status status = 1;
+}
+
+// Parameters for a traverse mission (reserved for future use).
+message TraverseParams {}
+
+// A traverse mission that navigates to one or more goals.
+message TraverseMission {
+  repeated core.Goal goals = 1;
+  TraverseParams params = 2;
+}
+
+// Parameters for a traverse patrol mission (reserved for future use).
+message TraversePatrolParam {}
+
+// A traverse patrol mission that navigates to one or more goals 
+// and continuously loops through the goals stopping at each for a time limit
+message TraversePatrolMission {
+  repeated core.Goal goals = 1;
+  TraversePatrolParams params = 2;
+}
+
+// Carti missions are specific to the Carti robot family.
+// Attempting to run a Carti mission on a non Carti robot 
+// will result in INVALID_ARGUMENT error.
+message Mission {
+  oneof mission {
+    // A traverse mission that follows a sequence of goals
+    TraverseMission traverse_mission = 1;
+
+    // A traverse patrol mission that follows a sequence of goals on loops.
+    TraversePatrolMission traverse_patrol_mission = 2;
+  }
+}

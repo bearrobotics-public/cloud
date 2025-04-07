@@ -1,0 +1,35 @@
+// File: cloud_api_service.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/metadata.proto";
+
+
+// Represents the robot's pose on the map.
+message Pose {
+  // X-coordinate in meters within the map.
+  float x_meters = 1;
+
+  // Y-coordinate in meters within the map.
+  float y_meters = 2;
+
+  // The heading of the robot in radians.
+  // Ranges from -π to π, where 0.0 points along the positive x-axis.
+  float heading_radians = 3;
+}
+
+message PoseWithMetadata {
+  // Metadata associated with the event.
+  EventMetadata metadata = 1;
+
+  // Pose of the robot on the map.
+  Pose pose = 2;
+}
