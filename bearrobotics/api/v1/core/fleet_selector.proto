@@ -12,13 +12,10 @@ package bearrobotics.api.v1.core;
 
 
 // RobotFilter defines the conditions for selecting robots.
-// All specified fields are combined using an AND condition.
 message RobotFilter {
-  // An empty location_id matches all locations.
+  // An empty location_id return all robots assigned to all
+  // locations created and owned by API key user.
   string location_id = 1;
-
-  // An empty distributor_id defaults to the distributor assigned to the API key user.
-  string distributor_id = 2;
 }
 
 // RobotSelector defines a filter for selecting specific robots.

@@ -15,7 +15,9 @@ import "bearrobotics/api/v1/core/metadata.proto";
 
 // Represents the state of a single tray.
 message TrayState {
-  
+  // Unique string name for the given tray. e.g. "top", "middle", "bottom"
+  string tray_name = 1;
+
   // Current load state of the tray.
   enum LoadState {
     LOAD_STATE_UNKNOWN = 0;
@@ -29,10 +31,10 @@ message TrayState {
     // The tray is carrying more than its maximum capacity.
     LOAD_STATE_OVERLOADED = 3;
   }
-  LoadState load_state = 1;
+  LoadState load_state = 2;
 
   // Weight on the tray in kilograms. Minimum precision is 10g.
-  float weight_kg = 2;
+  float weight_kg = 3;
 
   // Ratio of the current load to the tray’s maximum load capacity.
   // This value may exceed 1.0 if the tray is overloaded.
@@ -40,14 +42,14 @@ message TrayState {
   // Caveats:
   // - If the maximum load is misconfigured (e.g., set to 0.0),
   //   this value may return NaN.
-  float load_ratio = 3;
+  float load_ratio = 4;
 }
 
-// A map of tray states reported by individual trays.
-// Each entry pairs a tray name (Key) with its corresponding tray state.
-// TODO: link to Tray name definitions.
+// A list of tray states reported by individual trays.
 message TrayStates {
-  map<string, TrayState> tray_states = 1;
+  // State of enabled trays, ordered from the top-most tray on the robot to the
+  // bottom.
+  repeated TrayState tray_states = 1;
 }
 
 message TrayStatesWithMetadata {
