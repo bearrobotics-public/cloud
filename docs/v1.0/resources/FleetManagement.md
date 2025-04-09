@@ -12,9 +12,7 @@ All specified fields are combined using an **AND** condition.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`location_id`| `string`|     An empty location_id matches all locations of the distributor.  |
-|`distributor_id`|`string` |  An empty distributor_id defaults to the distributor assigned to the API key user. |
-
+|`location_id`| `string`|An empty location_id return all robots assigned <br />to all locations created and owned by API key user.  |
 
 ### Response
 A response message has 2 fields: <br/>
@@ -22,7 +20,7 @@ A response message has 2 fields: <br/>
 | Field | Message Type | Description |
 |------|------|-------------|
 |`total_robots`| `int32`| Total number of robots. |
-|`robot_ids`| List of `string` | This might not have all the robot IDs if there are too many.<br /> It will have all the robot IDs if the number of robot_ids is same as total_robots. |
+|`robot_ids`| List of `string` | This might not have all the robot IDs if there are too many.<br /> It will have all the robot IDs if the number of <br /> `robot_ids` is same as `total_robots`. |
 
 
 ### Errors
@@ -78,7 +76,6 @@ A response message has 2 fields: <br/>
       req := &corepb.ListRobotIDsRequest{
         Filter: &corepb.RobotFilter{
           LocationId:    "location-123",
-          DistributorId: "dist-456",
         },
       }
 
@@ -118,7 +115,6 @@ A response message has 2 fields: <br/>
             request = core_pb2.ListRobotIDsRequest(
                 filter=core_pb2.RobotFilter(
                     location_id="location-123",
-                    distributor_id="dist-456"
                 )
             )
 
@@ -140,7 +136,6 @@ A response message has 2 fields: <br/>
       -d '{
         "filter": {
           "locationId": "location-123",
-          "distributorId": "dist-456"
         }
       }' \
       api.bearrobotics.api:443 \
@@ -148,11 +143,10 @@ A response message has 2 fields: <br/>
     ```
 
 === "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics/public-protos) for actual package names and full definitions.
+    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
     ```proto
     message RobotFilter {
-      optional string location_id = 1;
-      optional string distributor_id = 2;
+      string location_id = 1;
     }
 
     message ListRobotIDsRequest {
