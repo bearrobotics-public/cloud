@@ -327,31 +327,26 @@ Represents the state of a single tray.
             "timestamp": "2025-04-01T16:00:00Z",
             "sequenceNumber": 105
           },
-          "trayStates": {
-            "upper-middle": {
+          "trayStates": [
+            {
+              "trayName": "top",
+              "loadState": "LOAD_STATE_OVERLOADED",
+              "weightKg": 8.1,
+              "loadRatio": 1.18
+            },
+            {
+              "trayName": "middle",
               "loadState": "LOAD_STATE_LOADED",
               "weightKg": 2.3,
               "loadRatio": 0.76
             },
-            "lower-middle": {
+            {
+              "trayName": "bottom",
               "loadState": "LOAD_STATE_EMPTY",
-              "weightKg": 0.0,
-              "loadRatio": 0.0
+              "weightKg": 0,
+              "loadRatio": 0
             }
-          }
-        },
-        "pennybot-efg456": {
-          "metadata": {
-            "timestamp": "2025-04-01T16:00:03Z",
-            "sequenceNumber": 58
-          },
-          "trayStates": {
-            "top": {
-              "loadState": "LOAD_STATE_OVERLOADED",
-              "weightKg": 8.1,
-              "loadRatio": 1.18
-            }
-          }
+          ]
         }
       }
     }
@@ -373,7 +368,7 @@ Represents the state of a single tray.
     }
 
     message TrayStates {
-      map<string, TrayState> tray_states = 1;
+      repeated TrayState tray_states = 1;
     }
 
     message EventMetadata {
