@@ -343,7 +343,7 @@ The ID of the mission created.
     ```
 
 === "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics/public-protos) for actual package names and full definitions.
+    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
     ```proto
     message Pose {
       float x_meters = 1;

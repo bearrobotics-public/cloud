@@ -218,7 +218,7 @@ The ID of the mission created.
     ```
 
 === "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics/public-protos) for actual package names and full definitions.
+    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
     ```proto
     message Pose {
       float x_meters = 1;
@@ -289,14 +289,15 @@ A mapping of tray states reported by individual robots. Each entry pairs a robot
 | `metadata` | EventMetadata | Metadata associated with the tray states. |
 | `tray_states` | TrayStates | The tray states reported by the robot. |
 
-##### TrayStates `map<string, TrayState>`
-A map of tray states reported by individual trays. Each entry pairs a tray name (Key) (TODO) with its corresponding tray state.
+##### TrayStates `TrayState` `repeated`
+State of enabled trays, ordered from the top-most tray on the robot to the bottom.
 
 ##### TrayState
 Represents the state of a single tray.
 
 | Field | Message Type | Description |
 |------|------|-------------|
+| `tray_name`  |string|  Unique string name for the given tray. <br /> e.g. "top", "middle", "bottom" <br /> See [illustrations](#tray-configurations-on-different-servi-models) for tray configurations on different robot models.
 | `load_state` | LoadState *enum* |  |
 | `weight_kg` | float | Weight on the tray in kilograms. Minimum precision is 10g. |
 | `load_ratio` | float | Ratio of the current load to the tray’s maximum load capacity.<br />This value may exceed 1.0 if the tray is overloaded.<br /> Caveats:<br>- If the maximum load is misconfigured (e.g., set to 0.0),<br />  this value may return NaN. |
@@ -326,31 +327,26 @@ Represents the state of a single tray.
             "timestamp": "2025-04-01T16:00:00Z",
             "sequenceNumber": 105
           },
-          "trayStates": {
-            "upper-middle": {
+          "trayStates": [
+            {
+              "trayName": "top",
+              "loadState": "LOAD_STATE_OVERLOADED",
+              "weightKg": 8.1,
+              "loadRatio": 1.18
+            },
+            {
+              "trayName": "middle",
               "loadState": "LOAD_STATE_LOADED",
               "weightKg": 2.3,
               "loadRatio": 0.76
             },
-            "lower-middle": {
+            {
+              "trayName": "bottom",
               "loadState": "LOAD_STATE_EMPTY",
-              "weightKg": 0.0,
-              "loadRatio": 0.0
+              "weightKg": 0,
+              "loadRatio": 0
             }
-          }
-        },
-        "pennybot-efg456": {
-          "metadata": {
-            "timestamp": "2025-04-01T16:00:03Z",
-            "sequenceNumber": 58
-          },
-          "trayStates": {
-            "top": {
-              "loadState": "LOAD_STATE_OVERLOADED",
-              "weightKg": 8.1,
-              "loadRatio": 1.18
-            }
-          }
+          ]
         }
       }
     }
@@ -359,19 +355,20 @@ Represents the state of a single tray.
 === "Protobuf"
     ```proto
     message TrayState {
+      string tray_name = 1;
       enum LoadState {
         LOAD_STATE_UNKNOWN = 0;
         LOAD_STATE_LOADED = 1;
         LOAD_STATE_EMPTY = 2;
         LOAD_STATE_OVERLOADED = 3;
       }
-      LoadState load_state = 1;
-      float weight_kg = 2;
-      float load_ratio = 3;
+      LoadState load_state = 2;
+      float weight_kg = 3;
+      float load_ratio = 4;
     }
 
     message TrayStates {
-      map<string, TrayState> tray_states = 1;
+      repeated TrayState tray_states = 1;
     }
 
     message EventMetadata {
@@ -388,3 +385,13 @@ Represents the state of a single tray.
       map<string, servi.TrayStatesWithMetadata> tray_states = 2;
     }
     ```
+
+##### Tray configurations on different Servi models
+###### Servi Plus
+![Servi Plus](../../assets/servi-plus.png)
+
+###### Servi
+![Servi](../../assets/servi.png)
+
+###### Servi Mini
+![Servi Mini](../../assets/servi-mini.png)

@@ -35,6 +35,12 @@
   padding-bottom: 0rem;
 }
 
+/* Override for level 6 headings in MkDocs Material */
+.md-typeset h6 {
+  text-transform: none; /* Prevents all caps */
+  font-size: 0.8rem; 
+}
+
 .tag-container {
   display: flex;
   align-items: center;
