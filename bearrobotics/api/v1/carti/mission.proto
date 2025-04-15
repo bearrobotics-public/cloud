@@ -46,7 +46,7 @@ message TraverseMission {
 }
 
 // Parameters for a traverse patrol mission (reserved for future use).
-message TraversePatrolParam {}
+message TraversePatrolParams {}
 
 // A traverse patrol mission that navigates to one or more goals 
 // and continuously loops through the goals stopping at each for a time limit

@@ -8,7 +8,7 @@
 
 syntax = "proto3";
 
-package bearrobotics.api.v1.services;
+package bearrobotics.api.v1.services.cloud;
 
 import "bearrobotics/api/v1/core/annotation.proto";
 import "bearrobotics/api/v1/core/fleet_selector.proto";
@@ -283,7 +283,7 @@ message SubscribeEmergencyStopStatusRequest {
 }
 
 message SubscribeEmergencyStopStatusResponse {
-  common.EventMetadata metadata = 1;
+  core.EventMetadata metadata = 1;
   core.EmergencyStopState e_stop_state = 2;
 }
 

@@ -10,8 +10,6 @@ syntax = "proto3";
 
 package bearrobotics.api.v1.core;
 
-import "bearrobotics/api/v1/core/pose.proto";
-
 
 // Represents the current state of the localization process.
 message LocalizationState {
