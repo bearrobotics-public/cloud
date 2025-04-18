@@ -155,7 +155,7 @@ The ID of the robot that the localization command is sent to.
         }
       }' \
       api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.LocalizeRobot
+      bearrobotics.api.v1.services.cloud.CloudAPIService.LocalizeRobot
     ```
 
 === "Protobuf"
