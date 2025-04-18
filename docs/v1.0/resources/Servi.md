@@ -214,7 +214,7 @@ The ID of the mission created.
         }
       }' \
       api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.cloud.CloudAPIService.CreateMission
+      bearrobotics.api.v1.services.cloud.APIService.CreateMission
     ```
 
 === "Protobuf"

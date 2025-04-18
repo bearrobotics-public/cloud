@@ -139,7 +139,7 @@ A response message has 2 fields: <br/>
         }
       }' \
       api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.cloud.CloudAPIService.ListRobotIDs
+      bearrobotics.api.v1.services.cloud.APIService.ListRobotIDs
     ```
 
 === "Protobuf"
