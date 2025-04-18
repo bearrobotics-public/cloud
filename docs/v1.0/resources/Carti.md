@@ -117,7 +117,7 @@ The ID of the mission created.
                   },
                 },
               },
-              Param: &corepb.TraverseParam{},
+              Params: &corepb.TraverseParams{},
             },
           },
         },
@@ -164,7 +164,7 @@ The ID of the mission created.
                             core_pb2.Goal(destination_id="room-a"),
                             core_pb2.Goal(destination_id="room-b")
                         ],
-                        param=core_pb2.TraverseParam()
+                        param=core_pb2.TraverseParams()
                     )
                 )
             )
@@ -192,7 +192,7 @@ The ID of the mission created.
               { "destinationId": "room-a" },
               { "destinationId": "room-b" }
             ],
-            "param": {}
+            "params": {}
           }
         }
       }' \
@@ -216,11 +216,11 @@ The ID of the mission created.
       }
     }
 
-    message TraverseParam {}
+    message TraverseParams {}
 
     message TraverseMission {
       repeated core.Goal goals = 1;
-      TraverseParam param = 2;
+      TraverseParams params = 2;
     }
 
     message carti.Mission {

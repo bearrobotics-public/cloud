@@ -36,7 +36,7 @@ message BaseMission {
     NavigateMission navigate_mission = 1;
 
     // A mission that automatically selects the optimal goal from a list.
-    NavigateAutoMission navigation_auto_mission = 2;
+    NavigateAutoMission navigate_auto_mission = 2;
   }
 }
 
