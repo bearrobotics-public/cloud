@@ -318,7 +318,7 @@ The ID of the mission created.
           }
         }
       }' \
-      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.CreateMission
+      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.cloud.APIService.CreateMission
 
     grpcurl \
       -proto bearrobotics/api/v1/services/cloud_api_service.proto \
@@ -339,7 +339,7 @@ The ID of the mission created.
           }
         }
       }' \
-      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.CreateMission
+      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.cloud.APIService.CreateMission
     ```
 
 === "Protobuf"
@@ -618,7 +618,7 @@ The ID of the robot that will receive this command.
           "command": "COMMAND_PAUSE"
         }
       }' \
-      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.UpdateMission
+      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.cloud.APIService.UpdateMission
     ```
 
 === "Protobuf"
@@ -849,7 +849,7 @@ The robotID the message is associated with.
         }
       }' \
       api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.SubscribeMissionStatus
+      bearrobotics.api.v1.services.cloud.APIService.SubscribeMissionStatus
     ```
 === "Protobuf"
     ```proto

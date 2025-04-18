@@ -23,10 +23,10 @@ import "bearrobotics/api/v1/servi/tray_status.proto";
 import "google/api/annotations.proto";
 
 
-// CloudAPIService defines the control, navigation, monitoring, and fleet management
+// APIService defines the control, navigation, monitoring, and fleet management
 // interface for robots. This includes mission orchestration, localization,
 // pose tracking, battery monitoring, and map retrieval.
-service CloudAPIService {
+service APIService {
   // === Mission Commands =====================================================
   //
   // Missions are atomic units of behavior that define a robot's high-level actions.
