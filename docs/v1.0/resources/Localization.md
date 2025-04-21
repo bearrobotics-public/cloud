@@ -16,7 +16,7 @@ The ID of the robot that the localization command is sent to.
 | Field  | Message Type | Description |
 |------------|-------------| ---|
 |[destination_id](../../v1.0/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
-|[Pose](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
+|[Pose](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md#pose) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
 
 ### Response
 
@@ -210,7 +210,7 @@ The ID of the robot that subscription request is sent to.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `robot_id` you don't own. <br /> Tips: check the spelling of the `robot_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` you don't own. <br /> Tips: check the spelling of all `robot_id` values.|
 
 ### Examples
 ##### Response
@@ -288,7 +288,7 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `RobotIDs`  or a `location_id` you don't own. <br /> Tip: check the spelling of the `RobotIDs` or `location_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id`  or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
 ### Examples
 ##### Response
