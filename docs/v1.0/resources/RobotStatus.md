@@ -53,7 +53,7 @@ Represents the state of the robot's battery system.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `RobotIDs`  or a `location_id` you don't own. <br /> Tip: check the spelling of the `RobotIDs` or `location_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
 ### Examples
 === "JSON"
@@ -156,7 +156,7 @@ Represents the online connection state between the cloud and the robot.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `RobotIDs`  or a `location_id` you don't own. <br /> Tip: check the spelling of the `RobotIDs` or `location_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
 ### Examples
 

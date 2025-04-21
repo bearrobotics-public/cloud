@@ -5,7 +5,7 @@ tasks to complex, conditional workflows.
 
 ------------
 ## CreateMission 
-Send a robot to  a specified type mission. 
+Send a robot on a mission of specified type. 
 <br/>
 
 ### Request
@@ -15,31 +15,45 @@ The ID of the robot that will receive this command.
 
 
 ##### mission `Mission` `required`
-Represents a unified mission . Only one [mission type](../../concepts/mission.md#mission-types) may be set at a time.
+Universal wrapper for mission types. Only one [mission type](../../concepts/mission.md#mission-types) may be set at a time.
+
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`base_mission`   |[`BaseMission`](#base_mission-basemission)	| Base missions are applicable to all robot families. |
+|`servi_mission`	|[`servi.Mission`](Servi.md#servi_mission-servimission) | Servi missions are specific to the Servi robot family. <br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
+|`carti_mission`	|[`carti.Mission`](Carti.md#carti_mission-cartimission)	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission. |
+
+##### base_mission `BaseMission`
+Use field `base_mission` to send a base mission. Current API version supports 2 types of base missions.
+
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`navigate_mission`   |[`NavigateMission`](#navigate_mission-navigatemission)	| Create a base mission of type `Navigate`. |
+|`navigate_auto_mission`	|[`NavigateAutoMission`](#navigate_auto_mission-navigateautomission)| Create a base mission of type `NavigateAuto`. |
+
+##### navigate_mission `NavigateMission`
+A mission consisting of a single, explicitly defined goal.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
-|`base_mission`   |`BaseMission`	| Base missions are applicable to all robot families. |
-|`servi_mission`	|`servi.Mission`| Servi missions are specific to the Servi robot family. <br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
-|`carti_mission`	|`carti.Mission`	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission.
+|`goal`   |[`Goal`](#goal-goal-required)<br>`required`	| The target destination or pose for the mission. |
 
-Use field `base_mission` to send a base mission. Current API version supports 2 types of base missions.
 
-**NavigateMission** <br/>
-A mission consisting of a single, explicaitly define goal. 
+##### navigate_auto_mission `NavigateAutoMission`
+A mission that automatically selects the best available goal from the provided list. The system will choose the closest goal while avoiding goals currently occupied by other robots.
 
-**NavigateAutoMission**<br/>
-A mission that automatically selects the best available goal from the provided list. <br />
-For example, when sending a robot to one of several possible goals, the system will automatically choose an available one,avoiding goals currently occupied by other robots. <br/>
+| Field  | Message Type | Description |
+|------------|-------------| ---|
+|`goals`   |*repeated* [`Goal`](#goal-goal-required)<br>`required`	| The **list** of target destinations for the mission. |
 
 ##### goal `Goal` `required`
 
 [Goal](../../concepts/mission.md#goals) represents a target destination **or** pose for the robot to navigate to.
 
-| Field  | Message Type | Description |
+| Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|[destination_id](../../v1.0/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
-|[Pose](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
+|[`destination_id`](../../v1.0/resources/LocationsAndMaps.md#destination) | `string` | Unique identifier for the destination.|
+|[`pose`](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md#pose) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
 
 **Refer to the [examples](#examples) for how to create and send a Mission.**
 
@@ -363,7 +377,7 @@ The ID of the mission created.
     }
 
     message NavigateAutoMission {
-      repoeated Goal goals = 1;
+      repeated Goal goals = 1;
     }
     
     message BaseMission {
@@ -411,7 +425,7 @@ Missions are executed in the order they are appended.
 ## UpdateMission 
 Issues a command to control or update the current mission (e.g., pause, cancel).
 !!! warning
-    We currently do not support updating missoins in [mission queue](../../concepts/mission.md#mission-queue). <br/>
+    We currently do not support updating missions in [mission queue](../../concepts/mission.md#mission-queue). <br/>
     Attempting to send UpdateMission command to a queued mission will result in `NOT_FOUND` error.
 
 ### Request
@@ -714,7 +728,7 @@ The robotID the message is associated with.
 
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `RobotIDs`  or a `location_id` you don't own. <br /> Tip: check the spelling of the `RobotIDs` or `location_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 | `INVALID_ARGUMENT`| One or more request parameters are malformed or logically incorrect. <br /> Example: Using an invalid robot ID format. |
 
 ### Examples
@@ -978,11 +992,11 @@ The robotID the message is associated with.
     
 -----------
 ## ChargeRobot
-`ChargeRobot` is specialy type of mission. Use this command to instructs the robot to begin charging, regardless of its current battery level. <br />
+`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. <br />
 
-This command is only supported on robots equipped with a contact-based charging dock. Robots without a compatible dock will return a INVALID_ARGUMENT error. <br />
+This command is only supported on robots equipped with a contact-based charging dock. Robots without a compatible dock will return an `INVALID_ARGUMENT` error. <br />
 
-You can use [`SubscribeBatteryStatus`]() to monitor the charging process. 
+You can use [`SubscribeBatteryStatus`](RobotStatus.md#subscribebatterystatus) to monitor the charging process. 
 
 ### Request
 

@@ -26,7 +26,7 @@ A response message has 2 fields: <br/>
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | Attempting to retrieve Robot IDs with a `location_id` you don't own. <br /> Tips: check the spelling of `location_id`.|
+| `PERMISSION_DENIED` | Attempting to retrieve Robot IDs with a `location_id` you don't own. <br /> Tips: check the spelling of all `location_id` values.|
 
 ### Examples
 === "Go"

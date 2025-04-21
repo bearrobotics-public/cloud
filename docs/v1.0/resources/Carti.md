@@ -21,24 +21,37 @@ Use the shared `CreateMission` endpoint to send missions for Carti robots. Carti
 ##### robot_id `string` `required`
 The ID of the robot that will receive this command.
 
+##### mission `Mission` `required`
+Universal wrapper for mission types. Only one [mission type](../../concepts/mission.md#mission-types) may be set at a time.
 
-##### mission [`Mission`](Mission.md#mission-mission-required) `required`
-Use the field `carti_mission` to create and send a mission. Current API version supports 2 Carti missions.
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`base_mission`   |[`BaseMission`](Mission.md#base_mission-basemission)	| Base missions are applicable to all robot families. <br /> Refer to [Mission](Mission.md) for how to create and send a base mission.|
+|`servi_mission`	|[`servi.Mission`](Servi.md#servi_mission-servimission) | Servi missions are specific to the Servi robot family.<br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
+|`carti_mission`	|[`carti.Mission`](#carti_mission-cartimission)| Carti missions are specific to the Carti robot family. |
+
+##### carti_mission `carti.Mission`
+Use the field `carti_mission` to create and send a mission. Current API version supports 2 types of Carti missions.
+
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`traverse_mission`   |[`TraverseMission`](#traverse_mission-traversemission)	| Create a carti mission of type `Traverse`. |
+|`traverse_patrol_mission`	|[`TraversePatrolMission`](#traverse_patrol_mission-traversepatrolmission)| Create a carti mission of type `TraversePatrol`. |
 
 **TraverseMission** <br />
-A traverse mission that navigates to one or more goals. It is defined by 2 fields
+A traverse mission that navigates to one or more goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`TraverseParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
 **TraversePatrolMission** <br />
-A traverse patrol mission that navigates to one or more goals and continuously loops through the goals stopping at each for a time limit.
+A traverse patrol mission that navigates to one or more goals and continuously loops through the goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`TraversePatrolParam` <br />`optional`|  ***There is no param defined in this API version.*** |
 
 **Refer to the [examples](#examples) for how to create and send a Carti mission.**

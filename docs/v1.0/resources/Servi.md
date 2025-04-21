@@ -24,39 +24,56 @@ Use the shared `CreateMission` endpoint to send missions for Servi robots. Servi
 The ID of the robot that will receive this command.
 
 
-##### mission [`Mission`](Mission.md#mission-mission-required) `required`
-Use the field `servi_mission` to create and send a mission. Current API version supports 4 types of Servi mission.
+##### mission `Mission` `required`
+Universal wrapper for mission types. Only one [mission type](../../concepts/mission.md#mission-types) may be set at a time.
 
-**BussingMission** <br />
-A bussing mission that navigates to one or more goals, stopping at each for a time limit or until weight is added.
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`base_mission`   |[`BaseMission`](Mission.md#base_mission-basemission)	| Base missions are applicable to all robot families. <br /> Refer to [Mission](Mission.md) for how to create and send a base mission.|
+|`servi_mission`	|[`servi.Mission`](#servi_mission-servimission) | Servi missions are specific to the Servi robot family. |
+|`carti_mission`	|[`carti.Mission`](Carti.md#carti_mission-cartimission)	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission. |
+
+
+##### servi_mission `servi.Mission`
+Use the field `servi_mission` to create and send a servi mission. Current API version supports 4 types of Servi mission.
+
+| Field (*oneof*) | Message Type | Description |
+|------------|-------------| ---|
+|`bussing_mission`   |[`BussingMission`](#bussing_mission-bussingmission)	| Create a servi mission of type `Bussing`. |
+|`bussing_patrol_mission`	|[`BussingPatrolMission`](#bussing_patrol_mission-bussingpatrolmission)| Create a servi mission of type `BussingPatrol`. |
+|`delivery_mission`   |[`DeliveryMission`](#delivery_mission-deliverymission)	| Create a servi mission of type `Delivery`. |
+|`delivery_patrol_mission`	|[`DeliveryPatrolMission`](#delivery_patrol_mission-deliverypatrolmission)| Create a servi mission of type `DeliveryPatrol`. |
+
+##### bussing_mission `BussingMission`
+A mission that navigates to one or more goals, stopping at each for a set amount of time or until some weight is added.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of`Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`BussingParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**BussingPatrolMission** <br />
-A bussing patrol mission that continuously loops through goals, stopping at each for a time limit until weight exceeds a threshold.
+##### bussing_patrol_mission `BussingPatrolMission`
+A mission that continuously loops through goals, stopping at each for a set amount of time or until weight exceeds a threshold.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`BussingPatrolParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**DeliveryMission** <br />
-A delivery mission that navigates to one or more goals, stopping at each for a time limit or until weight is removed.
+##### delivery_mission `DeliveryMission`
+A mission that navigates to one or more goals, stopping at each for a set amount of time or until some weight is removed.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`DeliveryParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**DeliveryPatrolMission** <br />
-A delivery patrol mission that continuously loops through goals, stopping at each for a time limit until all weight is removed.
+##### delivery_patrol_mission `DeliveryPatrolMission`
+A that continuously loops through goals, stopping at each for a set amount of time or until all weight is removed.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| List of `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`DeliveryPatrolParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
 **Refer to the [examples](#examples) for how to create and send a Carti mission.**
@@ -314,7 +331,7 @@ Represents the state of a single tray.
 | ErrorCode  | Description |
 |------------|-------------|
 |`INVALID_ARGUMENT`   | This command is sending to is not a Servi family robot. |
-| `PERMISSION_DENIED` | Attempting to request status for `RobotIDs`  or a `location_id` you don't own. <br /> Tip: check the spelling of the `RobotIDs` or `location_id`.|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
 ### Examples
 ##### Response

@@ -20,7 +20,7 @@ The request is missing valid authentication credentials (e.g., invalid token, ex
 The request was authenticated, but the client does not have permission to access the requested resource. <br />
 **Code**: `PERMISSION_DENIED` <br />
 **Resolution**: Verify that the API key's user has the necessary permissions for the target robot or location.
-Tip: Double-check the spelling and values of `robot_id` and `location_id`.
+Tip: Double-check the spelling of all `robot_id` and `location_id` values.
 <br />
 
 #### Request fails validation
