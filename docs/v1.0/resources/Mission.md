@@ -52,7 +52,7 @@ A mission that automatically selects the best available goal from the provided l
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|[destination_id](../../v1.0/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
+|[destination_id](../../v1.0/resources/LocationsAndMaps.md#destination) | `string` | Unique identifier for the destination.|
 
 **Refer to the [examples](#examples) for how to create and send a Mission.**
 
