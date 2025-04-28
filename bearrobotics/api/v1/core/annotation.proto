@@ -50,6 +50,5 @@ message Annotation {
 message Goal {
   oneof goal {
     string destination_id = 1;
-    Pose pose = 2;
   }
 }

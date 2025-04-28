@@ -119,9 +119,9 @@ service APIService {
   // followed by updates whenever the emergency stop state changes.
   rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest)
       returns (stream SubscribeEmergencyStopStatusResponse) {
-	option (google.api.http) = {
-	  post: "/v1/estop-status/subscribe"
-	};
+	  option (google.api.http) = {
+	    post: "/v1/estop-status/subscribe"
+	  };
   }
 
   // Subscribes to the robot’s localization state.

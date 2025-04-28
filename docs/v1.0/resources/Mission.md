@@ -52,8 +52,7 @@ A mission that automatically selects the best available goal from the provided l
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|[`destination_id`](../../v1.0/resources/LocationsAndMaps.md#destination) | `string` | Unique identifier for the destination.|
-|[`pose`](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md#pose) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
+|[destination_id](../../v1.0/resources/LocationsAndMaps.md#destination) | `string` | Unique identifier for the destination.|
 
 **Refer to the [examples](#examples) for how to create and send a Mission.**
 
@@ -137,56 +136,8 @@ The ID of the mission created.
       fmt.Println("CreateMission (destination_id) response:", resp)
     }
 
-    func createMissionWithPose() {
-      token, err := GetToken()
-      if err != nil {
-        log.Fatalf("Failed to get token: %v", err)
-      }
-
-      conn, cancel, err := createChannelWithCredentialsRefresh()
-      if err != nil {
-        log.Fatalf("Failed to create channel: %v", err)
-      }
-      defer cancel()
-      defer conn.Close()
-
-      stub := servicespb.NewServicesClient(conn)
-
-      ctx, cancelCtx := context.WithTimeout(context.Background(), 5*time.Second)
-      defer cancelCtx()
-      ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-
-      req := &corepb.CreateMissionRequest{
-        RobotId: "pennybot-abc123",
-        Mission: &corepb.Mission{
-          BaseMission: &corepb.BaseMission{
-            NavigateMission: &corepb.NavigateMission{
-              Goal: &corepb.Goal{
-                Goal: &corepb.Goal_Pose{
-                  Pose: &corepb.Pose{
-                    XMeters:        1.2,
-                    YMeters:        2.4,
-                    HeadingRadians: 0.785,
-                  },
-                },
-              },
-            },
-          },
-        },
-      }
-
-      resp, err := stub.CreateMission(ctx, req)
-      if err != nil {
-        log.Printf("CreateMission (pose) failed: %v", err)
-        return
-      }
-
-      fmt.Println("CreateMission (pose) response:", resp)
-    }
-
     func main() {
       createMissionWithDestination()
-      createMissionWithPose()
     }
     ```
 
@@ -203,37 +154,6 @@ The ID of the mission created.
     def create_channel_with_credentials_refresh():
         # Create a secure connection with SSL credentials.
         pass
-
-    def create_mission_request_with_pose():
-        try:
-            token = get_token()
-            channel = create_channel_with_credentials_refresh()
-            stub = CloudAPIServiceStub(channel)
-
-            request = core_pb2.CreateMissionRequest(
-                robot_id="pennybot-abc123",
-                mission=core_pb2.Mission(
-                    base_mission=core_pb2.BaseMission(
-                        navigate_mission=core_pb2.NavigateMission(
-                            goal=core_pb2.Goal(
-                                pose=core_pb2.Pose(
-                                    x_meters=1.2,
-                                    y_meters=2.4,
-                                    heading_radians=0.785
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-
-            response = stub.CreateMission(request)
-            print("CreateMission response:", response)
-
-        except grpc.RpcError as e:
-            print(f"gRPC error occurred: {e.code().name} - {e.details()}")
-        except Exception as ex:
-            print(f"Unexpected error: {type(ex).__name__} - {ex}")
 
     def create_mission_request_with_destination():
         try:
@@ -334,41 +254,15 @@ The ID of the mission created.
       }' \
       api-test.bearrobotics.api:443 bearrobotics.api.v1.services.cloud.APIService.CreateMission
 
-    grpcurl \
-      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
-      -import-path protos \
-      -d '{
-        "robot_id": "pennybot-abc123",
-        "mission": {
-          "baseMission": {
-            "navigateMission": {
-              "goal": {
-                "pose": {
-                  "xMeters": 3.0,
-                  "yMeters": 4.5,
-                  "headingRadians": 0.0
-                }
-              }
-            }
-          }
-        }
-      }' \
-      api-test.bearrobotics.api:443 bearrobotics.api.v1.services.cloud.APIService.CreateMission
     ```
 
 === "Protobuf"
     ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
     ```proto
-    message Pose {
-      float x_meters = 1;
-      float y_meters = 2;
-      float heading_radians = 3;
-    }
 
     message Goal {
       oneof goal {
         string destination_id = 1;
-        Pose pose = 2;
       }
     }
 
@@ -696,7 +590,7 @@ The robotID the message is associated with.
 |------|------|-------------|
 | `mission_id` | string | Unique identifier for the mission. |
 | `state` | State *enum* |  |
-| `goals` | [Goal](#goal-required) | All goals associated with the mission, <br />in the order the request was given. |
+| `goals` | [Goal](#goal-goal-required) | All goals associated with the mission, <br />in the order the request was given. |
 | `current_goal_index` | int32 | Index of the currently active goal in the goals list. |
 | `mission_feedback` | MissionFeedback | Latest feedback for the mission. |
 

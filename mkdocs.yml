@@ -50,8 +50,8 @@ nav:
       - v1.0:
           - Core resources:
               - Mission: v1.0/resources/Mission.md
-              - Map: v1.0/resources/LocationsAndMaps.md
-              - Localization: v1.0/resources/Localization.md
+              - Locations & Maps: v1.0/resources/LocationsAndMaps.md
+              - Localization & Navigation: v1.0/resources/Localization.md
               - Robot Status: v1.0/resources/RobotStatus.md
               - Fleet Management: v1.0/resources/FleetManagement.md
           - Carti: v1.0/resources/Carti.md
