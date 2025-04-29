@@ -46,7 +46,7 @@ message Annotation {
 }
 
 
-// Goal represents a target destination or pose for the robot to navigate to.
+// Goal represents a target destination for the robot to navigate to.
 message Goal {
   oneof goal {
     string destination_id = 1;

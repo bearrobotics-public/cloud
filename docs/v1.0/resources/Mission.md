@@ -36,7 +36,7 @@ A mission consisting of a single, explicitly defined goal.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
-|`goal`   |[`Goal`](#goal-goal-required)<br>`required`	| The target destination or pose for the mission. |
+|`goal`   |[`Goal`](#goal-goal-required)<br>`required`	| The target destination for the mission. |
 
 
 ##### navigate_auto_mission `NavigateAutoMission`
@@ -48,7 +48,7 @@ A mission that automatically selects the best available goal from the provided l
 
 ##### goal `Goal` `required`
 
-[Goal](../../concepts/mission.md#goals) represents a target destination **or** pose for the robot to navigate to.
+[Goal](../../concepts/mission.md#goals) represents a target destination for the robot to navigate to.
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
