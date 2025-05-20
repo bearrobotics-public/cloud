@@ -85,6 +85,7 @@ nav:
           - Examples:
               - Python: guides/examples/python.md
               - Golang: guides/examples/golang.md
+              - Java: guides/examples/java.md
       - Errors and Troubleshooting: guides/errors.md
   - Changelog: 
     - v1.0: changelog/v1.0.md
