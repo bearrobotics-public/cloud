@@ -3,3 +3,41 @@ google/*
 *.tmpl
 *.sh
 site/
+
+# Ignore credentials files
+**/credentials.json
+
+# Gradle
+examples/java/.gradle/
+
+# IDE files
+examples/java/.idea/
+examples/java/*.iml
+examples/java/.vscode/
+examples/java/.settings/
+examples/java/.project
+examples/java/.classpath
+
+# Compiled class files
+examples/java/*.class
+
+# Package files
+examples/java/*.jar
+examples/java/*.war
+examples/java/*.nar
+examples/java/*.ear
+examples/java/*.zip
+examples/java/*.tar.gz
+examples/java/*.rar
+
+# Log files
+examples/java/*.log
+
+# OS specific
+examples/java/.DS_Store
+examples/java/build/
+
+# Generated code
+**/generated/
+**/__init__.py
+**/__pycache__/
