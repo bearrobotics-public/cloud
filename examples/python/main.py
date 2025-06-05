@@ -42,7 +42,14 @@ def main():
     port = 443;
     destination_id = "Sajjad";
 
-    channel = grpc.secure_channel(f"{host}:{port}", grpc.ssl_channel_credentials())
+    channel = grpc.secure_channel(
+        f"{host}:{port}",
+        grpc.ssl_channel_credentials(),
+        options=[
+            ("grpc.keepalive_time_ms", 30000),
+            ("grpc.keepalive_timeout_ms", 10000),
+        ]
+    )
     stub = APIServiceStub(channel)
 
     # Call the API
