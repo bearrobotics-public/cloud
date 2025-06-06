@@ -1,0 +1,25 @@
+#! /bin/bash
+
+pip install grpcio-tools
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT/examples/python"
+
+PROTO_OUT="generated"
+mkdir "$PROTO_OUT"
+
+# Create __init__.py to make this a proper Python package
+touch "$PROTO_OUT/__init__.py"
+
+# Generate protos
+python3 -m grpc_tools.protoc \
+    -I . \
+    --python_out="$PROTO_OUT" \
+    --grpc_python_out="$PROTO_OUT" \
+    bearrobotics/api/v1/*/*.proto \
+    bearrobotics/api/v1/*/*/*.proto \
+    google/api/*.proto
+
+# Fix imports in generated files
+find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from bearrobotics/from generated.bearrobotics/g' {} +
+find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from google.api/from generated.google.api/g' {} +
