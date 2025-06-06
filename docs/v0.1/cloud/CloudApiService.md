@@ -2,7 +2,7 @@
 The definition of Bear Cloud API service.
 
 ### Fleet Management
-#### ListRobotIDs [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### ListRobotIDs [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [ListRobotIDsRequest](#listrobotidsrequest)
 - **Response Type:** [ListRobotIDsResponse](#listrobotidsresponse)
 - **Description:**
@@ -10,17 +10,17 @@ The definition of Bear Cloud API service.
 filter options regardless of robot status.
 
 ### Map
-#### GetCurrentMapContent [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### GetCurrentMapContent [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [GetCurrentMapContentRequest](#getcurrentmapcontentrequest)
 - **Response Type:** [GetCurrentMapContentResponse](#getcurrentmapcontentresponse)
 - **Description:**
   Retrieve the current map content data, which is loaded on the robot.
-#### GetLocation [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### GetLocation [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [GetLocationRequest](#getlocationrequest)
 - **Response Type:** [GetLocationResponse](#getlocationresponse)
 - **Description:**
   Retrieve the current location data to which the robot is connected.<br>If the robot is offline, it uses the cached Location data.
-#### GetMap [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### GetMap [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [GetMapRequest](#getmaprequest)
 - **Response Type:** [GetMapResponse](#getmapresponse)
 - **Description:**
@@ -30,12 +30,12 @@ filter options regardless of robot status.
 - **Response Type:** [GetMapAnnotationResponse](#getmapannotationresponse)
 - **Description:**
   Retrieve annotation data for a specified annotation_id.<br>If offline, it uses the cached Annotation data.
-#### GetMapData [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### GetMapData [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [GetMapDataRequest](#getmapdatarequest)
 - **Response Type:** [GetMapDataResponse](#getmapdataresponse)
 - **Description:**
   Retrieve map data for a specified map_data_id.<br>If offline, it uses the cached MapData data.
-#### SwitchMap [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### SwitchMap [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [SwitchMapRequest](#switchmaprequest)
 - **Response Type:** [SwitchMapResponse](#switchmapresponse)
 - **Description:**
@@ -43,30 +43,30 @@ filter options regardless of robot status.
 Returns the map_id of the switched map.
 
 ### Mission
-#### AppendMission [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### AppendMission [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [AppendMissionRequest](#appendmissionrequest)
 - **Response Type:** [AppendMissionResponse](#appendmissionresponse)
 - **Description:**
   Append the given mission to the end of the queue.
 The mission will be added in the order it is received.
-#### ChargeRobot [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### ChargeRobot [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [ChargeRobotRequest](#chargerobotrequest)
 - **Response Type:** [ChargeRobotResponse](#chargerobotresponse)
 - **Description:**
   Create a mission to go charge a robot regardless of battery state.<br>The call will fail if the robot is already on a different mission,
 which needs to be canceled before the robot can be charged.
-#### CreateMission [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### CreateMission [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [CreateMissionRequest](#createmissionrequest)
 - **Response Type:** [CreateMissionResponse](#createmissionresponse)
 - **Description:**
   Create a mission for a given type.<br>The call will fail if the robot cannot go on the requested mission.
-#### SubscribeMissionStatus [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### SubscribeMissionStatus [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [SubscribeMissionStatusRequest](#subscribemissionstatusrequest)
 - **Response Type:** [SubscribeMissionStatusResponse](#subscribemissionstatusresponse)
 - **Description:**
   Subscribe to robot's mission status.<br>Upon subscription, the server immediately sends the latest known
 mission status, followed by updates whenever the mission status changes.
-#### UpdateMission [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### UpdateMission [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [UpdateMissionRequest](#updatemissionrequest)
 - **Response Type:** [UpdateMissionResponse](#updatemissionresponse)
 - **Description:**
@@ -91,7 +91,7 @@ localization status.
 - **Description:**
   Subscribe to the robot's localization status.<br>Upon subscription, the latest known localization status will be sent.
 If the robot is actively localizing, statuses will be published upon changes.
-#### SubscribeRobotPose [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### SubscribeRobotPose [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [SubscribeRobotPoseRequest](#subscriberobotposerequest)
 - **Response Type:** [SubscribeRobotPoseResponse](#subscriberobotposeresponse)
 - **Description:**
@@ -121,7 +121,7 @@ robot's estimated position.
   List all profile IDs for a specific location_id.
 
 ### Robot Status
-#### SubscribeBatteryStatus [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### SubscribeBatteryStatus [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [SubscribeBatteryStatusRequest](#subscribebatterystatusrequest)
 - **Response Type:** [SubscribeBatteryStatusResponse](#subscribebatterystatusresponse)
 - **Description:**
@@ -145,7 +145,7 @@ trays that does not have weight sensor will have an UNKNOWN load state and
 no weight data streamed.
 
 ### Robot System
-#### GetRobotSystemInfo [:material-tag-outline:](../../changelog.md#february-5-2025 "Available on Beta")
+#### GetRobotSystemInfo [:material-tag-outline:](../../changelog/v0.1beta.md#february-5-2025 "Available on Beta")
 - **Request Type:** [GetRobotSystemInfoRequest](#getrobotsysteminforequest)
 - **Response Type:** [GetRobotSystemInfoResponse](#getrobotsysteminforesponse)
 - **Description:**
