@@ -1,98 +1,105 @@
-# BCAS gRPC Client Example
+# Quick Start Guide
 
-This project demonstrates how to use gRPC to connect to the Bear Robotics Cloud API Service (BCAS).
+Get up and running with the Bear Robotics Cloud API v1 client.
 
-## Project Structure
+## Prerequisites
 
-- `proto/cloud/`: Git submodule containing the official Bear Robotics API protobuf files
-- `src/main/java/`: Java source code
-  - `com.example`: Main application code
-  - `com.example.auth`: Authentication-related classes
-- `src/main/resources/`: Configuration files and credentials
-- `build.gradle`: Gradle build configuration with protobuf compiler setup
+- Java 17 or higher (latest LTS 21 recommended)
+- Valid Bear Robotics API credentials
 
-## Setup
+## Step 1: Setup Credentials
 
-1. Clone this repository:
-   ```
-   git clone https://your-repository-url.git
-   cd bcas-example
-   ```
+Create `src/main/resources/credentials.json`:
 
-2. Set up API credentials:
-   Create a file at `src/main/resources/credentials.json` with the following format:
-   ```json
-   {
-     "api_key": "your-api-key",
-     "secret": "your-api-secret",
-     "scope": "Bear"
-   }
-   ```
-   Note: This file is listed in `.gitignore` to prevent committing credentials.
-
-3. Build the project:
-   ```
-   ./gradlew build
-   ```
-
-## Usage
-
-The Main class demonstrates how to create a gRPC client to connect to the Bear Robotics Cloud API Service.
-
-It includes an example of using server-side streaming with the `SubscribeMissionStatus` RPC method, which allows
-you to receive continuous updates about a robot's mission status.
-
-To run the example:
-
-```
-./gradlew run --args="pennybot-dbe062"
+```json
+{
+  "api_key": "your-api-key-here",
+  "secret": "your-secret-here",
+  "scope": "Bear"
+}
 ```
 
-## API Authentication
+## Step 2: Build and Run
 
-The project includes a complete implementation of the Bear Robotics API authentication flow:
+```bash
+# Build the project
+./gradlew build
+```
 
-1. The `BearAuthService` class reads API credentials from a local file
-2. It makes an HTTP call to the authentication endpoint to obtain a JWT token
-3. The `JwtCredentials` class implements gRPC's `CallCredentials` to add the JWT token to each request
-4. Token expiration is handled automatically by refreshing when needed
+## Step 3: Try Different Streams
 
-This implementation securely connects to the API using TLS and proper authentication.
+```bash
+# Basic battery status streaming with custom error handling
+./gradlew run --args="<target_robot_id> basic"
 
-## Long-Running Connections
+# Concurrent streaming (both robot and mission status)
+./gradlew run --args="<target_robot_id> concurrent"
+```
 
-This project demonstrates best practices for maintaining long-running gRPC connections:
+## Step 4: Custom Implementation
 
-1. **Automatic Token Refreshing**: The `BearAuthService` class uses a scheduled executor to proactively refresh the JWT token before it expires, avoiding authentication errors during streaming calls.
+Create your own streaming client:
 
-2. **Reconnection Logic**: The client implements automatic reconnection if a streaming connection fails. This allows it to recover from network issues or server-side disruptions.
+```java
+public class MyStreamingApp {
+    public static void main(String[] args) throws Exception {
+        String robotId = args.length > 0 ? args[0] : "robot-1";
+        
+        // Initialize client
+        BearRoboticsClient client = new BearRoboticsClient("api.bearrobotics.ai", 443);
 
-3. **Keep-Alive Settings**: The gRPC channel is configured with keep-alive settings to detect and recover from "half-open" connections, where one side believes the connection is still active but it's actually broken.
+        // Build request
+        RobotSelector selector = RobotSelector.newBuilder()
+            .setRobotIds(RobotSelector.RobotIDs.newBuilder()
+                .addIds(robotId)
+                .build())
+            .build();
+        SubscribeMissionStatusRequest request = SubscribeMissionStatusRequest.newBuilder()
+            .setSelector(selector)
+            .build();
 
-4. **Graceful Shutdown**: The client properly cleans up resources on shutdown, including canceling any active streaming calls and shutting down the token refresh scheduler.
+        // Create streaming client with custom callback
+        StreamingClient<SubscribeMissionStatusRequest, SubscribeMissionStatusResponse> streamingClient =
+            client.<SubscribeMissionStatusRequest, SubscribeMissionStatusResponse>createStreamingClient()
+                .rpcMethod((req, observer) -> client.getAsyncStub().subscribeMissionStatus(req, observer))
+                .request(request)
+                .onResponse(response -> {
+                    // Your custom logic here
+                    System.out.println("Robot: " + response.getRobotId() + 
+                                     " - Mission: " + response.getMissionState().getMissionId() +
+                                     " - State: " + response.getMissionState().getState());
+                })
+                .onError(error -> {
+                    // Your custom logic here
+                    System.err.println("Error: " + error.getMessage());
+                })
+                .streamName("My Mission Stream")
+                .build();
 
-## Development
+        // Start streaming
+        streamingClient.startStreaming();
+    }
+}
+```
 
-### Authentication Flow
+## Key Features
 
-The authentication process works as follows:
+- **Automatic JWT token refresh** - No auth interruptions
+- **Smart reconnection logic** - Retries subscription upon recoverable error codes
+- **Multiple concurrent streams** - Monitor multiple streams
+- **Custom callbacks** - Handle data with custom callbacks (`onResponse`, `onError`, `onCompleted`)
 
-1. API credentials (API key and secret) are loaded from `credentials.json`
-2. The application makes a request to `https://api-auth.bearrobotics.ai/authorizeApiAccess` with these credentials
-3. The auth endpoint returns a JWT token string
-4. This token is attached to all gRPC requests via the Authorization header
-5. When the token expires (or a predefined duration of time passes), a new one is automatically fetched
+## Next Steps
 
-### Token Refresh Handling
+- Check out [Main.java](src/main/java/com/example/Main.java) for implementations for different patterns
 
-JWT tokens from the Bear Robotics API expire after an hour. Our implementation handles this in several ways:
+## Support
 
-1. **Proactive Refresh**: Tokens are refreshed every 30 minutes before they expire to ensure smooth operation
-2. **Background Refresh**: Token refreshing happens in a background thread, not interrupting the main application flow
-3. **Error Recovery**: If a request fails with an UNAUTHENTICATED error, the client can retry with a fresh token
-4. **Retry Support**: For streaming RPCs, the client can retry with a fresh token if the stream is broken
+If you encounter issues:
 
-### Generating code from proto files
+1. Check your `credentials.json` format and file location
+2. Enable debug logging: `Logger.getLogger("com.example.streaming").setLevel(Level.FINE)`
+3. Check network connectivity to the API Server `api.bearrobotics.ai:443`
 
-The project is configured to automatically generate Java code from the proto files during the build process. The generated code will be placed in `src/generated/`.
+The client handles most connection issues automatically through reconnection logic.
 
