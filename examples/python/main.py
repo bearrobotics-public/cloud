@@ -40,7 +40,7 @@ def main():
     # Default values
     host = "api.bearrobotics.ai";
     port = 443;
-    destination_id = "Sajjad";
+    destination_id = "your_destination_id";
 
     channel = grpc.secure_channel(
         f"{host}:{port}",

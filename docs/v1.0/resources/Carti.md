@@ -35,8 +35,8 @@ Use the field `carti_mission` to create and send a mission. Current API version 
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`traverse_mission`   |[`TraverseMission`](#traverse_mission-traversemission)	| Create a carti mission of type `Traverse`. |
-|`traverse_patrol_mission`	|[`TraversePatrolMission`](#traverse_patrol_mission-traversepatrolmission)| Create a carti mission of type `TraversePatrol`. |
+|`traverse_mission`   |`TraverseMission`	| Create a carti mission of type `Traverse`. |
+|`traverse_patrol_mission`	|`TraversePatrolMission`| Create a carti mission of type `TraversePatrol`. |
 
 **TraverseMission** <br />
 A traverse mission that navigates to one or more goals, stopping at each for a set amount of time or until directed to continue.
@@ -65,7 +65,7 @@ The ID of the mission created.
 | ErrorCode  | Description |
 |------------|-------------|
 |`INVALID_ARGUMENT`      | This command is sending to is not a Carti family robot. |
-|`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
+|`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](Mission.md#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
 
 
 ### Examples

@@ -89,9 +89,8 @@ nav:
       - Setup:
           - Authentication: guides/setup/authentication.md
           - Examples:
-              - Python: guides/examples/python.md
-              - Golang: guides/examples/golang.md
               - Java: guides/examples/java.md
+              - Usage: guides/examples/usage.md
       - Errors and Troubleshooting: guides/errors.md
   - Changelog: 
     - v1.0: changelog/v1.0.md
