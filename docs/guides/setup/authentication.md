@@ -8,9 +8,9 @@ The credentials are provided in the following JSON format:
 
 ```json
 {
-  "api_key": "deca1611-fb00-40b6-be4b-9ed797ae1642",
-  "scope": "YOUR_SCOPE",
-  "secret": "2cd66c59-a845-4f16-ac1e-50b50e3878ec"
+  "api_key": "your-api-key",
+  "secret": "your-api-secret",
+  "scope": "your-scope"
 }
 ```
 
@@ -22,36 +22,48 @@ All three fields must be correctly matched for the credentials to be authorized:
 
 ## JWT Generation Examples:
 
-#### curl:
+=== "CLI"
 
-```
-curl -X POST https://api-auth.bearrobotics.ai/authorizeApiAccess \
-     -H "Content-Type: application/json" \
-     -d '{"api_key":"deca1611-fb00-40b6-be4b-9ed797ae1642",
-          "scope":"YOUR_SCOPE",
-          "secret":"2cd66c59-a845-4f16-ac1e-50b50e3878ec"}'
-```
+    ```
+    curl -X POST https://api-auth.bearrobotics.ai/authorizeApiAccess \
+        -H "Content-Type: application/json" \
+        -d '{cat /path/to/credentials.json}'
+    ```
 
-#### HTTP library (Go):
+=== "Go"
 
-```go
-func GetToken(url string, creds string) (string, error) {
-   resp, err := http.Post(url, "application/json", bytes.NewBufferString(creds))
-   if err != nil {
-       return "", err
-   }
-   defer resp.Body.Close()
+    ``` go
+    import os
 
-   if resp.StatusCode != 200 {
-       return "", fmt.Errorf("failed to get new token: %d", resp.StatusCode)
-   }
-   body, err := io.ReadAll(resp.Body)
-   if err != nil {
-       return "", err
-   }
-   return string(body), nil
-}
-```
+    const (
+        AUTH_URL = "https://api-auth.bearrobotics.ai/authorizeApiAccess"
+        PATH_TO_CREDS = "/path/to/credentials.json"
+    )
+
+    func GetToken() (string, error) {
+        creds, err := os.ReadFile(PATH_TO_CREDS)
+        if err != nil {
+            return "", fmt.Errorf("failed to read credentials file: %v", err)
+        }
+
+        credString := string(creds)
+        resp, err := http.Post(AUTH_URL, "application/json", bytes.NewBufferString(credString))
+        if err != nil {
+            return "", fmt.Errorf("failed to POST to auth endpoint: %v", err)
+        }
+        defer resp.Body.Close()
+
+        if resp.StatusCode != 200 {
+            return "", fmt.Errorf("failed to get new token: %d", resp.StatusCode)
+        }
+
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+            return "", err
+        }
+        return string(body), nil
+    }
+    ```
 
 ## JWT Usage
 
@@ -63,68 +75,68 @@ Authorization: Bearer <JWT>
 
 The JWT has an expiration time, specified by the `exp` field. To maintain uninterrupted access, it is recommended to refresh the JWT periodically, ideally every 15 to 20 minutes.
 
-#### JWT Usage Example (Go)
+#### JWT Usage Examples
 
-```go
-type TokenCreds struct {
-   JWT             atomic.Value
-   TransportSecurity bool
-}
+=== "Go"
 
-// GetRequestMetadata gets the current gRPC request metadata,
-// with current token. This func gets called before every gRPC query.
-func (t *TokenCreds) GetRequestMetadata(_ context.Context, _ ...string)
-(map[string]string, error) {
-  if jwtToken := t.JWT.Load(); jwtToken != nil {
-    return map[string]string{
-      "Authorization": "Bearer " + jwtToken.(string),
-    }, nil
- }
- return nil, fmt.Errorf("token is not set")
-}
-
-func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
-   var creds = `{"api_key": "deca1611-fb00-40b6-be4b-9ed797ae1642","scope": "YOUR_SCOPE","secret": "2cd66c59-a845-4f16-ac1e-50b50e3878ec"}`
-   token := TokenCreds{TransportSecurity: true}
-
-   ctx, cancelRefresher := context.WithCancel(context.Background())
-   go func() {
-       ticker := time.NewTicker(15 * time.Minute)
-       defer ticker.Stop()
-
-       for {
-           select {
-           case <-ctx.Done():
-               slog.Info("Refresher exiting...")
-               return
-           case <-ticker.C:
-               jwt, err := GetToken(
-                   "https://api-auth.bearrobotics.ai/authorizeApiAccess", creds)
-               if err != nil {
-                   slog.Error("Failed to get new token", "error", err)
-               }
-               if err == nil {
-                   token.JWT.Store(jwt)
-               }
-           }
-       }
-   }()
-
-   tls_creds := credentials.NewTLS(&tls.Config{})
-   conn, err := grpc.NewClient(
-       serverAddress,
-       grpc.WithTransportCredentials(tls_creds),
-       grpc.WithPerRPCCredentials(token))
-    if err != nil {
-        log.Fatalf("Failed to create new gRPC client: %v", err)
-        return nil, nil, err
+    ``` go
+    type TokenCreds struct {
+        JWT             atomic.Value
+        TransportSecurity bool
     }
 
-   // Make gRPC queries using conn.
-   // Cancel refresher when no longer needed.
-   return conn, cancelRefresher, nil
-}
-```
+    // GetRequestMetadata gets the current gRPC request metadata,
+    // with current token. This func gets called before every gRPC query.
+    func (t *TokenCreds) GetRequestMetadata(_ context.Context, _ ...string)
+    (map[string]string, error) {
+        if jwtToken := t.JWT.Load(); jwtToken != nil {
+            return map[string]string{
+            "Authorization": "Bearer " + jwtToken.(string),
+            }, nil
+        }
+        return nil, fmt.Errorf("token is not set")
+    }
+
+    func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
+        token := TokenCreds{TransportSecurity: true}
+
+        ctx, cancelRefresher := context.WithCancel(context.Background())
+        go func() {
+            ticker := time.NewTicker(15 * time.Minute)
+            defer ticker.Stop()
+
+            for {
+                select {
+                case <-ctx.Done():
+                    slog.Info("Refresher exiting...")
+                    return
+                case <-ticker.C:
+                    jwt, err := GetToken()
+                    if err != nil {
+                        slog.Error("Failed to get new token", "error", err)
+                    }
+                    if err == nil {
+                        token.JWT.Store(jwt)
+                    }
+                }
+            }
+        }()
+
+        tls_creds := credentials.NewTLS(&tls.Config{})
+        conn, err := grpc.NewClient(
+            serverAddress,
+            grpc.WithTransportCredentials(tls_creds),
+            grpc.WithPerRPCCredentials(token))
+            if err != nil {
+                log.Fatalf("Failed to create new gRPC client: %v", err)
+                return nil, nil, err
+            }
+
+        // Make gRPC queries using conn.
+        // Cancel refresher when no longer needed.
+        return conn, cancelRefresher, nil
+    }
+    ```
 
 ## Security
 

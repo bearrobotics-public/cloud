@@ -1,4 +1,4 @@
-Retrieve data about a robot's operating environment, including [maps](../../concepts/location.md#maps), floors, [annotations]((../../concepts/location.md#annotation)), and navigable [destinations](../../concepts/location.md#destination).
+Retrieve data about a robot's operating environment, including [maps](../../concepts/location.md#maps), floors, [annotations](../../concepts/location.md#annotation), and navigable [destinations](../../concepts/location.md#destination).
 
 ------------
 ## GetCurrentMap 
@@ -21,7 +21,7 @@ Map represents a navigable map used by robots, including metadata and associated
 | `map_id`       | `string` | Unique identifier for the map.<br />Example: "9578" |
 | `created_time` | `Timestamp` | Indicating when the map was created. |
 | `modified_time`| `Timestamp` | Indicating the last time the map was modified. |
-| `display_name` | `string` | Display name of the map, matching the name used in [Bear Universe](universe.bearrobotics.ai). <br />Example: "ITCT SEOUL" |
+| `display_name` | `string` | Display name of the map, matching the name used in [Bear Universe](https://universe.bearrobotics.ai). <br />Example: "ITCT SEOUL" |
 | `annotation`   | [`Annotation`](#annotation) | Annotation associated with this map, defining specific <br / >areas and destinations. |
 
 ##### Annotation
