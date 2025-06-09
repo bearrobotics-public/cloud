@@ -1,101 +1,13 @@
 # Usage Examples
 
-This page provides example client usage of the Bear Cloud API Service.
+This page provides example client code snippets for using the Bear Cloud API Service.
 
 For complete, runnable examples, see our [public repository](https://github.com/bearrobotics-public/cloud/tree/main).
-
-## Prerequisites
-
-Ensure you have installed the package(s) required to compile the protocol buffers:
-
-=== "Python"
-
-	```
-	pip install grpcio-tools
-	```
-
-=== "Go"
-
-	```
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	```
-
-## Defining Import Paths (Go)
-
-In order to compile protocol buffers into Go code, you must first provide Go import paths. Please refer to the [Protocol Buffers Documentation](https://protobuf.dev/reference/go/go-generated/#package).
-
-## Compiling Protocol Buffers
-
-Run the following script to generate the necessary protocol buffer files:
-
-=== "Python"
-
-	```bash
-	cd "<path/to/raw/protos>"
-
-	PROTO_OUT="<path/to/generated/protos>"
-	mkdir "$PROTO_OUT"
-
-	# Create __init__.py to make this a proper Python package
-	touch "$PROTO_OUT/__init__.py"
-
-	# Generate protos
-	python3 -m grpc_tools.protoc \
-		-I . \
-		--python_out="$PROTO_OUT" \
-		--grpc_python_out="$PROTO_OUT" \
-		bearrobotics/api/v1/*/*.proto \
-		bearrobotics/api/v1/*/*/*.proto \
-		google/api/*.proto
-
-	# Fix imports in generated files
-	find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from bearrobotics/from <path/to/generated/protos>.bearrobotics/g' {} +
-	find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from google.api/from <path/to/generated/protos>.google.api/g' {} +
-	```
-
-=== "Go"
-
-	```bash
-	cd <"path/to/raw/protos">
-
-	PROTO_OUT="<path/to/generated/protos>"
-	mkdir "$PROTO_OUT"
-
-	# Create __init__.py to make this a proper Python package
-	touch "$PROTO_OUT/__init__.py"
-
-	# If you did not specify import paths in each proto file with `option go_package`,
-	# then you must add another --go_opt=M${PROTO_FILE}=${GO_IMPORT_PATH} flag for each here.
-	protoc --proto_path=. \
-		--go_out="$PROTO_OUT" \
-		--go_opt=paths=source_relative \
-		--go-grpc_out="$PROTO_OUT" \
-		--go-grpc_opt=paths=source_relative \
-		bearrobotics/api/v1/*/*.proto \
-		bearrobotics/api/v1/*/*/*.proto \
-		google/api/*.proto
-	```
-
-## Importing Generated Protos
-
-=== "Python"
-
-	```python
-	from path.to.generated.protos.proto_name_pb2 import ProtoFn
-	from path.to.generated.protos.proto_name_pb2_grpc import ProtoGRPCFn
-	```
-
-=== "Go"
-
-	```go
-	import generated_pb "path/to/generated/protos/proto_name_go_proto"
-	```
 
 ## Connecting to the API with Credentials
 
 #### Prerequisites:
-- API key (See the [Authentication Guide](../setup/authentication.md))
+- API key (See the [Authentication Guide](authentication.md))
 
 === "Python"
 
@@ -105,7 +17,7 @@ Run the following script to generate the necessary protocol buffer files:
 		# See the Python reference in the Authentication Guide.
 
 	def create_channel_with_credentials_refresh():
-		# Create a secure connection with SSL credentials.
+		# Create a secure connection with TLS/SSL credentials.
 		# See the Python reference in the Authentication Guide.
 	```
 
@@ -118,16 +30,28 @@ Run the following script to generate the necessary protocol buffer files:
 	}
 
 	func CreateChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
-		// Create a secure connection with SSL credentials.
+		// Create a secure connection with TLS/SSL credentials.
 		// See the example Go client code in the Authentication Guide.
 	}
 	```
 
+## Compiling and Importing Protocol Buffer Files
+
+#### Prerequisites:
+- Bear API protocol buffer (protobuf) files, available for download from our public repository [here](https://github.com/bearrobotics-public/cloud/tree/main/bearrobotics/api)
+
+!!! note
+	In order to call Bear API functions, you must first compile the Bear API protobuf files into the language of your choice and import them in your code.
+
+Please see the complete examples in our [public repository](https://github.com/bearrobotics-public/cloud/tree/main) for details.
+
+Additionally, refer to the gRPC reference on generated code: [Java](https://grpc.io/docs/languages/java/generated-code/) | [Python](https://grpc.io/docs/languages/python/generated-code/)
+
 ## Example: List Robot IDs
 
 #### Prerequisites:
-- [Compiled protobuf files](#compiling-protocol-buffers) for `cloud_api_service`
 - [API connection with credentials](#connecting-to-the-api-with-credentials)
+- [Compiled protobuf files](#compiling-and-importing-protocol-buffer-files) for `cloud_api_service`
 
 === "Python"
 
@@ -204,8 +128,8 @@ Run the following script to generate the necessary protocol buffer files:
 ## Example: Subscribe Battery Status
 
 #### Prerequisites:
-- [Compiled protobuf files](#compiling-protocol-buffers) for `cloud_api_service`
 - [API connection with credentials](#connecting-to-the-api-with-credentials)
+- [Compiled protobuf files](#compiling-and-importing-protocol-buffer-files) for `cloud_api_service`
 
 === "Python"
 

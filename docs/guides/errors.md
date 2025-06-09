@@ -13,7 +13,7 @@ The robot’s software version does not meet the compatibility requirements of t
 ####  Authenticated error
 The request is missing valid authentication credentials (e.g., invalid token, expired session). <br />
 **Code**: `UNAUTHENTICATED` <br />
-**Resolution**: Confirm that the API key or JWT token is correct and has not expired. Refer to the [authentication guide](../guides/setup/authentication.md) for how to obtain and refresh a JWT token using your API key. <br />
+**Resolution**: Confirm that the API key or JWT token is correct and has not expired. Refer to the [authentication guide](authentication.md) for how to obtain and refresh a JWT token using your API key. <br />
 <br />
 
 #### Permission Denied

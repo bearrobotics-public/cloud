@@ -86,11 +86,8 @@ nav:
                   - Robot: v0.1/robot/Robot.md
                   - Status: v0.1/robot/Status.md
   - Guides:
-      - Setup:
-          - Authentication: guides/setup/authentication.md
-          - Examples:
-              - Java: guides/examples/java.md
-              - Usage: guides/examples/usage.md
+      - Authentication: guides/authentication.md
+      - Usage: guides/usage.md
       - Errors and Troubleshooting: guides/errors.md
   - Changelog: 
     - v1.0: changelog/v1.0.md
