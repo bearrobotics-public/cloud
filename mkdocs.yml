@@ -48,8 +48,9 @@ nav:
   - Overview:
     - index.md
   - Quickstart:
-      - Authentication: guides/setup/authentication.md
-      - Usage: guides/examples/usage.md
+      - Getting Started: guides/getting-started.md
+  - Guides:
+      - Authentication: guides/authentication.md
       - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
       - v1.0:

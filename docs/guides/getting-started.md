@@ -1,4 +1,4 @@
-# Usage Examples
+# Getting Started
 
 This page provides example client code snippets for using the Bear Cloud API Service.
 
