@@ -47,11 +47,11 @@ markdown_extensions:
 nav:
   - Overview:
     - index.md
-  - Core Concepts:
-      - Mission: concepts/mission.md
-      - Localization: concepts/localization.md
-      - Location: concepts/location.md
-      - Status: concepts/status.md
+  - Quickstart:
+      - Getting Started: guides/getting-started.md
+  - Guides:
+      - Authentication: guides/authentication.md
+      - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
       - v1.0:
           - Core resources:
@@ -85,14 +85,11 @@ nav:
                   - Mission: v0.1/robot/Mission.md
                   - Robot: v0.1/robot/Robot.md
                   - Status: v0.1/robot/Status.md
-  - Guides:
-      - Setup:
-          - Authentication: guides/setup/authentication.md
-          - Examples:
-              - Python: guides/examples/python.md
-              - Golang: guides/examples/golang.md
-              - Java: guides/examples/java.md
-      - Errors and Troubleshooting: guides/errors.md
-  - Changelog: 
+  - Core Concepts:
+      - Mission: concepts/mission.md
+      - Localization: concepts/localization.md
+      - Location: concepts/location.md
+      - Status: concepts/status.md
+  - Changelog:
     - v1.0: changelog/v1.0.md
     - v0.1Beta: changelog/v0.1beta.md
