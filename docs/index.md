@@ -21,8 +21,10 @@ The following sequence diagram illustrates how a single unary request is propaga
 
 ```mermaid
 sequenceDiagram
-    box Client Network
+    box Client App Network
     participant Client
+    end
+    box Client Robot Network
     participant Robot as Target Robot
     end
     box Bear Network
@@ -46,13 +48,16 @@ The following sequence diagram illustrates how streaming data flows from a robot
 
 ```mermaid
 sequenceDiagram
-    box Client Network
+    box Client App Network
     participant Client
+    end
+    box Client Robot Network
     participant Robot as Target Robot
     end
     box Bear Network
     participant API as Cloud API Service
     end
+    
     
     loop Before subscription
         Robot->>API: Continuously publish status

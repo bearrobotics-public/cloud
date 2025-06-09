@@ -67,13 +67,13 @@ All three fields must be correctly matched for the credentials to be authorized:
 
 ## JWT Usage
 
-Once the JWT is obtained, it must be included in the Authorization header of each outgoing gRPC request using the following format:
+Once the JWT is obtained, it must be included in the metadata of each outgoing gRPC request using the following format:
 
 ```
 Authorization: Bearer <JWT>
 ```
 
-The JWT has an expiration time, specified by the `exp` field. To maintain uninterrupted access, it is recommended to refresh the JWT periodically, ideally every 15 to 20 minutes.
+The JWT has an expiration time, specified by the `exp` field. To maintain uninterrupted access, it is recommended to refresh the JWT periodically, ideally every 30 minutes.
 
 #### JWT Usage Examples
 
@@ -102,7 +102,7 @@ The JWT has an expiration time, specified by the `exp` field. To maintain uninte
 
         ctx, cancelRefresher := context.WithCancel(context.Background())
         go func() {
-            ticker := time.NewTicker(15 * time.Minute)
+            ticker := time.NewTicker(30 * time.Minute)
             defer ticker.Stop()
 
             for {
