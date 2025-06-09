@@ -1,7 +1,7 @@
 # Bear Cloud API
 
 ## Introduction
-Welcome to the Bear's **Cloud** respository. This repository contains:
+Welcome to the Bear Robotics **Cloud** repository. This repository contains:
 - Protocol Buffers (`.proto` files) defining the API specifications.
 - Documentation for integrating and using the Cloud API service. 
 
