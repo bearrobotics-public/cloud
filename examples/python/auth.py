@@ -1,8 +1,6 @@
 import grpc
 import json
-import os
 import requests
-from pathlib import Path
 
 AUTH_URL = "https://api-auth.bearrobotics.ai/authorizeApiAccess"
 CREDENTIALS_PATH = "resources/credentials.json"
