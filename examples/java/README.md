@@ -26,7 +26,7 @@ Create `src/main/resources/credentials.json`:
 ./gradlew build
 ```
 
-## Step 3: Try Different Streams
+## Step 3: Try Different Request Types (Streaming/Unary)
 
 ```bash
 # Basic battery status streaming with custom error handling
@@ -34,6 +34,9 @@ Create `src/main/resources/credentials.json`:
 
 # Concurrent streaming (both robot and mission status)
 ./gradlew run --args="<target_robot_id> concurrent"
+
+# Unary request example (CreateMission)
+./gradlew run --args="<target_robot_id> unary"
 ```
 
 ## Step 4: Custom Implementation
@@ -86,7 +89,6 @@ public class MyStreamingApp {
 
 - **Automatic JWT token refresh** - No auth interruptions
 - **Smart reconnection logic** - Retries subscription upon recoverable error codes
-- **Multiple concurrent streams** - Monitor multiple streams
 - **Custom callbacks** - Handle data with custom callbacks (`onResponse`, `onError`, `onCompleted`)
 
 ## Next Steps

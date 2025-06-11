@@ -4,6 +4,8 @@ import com.example.auth.BearAuthService;
 import com.example.auth.JwtCredentials;
 import com.example.streaming.StreamingClient;
 import com.example.streaming.StreamingRpcMethod;
+import com.example.unary.UnaryClient;
+import com.example.unary.UnaryRpcMethod;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -109,6 +111,17 @@ public class BearRoboticsClient {
      */
     public <TRequest, TResponse> StreamingClient.Builder<TRequest, TResponse> createStreamingClient() {
         return new StreamingClient.Builder<TRequest, TResponse>().credentials(credentials);
+    }
+
+    /**
+     * Create a unary client for any unary RPC with retry logic.
+     *
+     * @param <TRequest> The request type
+     * @param <TResponse> The response type
+     * @return A UnaryClient builder
+     */
+    public <TRequest, TResponse> UnaryClient.Builder<TRequest, TResponse> createUnaryClient() {
+        return new UnaryClient.Builder<TRequest, TResponse>().credentials(credentials);
     }
 
     /**
