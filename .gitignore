@@ -22,6 +22,7 @@ examples/java/.classpath
 examples/java/*.class
 
 # Package files
+examples/java/bin/
 examples/java/*.jar
 examples/java/*.war
 examples/java/*.nar

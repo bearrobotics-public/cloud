@@ -1,6 +1,7 @@
 package com.example;
 
 import com.example.streaming.StreamingClient;
+import com.example.unary.UnaryClient;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.util.logging.Logger;
 
 import bearrobotics.api.v1.core.FleetSelector.RobotSelector;
 import bearrobotics.api.v1.services.cloud.ApiService.*;
+import bearrobotics.api.v1.core.MissionOuterClass.*;
+import bearrobotics.api.v1.core.AnnotationOuterClass.Goal;
 
 /**
  * Examples demonstrating different ways to use the generic streaming client.
@@ -190,6 +193,58 @@ public class Main {
     }
 
     /**
+     * Example 3: Unary RPC with retry logic.
+     * Shows how to use the UnaryClient for RPC calls with retry capabilities.
+     */
+    public void unaryRpcExample(String robotId, String destinationId) {
+        logger.info("=== Unary RPC Example ===");
+        logger.info("Sending robot " + robotId + " to destination: " + destinationId);
+
+        // Create a Goal with the destination_id
+        Goal goal = Goal.newBuilder()
+                .setDestinationId(destinationId)
+                .build();
+
+        // Create a NavigateMission with the goal
+        NavigateMission navigateMission = NavigateMission.newBuilder()
+                .setGoal(goal)
+                .build();
+
+        // Create a BaseMission with the NavigateMission
+        BaseMission baseMission = BaseMission.newBuilder()
+                .setNavigateMission(navigateMission)
+                .build();
+
+        // Wrap the BaseMission in a Mission
+        Mission mission = Mission.newBuilder()
+                .setBaseMission(baseMission)
+                .build();
+
+        CreateMissionRequest request = CreateMissionRequest.newBuilder()
+                .setRobotId(robotId)
+                .setMission(mission)
+                .build();
+
+        // Create unary client with retry configuration
+        UnaryClient<CreateMissionRequest, CreateMissionResponse> unaryClient =
+            client.<CreateMissionRequest, CreateMissionResponse>createUnaryClient()
+                .rpcMethod(req -> client.getBlockingStub().createMission(req))
+                .request(request)
+                .rpcName("CreateMission")
+                .maxRetries(5)
+                .retryDelay(2000)
+                .build();
+
+        try {
+            CreateMissionResponse response = unaryClient.callBlocking();
+            logger.info("CreateMission Response received");
+            logger.info("Mission ID: " + response.getMissionId());
+        } catch (Exception e) {
+            logger.severe("Unary RPC failed after all retries: " + e.getMessage());
+        }
+    }
+
+    /**
      * Main method to run the examples.
      */
     public static void main(String[] args) {
@@ -197,6 +252,7 @@ public class Main {
         int port = 443;
         String robotId = args.length > 0 ? args[0] : "robot-1";
         String example = args.length > 1 ? args[1] : "basic";
+        String destinationId = args.length > 2 ? args[2] : "destination_1";
 
         try {
             BearRoboticsClient client = new BearRoboticsClient(host, port);
@@ -218,9 +274,12 @@ public class Main {
                 case "concurrent":
                     examples.multipleConcurrentStreamsExample(robotId);
                     break;
+                case "unary":
+                    examples.unaryRpcExample(robotId, destinationId);
+                    break;
                 default:
                     logger.severe("Unknown example: " + example);
-                    logger.info("Available examples: basic, concurrent");
+                    logger.info("Available examples: basic, concurrent, unary");
                     return;
             }
 
