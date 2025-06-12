@@ -13,6 +13,18 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 |`robot_ids`| `RobotIDs`| Selects robots by their specific IDs. <br/> Example: `["pennybot-123abc", "pennybot-abc123"]` |
 |`location_id`|`string` |  Selects all robots at the specified location. |
 
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "selector": {
+          "robot_ids": {
+            "ids": ["pennybot-abc123", "pennybot-123abc"]
+          }
+        }
+      }
+    ```
+
 ### Response
 
 ##### metadata `EventMetadata`
@@ -50,12 +62,7 @@ Represents the state of the robot's battery system.
 | CHARGE_METHOD_WIRED          | 2      | Charging via a wired connection.     |
 | CHARGE_METHOD_CONTACT           | 3      | Charging via contact-based interface (e.g., docking station).|
 
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
-
-### Examples
+##### JSON Response Examples
 === "JSON"
     ```json
     {
@@ -84,40 +91,10 @@ Represents the state of the robot's battery system.
     }
     ```
 
-=== "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
-    ```proto
-    message BatteryState {
-      int32 charge_percent = 1;
-
-      enum State {
-        STATE_UNKNOWN = 0;
-        STATE_CHARGING = 1;
-        STATE_DISCHARGING = 2;
-        STATE_FULL = 3;
-      }
-      State state = 2;
-
-      enum ChargeMethod {
-        CHARGE_METHOD_UNKNOWN = 0;
-        CHARGE_METHOD_NONE = 1;
-        CHARGE_METHOD_WIRED = 2;
-        CHARGE_METHOD_CONTACT = 3;
-      }
-      ChargeMethod charge_method = 3;
-    }
-
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-      int64 sequence_number = 2;
-    }
-
-    message SubscribeBatteryStatusResponse {
-      core.EventMetadata metadata = 1;
-      string robot_id = 2;
-      core.BatteryState battery_state = 3;
-    }
-    ```
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
 -----------
 ## SubscribeRobotStatus
@@ -133,6 +110,17 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 |`robot_ids`| `RobotIDs`| Selects robots by their specific IDs. <br/> Example: `["pennybot-123abc", "pennybot-abc123"]` |
 |`location_id`|`string` |  Selects all robots at the specified location. |
 
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "selector": {
+          "robot_ids": {
+            "ids": ["pennybot-abc123", "pennybot-123abc"]
+          }
+        }
+      }
+    ```
 ### Response
 ##### metadata `EventMetadata`
 
@@ -153,12 +141,7 @@ Represents the online connection state between the cloud and the robot.
 | STATE_CONNECTED          | 1      | The robot is connected to Bear cloud services. |
 | STATE_DISCONNECTED          | 2      | The robot is offline or unreachable from the cloud.   |
 
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
-
-### Examples
+##### JSON Response Example
 
 === "JSON"
     ```json
@@ -188,30 +171,7 @@ Represents the online connection state between the cloud and the robot.
     }
     ```
 
-=== "Protobuf"
-    ```proto
-    message RobotConnection {
-      enum State {
-        STATE_UNKNOWN = 0;
-        STATE_CONNECTED = 1;
-        STATE_DISCONNECTED = 2;
-      }
-      State state = 1;
-    }
-
-    message RobotState {
-      RobotConnection connection = 1;
-    }
-
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-      int64 sequence_number = 2;
-    }
-
-    message SubscribeRobotStatusResponse {
-      core.EventMetadata metadata = 1;
-      string robot_id = 2;
-      core.RobotState robot_states = 3;
-    }
-    ```
-
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|

@@ -18,134 +18,11 @@ The ID of the robot that the localization command is sent to.
 |[destination_id](../../v1.0/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
 |[Pose](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md#pose) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
 
-### Response
-
-*(No fields defined)* `{}` 
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-|`FAILED_PRECONDITION`   |  While the robot is localizing, any subsequent requests <br /> to localize the robot will return a error until the process is completed.|
-
-### Examples
-=== "Go"
-    ```go
-    package main
-
-    import (
-      "context"
-      "fmt"
-      "log"
-      "time"
-
-      "google.golang.org/grpc"
-      "google.golang.org/grpc/metadata"
-
-      corepb "your_project_path/bearrobotics/api/v1/core"
-      servicespb "your_project_path/bearrobotics/api/v1/services"
-    )
-
-    func GetToken() (string, error) {
-      // Fetch JWT token
-    }
-
-    func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
-      // Return a secure channel
-    }
-
-    func localizeRobotWithPose() {
-      token, err := GetToken()
-      if err != nil {
-        log.Fatalf("Token error: %v", err)
-      }
-
-      conn, cancel, err := createChannelWithCredentialsRefresh()
-      if err != nil {
-        log.Fatalf("Connection error: %v", err)
-      }
-      defer cancel()
-      defer conn.Close()
-
-      stub := servicespb.NewServicesClient(conn)
-
-      ctx, cancelCtx := context.WithTimeout(context.Background(), 5*time.Second)
-      defer cancelCtx()
-      ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-
-      req := &corepb.LocalizeRobotRequest{
-        RobotId: "pennybot-aaa111",
-        Goal: &corepb.Goal{
-          Goal: &corepb.Goal_Pose{
-            Pose: &corepb.Pose{
-              XMeters:        1.5,
-              YMeters:        2.8,
-              HeadingRadians: -0.52,
-            },
-          },
-        },
-      }
-
-      _, err = stub.LocalizeRobot(ctx, req)
-      if err != nil {
-        log.Fatalf("LocalizeRobot failed: %v", err)
-      }
-
-      fmt.Println("Localization request sent.")
-    }
-
-    func main() {
-      localizeRobotWithPose()
-    }
-    ```
-
-=== "Python gRPC"
-    ```python
-    import grpc
-    from bearrobotics.api.v1 import core_pb2
-    from bearrobotics.api.v1 import services_pb2_grpc
-
-    def get_token():
-        # Return JWT token
-        pass
-
-    def create_channel_with_credentials_refresh():
-        # Return secure channel
-        pass
-
-    def localize_robot_with_pose():
-        try:
-            token = get_token()
-            channel = create_channel_with_credentials_refresh()
-            stub = services_pb2_grpc.ServicesStub(channel)
-
-            request = core_pb2.LocalizeRobotRequest(
-                robot_id="pennybot-111aaa",
-                goal=core_pb2.Goal(
-                    pose=core_pb2.Pose(
-                        x_meters=1.5,
-                        y_meters=2.8,
-                        heading_radians=-0.52
-                    )
-                )
-            )
-
-            metadata = [("authorization", f"Bearer {token}")]
-            stub.LocalizeRobot(request, metadata=metadata)
-            print("Localization request sent.")
-
-        except grpc.RpcError as e:
-            print(f"gRPC error: {e.code().name} - {e.details()}")
-        except Exception as ex:
-            print(f"Unexpected error: {type(ex).__name__} - {ex}")
-    ```
-
-=== "gRPCurl"
-    ```bash
-    grpcurl \
-      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
-      -import-path protos \
-      -d '{
-        "robot_id": "pennybot-123123",
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-123123",
         "goal": {
           "pose": {
             "xMeters": 1.5,
@@ -153,34 +30,23 @@ The ID of the robot that the localization command is sent to.
             "headingRadians": -0.52
           }
         }
-      }' \
-      api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.cloud.APIService.LocalizeRobot
-    ```
-
-=== "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
-
-    ```proto
-    message Pose {
-      float x_meters = 1;
-      float y_meters = 2;
-      float heading_radians = 3;
-    }
-
-    message Goal {
-      oneof goal {
-        string destination_id = 1;
-        Pose pose = 2;
       }
-    }
-
-    message LocalizeRobotRequest {
-      string robot_id = 1;
-      core.Goal goal = 2;
-    }
     ```
 
+### Response
+
+*(No fields defined)* 
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+|`FAILED_PRECONDITION`   |  While the robot is localizing, any subsequent requests <br /> to localize the robot will return a error until the process is completed.|
 
 -----------
 
@@ -190,6 +56,14 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 ### Request
 ##### robot_id `string` `required`
 The ID of the robot that emergency stop subscription request is sent to.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-123123"
+      }
+    ```
 
 ### Response
 
@@ -207,13 +81,7 @@ The ID of the robot that emergency stop subscription request is sent to.
 | EMERGENCY_ENGAGED          | 1      | Triggers an emergency stop. <br/> Overrides and sets navigation-related velocity command to 0 to the motor.  |
 | EMERGENCY_DISENGAGED       | 2      | Wheels will resume acting upon software navigation commands.    |
 
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for `robot_id` you don't own. <br /> Tips: check the spelling of the `robot_id`.|
-
-### Examples
-##### Response
+##### JSON Response Example
 === "JSON"
     ```json
     {
@@ -227,31 +95,10 @@ The ID of the robot that emergency stop subscription request is sent to.
     }
     ```
 
-=== "Protobuf"
-    ```proto
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-
-      int64 sequence_number = 2;
-    }
-
-    message EmergencyStopState {
-
-      enum Emergency {
-        EMERGENCY_UNKNOWN = 0;
-
-        EMERGENCY_ENGAGED = 1;
-
-        EMERGENCY_DISENGAGED = 2;
-      }
-      Emergency emergency = 1;
-    }
-
-    message SubscribeEmergencyStopStatusResponse {
-      core.EventMetadata metadata = 1;
-      core.EmergencyStopState e_stop_state = 2;
-    }
-    ```
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for `robot_id` you don't own. <br /> Tips: check the spelling of the `robot_id`.|
 
 ## SubscribeLocalizationStatus
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get the robot’s localization state. Upon subscription, the latest localization state is sent immediately. State updates are streamed while localization is active.
@@ -259,6 +106,14 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 ### Request
 ##### robot_id `string` `required`
 The ID of the robot that subscription request is sent to.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-123123"
+      }
+    ```
 
 ### Response
 
@@ -277,13 +132,7 @@ The ID of the robot that subscription request is sent to.
 | STATE_SUCCEEDED          | 2      | Localization completed successfully.     |
 | STATE_LOCALIZING           | 3      | The robot is actively attempting to localize.  |
 
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` you don't own. <br /> Tips: check the spelling of all `robot_id` values.|
-
-### Examples
-##### Response
+##### JSON Response Example
 === "JSON"
     ```json
     {
@@ -296,30 +145,10 @@ The ID of the robot that subscription request is sent to.
       }
     }
     ```
-
-=== "Protobuf"
-    ```proto
-    message LocalizationState {
-      enum State {
-        STATE_UNKNOWN = 0;
-        STATE_FAILED = 1;
-        STATE_SUCCEEDED = 2;
-        STATE_LOCALIZING = 3;
-      }
-      State state = 2;
-    }
-
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-      int64 sequence_number = 2;
-    }
-
-    message SubscribeLocalizationStatusResponse {
-      core.EventMetadata metadata = 1;
-      core.LocalizationState localization_state = 2;
-    }
-    ```
-
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` you don't own. <br /> Tips: check the spelling of all `robot_id` values.|
 
 -----------
 ## SubscribeRobotPose
@@ -338,6 +167,18 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 |`robot_ids`| `RobotIDs`| Selects robots by their specific IDs. <br/> Example: `["pennybot-123abc", "pennybot-abc123"]` |
 |`location_id`|`string` |  Selects all robots at the specified location. |
 
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "selector": {
+          "robot_ids": {
+            "ids": ["pennybot-abc123", "pennybot-123abc"]
+          }
+        }
+      }
+    ```
+
 ### Response
 ##### PoseWithMetadata
 
@@ -354,14 +195,7 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 | `y_meters` | float | Y-coordinate in meters within the map. |
 | `heading_radians` | float | The heading of the robot in radians.<br>Ranges from -π to π, where 0.0 points along the positive x-axis. |
 
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to request status for a `robot_id`  or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
-
-### Examples
-##### Response
+##### JSON Response Example
 === "JSON"
     ```js
     {
@@ -392,26 +226,7 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
     }
     ```
 
-=== "Protobuf"
-    ```proto
-    message Pose {
-      float x_meters = 1;
-      float y_meters = 2;
-      float heading_radians = 3;
-    }
-
-    message PoseWithMetadata {
-      EventMetadata metadata = 1;
-      Pose pose = 2;
-    }
-
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-      int64 sequence_number = 2;
-    }
-
-    message SubscribeRobotPoseResponse {
-      map<string, core.PoseWithMetadata> poses = 2;
-    }
-    ```
-
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id`  or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
