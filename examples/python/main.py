@@ -31,7 +31,7 @@ def main():
         return 1
 
     robot_id = sys.argv[1]
-    
+
     if len(sys.argv) > 2:
         mode = sys.argv[2]
     else:
@@ -45,10 +45,6 @@ def main():
     channel = grpc.secure_channel(
         f"{host}:{port}",
         grpc.ssl_channel_credentials(),
-        options=[
-            ("grpc.keepalive_time_ms", 30000),
-            ("grpc.keepalive_timeout_ms", 10000),
-        ]
     )
     stub = APIServiceStub(channel)
 

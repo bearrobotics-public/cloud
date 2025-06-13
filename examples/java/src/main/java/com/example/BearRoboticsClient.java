@@ -64,8 +64,6 @@ public class BearRoboticsClient {
         // Build the channel with TLS and keep-alive options for long-running connections
         channel = ManagedChannelBuilder.forAddress(host, port)
                 .useTransportSecurity() // Use TLS for secure connection
-                .keepAliveTime(30, TimeUnit.SECONDS) // Send keepalive ping every 30 seconds
-                .keepAliveTimeout(10, TimeUnit.SECONDS) // Wait 10 seconds for ping ack before considering connection dead
                 .build();
 
         // Create the stubs with authentication
