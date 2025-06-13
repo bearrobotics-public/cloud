@@ -11,6 +11,15 @@ The returned map includes annotations and destinations, which can be used in mis
 ##### robot_id `string` `required`
 The robot ID used to request the map currently loaded on the robot.
 
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robot_id": "pennybot-abc123"
+      }
+    ```
+
 ### Response
 
 ##### map `Map`
@@ -42,15 +51,7 @@ Destination represents a single point of interest on the map that a robot can na
 | `destination_id` | string | Unique identifier for the destination. |
 | `display_name` | string | Human-readable name for the destination. |
 
-### Errors
-
-| ErrorCode  | Description |
-|------------|-------------|
-| `NOT_FOUND`| The annotation (of the requested map) does not exist. |
-
-### Examples
-
-##### Response
+##### JSON Response Example
 === "JSON"
     ```js
        {
@@ -76,40 +77,8 @@ Destination represents a single point of interest on the map that a robot can na
         }
       }
     ```
+### Errors
 
-=== "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
-    
-    ```proto
-    message Destination {
-      string destination_id = 1;
-
-      string display_name = 2;
-
-    }
-
-    message Annotation {
-
-      string annotation_id = 1;
-
-      string display_name = 2;
-
-      google.protobuf.Timestamp created_time = 3;
-
-      map<string, Destination> destinations = 4;
-    }
-
-    message Map {
-
-      string map_id = 1;
-
-      google.protobuf.Timestamp created_time = 2;
-
-      google.protobuf.Timestamp modified_time = 3;
-
-      string display_name = 4;
-
-      Annotation annotation = 5;
-    }
-    ```
-    
+| ErrorCode  | Description |
+|------------|-------------|
+| `NOT_FOUND`| The annotation (of the requested map) does not exist. |

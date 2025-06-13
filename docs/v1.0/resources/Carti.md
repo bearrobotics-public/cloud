@@ -54,11 +54,36 @@ A traverse patrol mission that navigates to one or more goals and continuously l
 |`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`TraversePatrolParam` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**Refer to the [examples](#examples) for how to create and send a Carti mission.**
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "carti-001",
+        "mission": {
+          "cartiMission": {
+            "traverseMission": {
+              "goals": [
+                { "destinationId": "room-a" },
+                { "destinationId": "room-b" }
+              ],
+              "params": {}
+            }
+          }
+        }
+      }
+    ```
 
 ### Response
 ##### **mission_id** `string`
 The ID of the mission created. 
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {
+        "missionId": "mission-abc123"
+      }
+    ```
 
 ### Errors
 
@@ -66,187 +91,3 @@ The ID of the mission created.
 |------------|-------------|
 |`INVALID_ARGUMENT`      | This command is sending to is not a Carti family robot. |
 |`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](Mission.md#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
-
-
-### Examples
-=== "Go"
-    ```go
-    package main
-
-    import (
-      "context"
-      "fmt"
-      "log"
-      "time"
-
-      "google.golang.org/grpc"
-      "google.golang.org/grpc/metadata"
-
-      corepb "your_project_path/bearrobotics/api/v1/core"
-      servicespb "your_project_path/bearrobotics/api/v1/services"
-    )
-
-    func GetToken() (string, error) {
-      // Return a valid Bearer token.
-    }
-
-    func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
-      // Return a secure gRPC channel with refreshable credentials.
-    }
-
-    func createTraverseMission() {
-      token, err := GetToken()
-      if err != nil {
-        log.Fatalf("Failed to get token: %v", err)
-      }
-
-      conn, cancel, err := createChannelWithCredentialsRefresh()
-      if err != nil {
-        log.Fatalf("Failed to create channel: %v", err)
-      }
-      defer cancel()
-      defer conn.Close()
-
-      stub := servicespb.NewServicesClient(conn)
-
-      ctx, cancelCtx := context.WithTimeout(context.Background(), 5*time.Second)
-      defer cancelCtx()
-      ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-
-      req := &corepb.CreateMissionRequest{
-        RobotId: "robot-123",
-        Mission: &corepb.Mission{
-          Mission: &corepb.Mission_TraverseMission{
-            TraverseMission: &corepb.TraverseMission{
-              Goals: []*corepb.Goal{
-                {
-                  Goal: &corepb.Goal_DestinationId{
-                    DestinationId: "room-a",
-                  },
-                },
-                {
-                  Goal: &corepb.Goal_DestinationId{
-                    DestinationId: "room-b",
-                  },
-                },
-              },
-              Params: &corepb.TraverseParams{},
-            },
-          },
-        },
-      }
-
-      resp, err := stub.CreateMission(ctx, req)
-      if err != nil {
-        log.Fatalf("CreateMission failed: %v", err)
-      }
-
-      fmt.Println("Created mission ID:", resp.MissionId)
-    }
-
-    func main() {
-      createTraverseMission()
-    }
-    ```
-
-=== "Python gRPC"
-    ```python
-    import grpc
-    from bearrobotics.api.v1 import core_pb2
-    from bearrobotics.api.v1 import services_pb2_grpc
-
-    def get_token():
-        # Return a valid Bearer token
-        pass
-
-    def create_channel_with_credentials_refresh():
-        # Return a secure gRPC channel
-        pass
-
-    def create_traverse_mission():
-        try:
-            token = get_token()
-            channel = create_channel_with_credentials_refresh()
-            stub = services_pb2_grpc.ServicesStub(channel)
-
-            request = core_pb2.CreateMissionRequest(
-                robot_id="robot-123",
-                mission=core_pb2.Mission(
-                    traverse_mission=core_pb2.TraverseMission(
-                        goals=[
-                            core_pb2.Goal(destination_id="room-a"),
-                            core_pb2.Goal(destination_id="room-b")
-                        ],
-                        param=core_pb2.TraverseParams()
-                    )
-                )
-            )
-
-            metadata = [("authorization", f"Bearer {token}")]
-            response = stub.CreateMission(request, metadata=metadata)
-            print("Created mission ID:", response.mission_id)
-
-        except grpc.RpcError as e:
-            print(f"gRPC error: {e.code().name} - {e.details()}")
-        except Exception as ex:
-            print(f"Unexpected error: {type(ex).__name__} - {ex}")
-    ```
-
-=== "gRPCurl"
-    ```bash
-    grpcurl \
-      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
-      -import-path protos \
-      -d '{
-        "robot_id": "robot-123",
-        "mission": {
-          "traverseMission": {
-            "goals": [
-              { "destinationId": "room-a" },
-              { "destinationId": "room-b" }
-            ],
-            "params": {}
-          }
-        }
-      }' \
-      api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.cloud.APIService.CreateMission
-    ```
-
-=== "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
-    ```proto
-    message Goal {
-      oneof goal {
-        string destination_id = 1;
-      }
-    }
-
-    message TraverseParams {}
-
-    message TraverseMission {
-      repeated core.Goal goals = 1;
-      TraverseParams params = 2;
-    }
-
-    message carti.Mission {
-      oneof mission {
-        TraverseMission traverse_mission = 1;
-      }
-    }
-
-    message Mission {
-      oneof mission {
-        carti.Mission carti_mission = 3;
-      }
-    }
-
-    message CreateMissionRequest {
-      string robot_id = 1;
-      core.Mission mission = 2;
-    }
-
-    message CreateMissionResponse {
-      string mission_id = 1;
-    }
-    ```

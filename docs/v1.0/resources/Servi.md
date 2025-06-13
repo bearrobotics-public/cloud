@@ -76,12 +76,36 @@ A that continuously loops through goals, stopping at each for a set amount of ti
 |`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
 |`params`|`DeliveryPatrolParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**Refer to the [examples](#examples) for how to create and send a Carti mission.**
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-456efg",
+        "mission": {
+          "serviMission": {
+            "bussingMission": {
+              "goals": [
+                { "destinationId": "pickup-table-1" },
+                { "destinationId": "dropoff-station-3" }
+              ],
+              "params": {}
+            }
+          }
+        }
+      }
+    ```
 
 ### Response
 ##### **mission_id** `string`
 The ID of the mission created. 
 
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {
+        "missionId": "mission-abc123"
+      }
+    ```
 ### Errors
 
 | ErrorCode  | Description |
@@ -89,186 +113,6 @@ The ID of the mission created.
 |`INVALID_ARGUMENT`      | This command is sending to is not a Carti family robot. |
 |`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](Mission.md#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
 
-### Examples
-=== "Go"
-    ```go
-    package main
-
-    import (
-      "context"
-      "fmt"
-      "log"
-      "time"
-
-      "google.golang.org/grpc"
-      "google.golang.org/grpc/metadata"
-
-      corepb "your_project_path/bearrobotics/api/v1/core"
-      servicespb "your_project_path/bearrobotics/api/v1/services"
-    )
-
-    func GetToken() (string, error) {
-      // Fetch your API key JWT and return it as a string.
-    }
-
-    func createChannelWithCredentialsRefresh() (*grpc.ClientConn, context.CancelFunc, error) {
-      // Return a secure gRPC channel with credentials.
-    }
-
-    func createBussingMission() {
-      token, err := GetToken()
-      if err != nil {
-        log.Fatalf("Failed to get token: %v", err)
-      }
-
-      conn, cancel, err := createChannelWithCredentialsRefresh()
-      if err != nil {
-        log.Fatalf("Failed to create channel: %v", err)
-      }
-      defer cancel()
-      defer conn.Close()
-
-      stub := servicespb.NewServicesClient(conn)
-
-      ctx, cancelCtx := context.WithTimeout(context.Background(), 5*time.Second)
-      defer cancelCtx()
-      ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-
-      req := &corepb.CreateMissionRequest{
-        RobotId: "pennybot-456efg",
-        Mission: &corepb.Mission{
-          Mission: &corepb.Mission_BussingMission{
-            BussingMission: &corepb.BussingMission{
-              Goals: []*corepb.Goal{
-                {
-                  Goal: &corepb.Goal_DestinationId{
-                    DestinationId: "pickup-table-1",
-                  },
-                },
-                {
-                  Goal: &corepb.Goal_DestinationId{
-                    DestinationId: "dropoff-station-3",
-                  },
-                },
-              },
-              Params: &corepb.BussingParams{},
-            },
-          },
-        },
-      }
-
-      resp, err := stub.CreateMission(ctx, req)
-      if err != nil {
-        log.Fatalf("CreateMission failed: %v", err)
-      }
-
-      fmt.Println("Created mission ID:", resp.MissionId)
-    }
-
-    func main() {
-      createBussingMission()
-    }
-    ```
-
-=== "Python gRPC"
-    ```python
-    import grpc
-    from bearrobotics.api.v1 import core_pb2
-    from bearrobotics.api.v1 import services_pb2_grpc
-
-    def get_token():
-        # Fetch your API key JWT
-        pass
-
-    def create_channel_with_credentials_refresh():
-        # Return a secure gRPC channel
-        pass
-
-    def create_bussing_mission():
-        try:
-            token = get_token()
-            channel = create_channel_with_credentials_refresh()
-            stub = services_pb2_grpc.ServicesStub(channel)
-
-            request = core_pb2.CreateMissionRequest(
-                robot_id="pennybot-456efg",
-                mission=core_pb2.Mission(
-                    bussing_mission=core_pb2.BussingMission(
-                        goals=[
-                            core_pb2.Goal(destination_id="pickup-table-1"),
-                            core_pb2.Goal(destination_id="dropoff-station-3")
-                        ],
-                        params=core_pb2.BussingParams()
-                    )
-                )
-            )
-
-            metadata = [("authorization", f"Bearer {token}")]
-            response = stub.CreateMission(request, metadata=metadata)
-            print("Created mission ID:", response.mission_id)
-
-        except grpc.RpcError as e:
-            print(f"gRPC error: {e.code().name} - {e.details()}")
-        except Exception as ex:
-            print(f"Unexpected error: {type(ex).__name__} - {ex}")
-    ```
-
-=== "gRPCurl"
-    ```bash
-    grpcurl \
-      -proto bearrobotics/api/v1/services/cloud_api_service.proto \
-      -import-path protos \
-      -d '{
-        "robot_id": "pennybot-456efg",
-        "mission": {
-          "bussingMission": {
-            "goals": [
-              { "destinationId": "pickup-table-1" },
-              { "destinationId": "dropoff-station-3" }
-            ],
-            "params": {}
-          }
-        }
-      }' \
-      api.bearrobotics.api:443 \
-      bearrobotics.api.v1.services.cloud.APIService.CreateMission
-    ```
-
-=== "Protobuf"
-    ###### Refer to our [public protobuf repo](https://github.com/bearrobotics-public/cloud/tree/v1.0) for actual package names and full definitions.
-    ```proto
-    message Goal {
-      oneof goal {
-        string destination_id = 1;
-      }
-    }
-
-    message BussingParams {}
-
-    message BussingMission {
-      repeated core.Goal goals = 1;  
-      BussingParams params = 2;
-    }
-
-    message servi.Mission {
-      oneof mission {
-        DeliveryMission delivery_mission = 1;
-        BussingMission bussing_mission = 2;
-        DeliveryPatrolMission delivery_patrol_mission = 3;
-        BussingPatrolMission bussing_patrol_mission = 4;
-        servi.Mission servi_mission = 5;
-      }
-    }
-
-    message CreateMissionRequest {
-      string robot_id = 1;
-      core.Mission mission = 2;
-    }
-
-    message CreateMissionResponse {
-      string mission_id = 1;
-    }
-    ```
 -----------
 ## SubscribeTrayStatuses
 Subscribes to the robot’s tray status updates. <br />
@@ -289,6 +133,19 @@ Upon subscription, the latest known tray states are sent immediately. Updates ar
 2. `location_id` `string` <br/>
   Selects all robots at the specified location. <br/>
 
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "selector": {
+          "robotIds": {
+            "ids": [
+              "pennybot-456efg"
+            ]
+          }
+        }
+      }
+    ```
 ### Response
 ##### tray_states `map<string, TrayStatesWithMetadata>`
 A mapping of tray states reported by individual robots. Each entry pairs a robot ID (key) with its corresponding tray states.
@@ -326,8 +183,7 @@ Represents the state of a single tray.
 |`INVALID_ARGUMENT`   | This command is sending to is not a Servi family robot. |
 | `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 
-### Examples
-##### Response
+##### JSON Response Example
 === "JSON"
     ```js
     {
@@ -359,40 +215,6 @@ Represents the state of a single tray.
           ]
         }
       }
-    }
-    ```
-
-=== "Protobuf"
-    ```proto
-    message TrayState {
-      string tray_name = 1;
-      enum LoadState {
-        LOAD_STATE_UNKNOWN = 0;
-        LOAD_STATE_LOADED = 1;
-        LOAD_STATE_EMPTY = 2;
-        LOAD_STATE_OVERLOADED = 3;
-      }
-      LoadState load_state = 2;
-      float weight_kg = 3;
-      float load_ratio = 4;
-    }
-
-    message TrayStates {
-      repeated TrayState tray_states = 1;
-    }
-
-    message EventMetadata {
-      google.protobuf.Timestamp timestamp = 1;
-      int64 sequence_number = 2;
-    }
-
-    message TrayStatesWithMetadata {
-      core.EventMetadata metadata = 1;
-      TrayStates tray_states = 2;
-    }
-
-    message SubscribeTrayStatusesResponse {
-      map<string, servi.TrayStatesWithMetadata> tray_states = 2;
     }
     ```
 
