@@ -90,6 +90,9 @@ The ID of the mission created.
 | ErrorCode  | Description |
 |------------|-------------|
 |`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
+|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry creating the mission.
+|`DEADLINE_EXCEEDED`    |  The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry creating the mission. |
 
 ## AppendMission 
 Appends a mission to the end of the [mission queue](../../concepts/mission.md#mission-queue). <br/>
@@ -104,7 +107,10 @@ Missions are executed in the order they are appended.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-|`FAILED_PRECONDITION`   |  There is no mission in the mission queue.|
+|`FAILED_PRECONDITION`   |  There is no mission in the mission queue. Client should first create the initial mission, and only use Append for queuing additional missions. |
+|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
+|`DEADLINE_EXCEEDED`    |  The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry appending the mission. |
 
 -----------
 ## UpdateMission 
@@ -164,8 +170,10 @@ The ID of the robot that will receive this command.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `NOT_FOUND` | The robot is NOT on the mission specified in the request. |
-| `INVALID_ARGUMENT`| The command is invalid for the robot's current state. <br /> For example, mission in [terminal state](#state-enum) (Cancelled, Succeeded, Failed) can't be updated. |
+| `FAILED_PRECONDITION` | The robot is either not on a mission, or the command is invalid for the robot's current state. <br /> For example, mission in [terminal state](#state-enum) (Cancelled, Succeeded, Failed) can't be updated. |
+| `INVALID_ARGUMENT`| The client supplied a request with invalid format. This covers sending empty requests, invalid commands, incorrect mission ID, and other format errors. Client should update their usage to have correctly formatted requests with valid commands, and ensure the mission id matches the currently running mission. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
+|`DEADLINE_EXCEEDED`    |  The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry appending the mission. |
 
 -----------
 ## SubscribeMissionStatus 
@@ -319,3 +327,5 @@ The ID of the mission created. Since this command is a special type of mission, 
 | ErrorCode  | Description |
 |------------|-------------|
 |`FAILED_PRECONDITION`   |  The robot is already executing a mission. <br />  The current mission must be canceled before issuing this command. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry creating the mission.
+|`DEADLINE_EXCEEDED`    |  The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry creating the mission. |

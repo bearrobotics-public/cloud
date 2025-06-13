@@ -71,3 +71,8 @@
 hr {
   padding-top: 1.6rem; 
 }
+
+/* Only prevent wrapping in the first column */
+.md-typeset table td:first-child, .md-typeset table th:first-child {
+  white-space: nowrap;
+}
