@@ -154,9 +154,6 @@ The ID of the robot that subscription request is sent to.
 ## SubscribeRobotPose
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to subscribe to the robot's pose estimates at a regular frequency. (~10Hz) Use this to track the robot's position in real time.
 
-!!! Warning
-    Current implementation supports up to 5 robots. Requests with more than 5 robots will return a `RESOURCE_EXHAUSTED` error. When using `location_id` as a selector, the response will include the first 5 robots sorted alphabetically.
-
 ### Request
 ##### selector `RobotSelector` `required`
 `RobotSelector` is used to select specific robots. <br/>
