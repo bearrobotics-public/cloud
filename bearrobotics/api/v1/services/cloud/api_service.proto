@@ -106,8 +106,8 @@ service APIService {
   // Localizes the robot to a known pose or destination.
   //
   // If the request is accepted, subscribe to `SubscribeLocalizationStatus`
-  // to track localization progress. While the robot is localizing, 
-  // any subsequent requests to localize the robot will return a 
+  // to track localization progress. While the robot is localizing,
+  // any subsequent requests to localize the robot will return a
   // FAILED_PRECONDITION error until the process is completed.
   rpc LocalizeRobot(LocalizeRobotRequest) returns (LocalizeRobotResponse) {
     option (google.api.http) = {post: "/v1/robot/localize"};
@@ -137,11 +137,7 @@ service APIService {
   }
 
   // Subscribes to the robot's pose estimates at a regular frequency. (~10Hz)
-  // 
-  // Current implementation supports up to 5 robots. Requests with more than 5 robots
-  // will return a RESOURCE_EXHAUSTED error. When using `location_id` as a selector,
-  // the response will include the first 5 robots sorted alphabetically.
-  // 
+  //
   // Use this to track the robot's position in real time.
   rpc SubscribeRobotPose(SubscribeRobotPoseRequest)
       returns (stream SubscribeRobotPoseResponse) {
@@ -190,7 +186,7 @@ service APIService {
 
   // === Servi-Specific =======================================================
   // These endpoints are only available for the Servi robot family.
-  // Attempting to run a Servi commands on a non Servi robot 
+  // Attempting to run a Servi commands on a non Servi robot
   // will result in an INVALID_ARGUMENT error.
 
 
@@ -303,15 +299,15 @@ message SubscribeMissionStatusRequest {
 message SubscribeMissionStatusResponse {
   core.EventMetadata metadata = 1;
   string robot_id = 2;
-  core.MissionState mission_state = 3; 
+  core.MissionState mission_state = 3;
 }
 
 message SubscribeRobotPoseRequest {
-  
+
   // The current implementation supports up to 5 robots.
   // Using location_id as a selector returns pose estimates
   // for the first 5 robots at that location, sorted alphabetically.
-  core.RobotSelector selector = 1; 
+  core.RobotSelector selector = 1;
 }
 
 message SubscribeRobotPoseResponse {
