@@ -19,6 +19,12 @@ There are two different types of RPCs available, **unary** and **server-side str
 
 The following sequence diagram illustrates how a single unary request is propagated from a client to a target robot through the Bear Cloud API service:
 
+!!! note
+
+    Unlike streaming RPCs, unary RPCs for executing commands on robots require a full round trip to and from the target robot as shown in the diagram below. This means such requests are susceptible to the network environment robots are in.
+
+    If the robot-side network fails temporarily, dropping either the inbound request to the robot or the outbound response from the robot, the Cloud API service will issue a timeout after 10 seconds, returning a `DEADLINE_EXCEEDED` error (`504 Gateway Timeout` for REST API calls) back to unblock the caller.
+
 ```mermaid
 sequenceDiagram
     box Client App Network

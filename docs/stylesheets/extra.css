@@ -76,3 +76,261 @@ hr {
 .md-typeset table td:first-child, .md-typeset table th:first-child {
   white-space: nowrap;
 }
+
+/* Swagger UI Schema Improvements for Better Horizontal Space Usage */
+.swagger-ui .models {
+  max-width: none !important;
+}
+
+.swagger-ui .model-box {
+  max-width: none !important;
+  overflow-x: auto !important;
+}
+
+.swagger-ui .model-container {
+  max-width: none !important;
+  overflow-x: auto !important;
+}
+
+/* Improve schema property display for deeply nested objects */
+.swagger-ui .property-row {
+  white-space: nowrap !important;
+  overflow-x: auto !important;
+  min-width: 0 !important;
+}
+
+.swagger-ui .prop-name {
+  white-space: nowrap !important;
+  min-width: auto !important;
+  flex-shrink: 0 !important;
+}
+
+.swagger-ui .prop-type {
+  white-space: nowrap !important;
+  min-width: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* Make nested schema containers use horizontal scrolling */
+.swagger-ui .model .object .property-row,
+.swagger-ui .model .object .inner-object {
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
+
+/* Ensure schema examples use horizontal space better */
+.swagger-ui .model .example {
+  overflow-x: auto !important;
+  white-space: pre !important;
+  max-width: none !important;
+}
+
+/* Target the main schema display areas */
+.swagger-ui .models-control,
+.swagger-ui .model,
+.swagger-ui .model-box-control {
+  max-width: none !important;
+  overflow-x: auto !important;
+}
+
+/* Improve the overall models section layout */
+.swagger-ui .models {
+  display: block !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* Prevent text wrapping in schema property names and types */
+.swagger-ui .model .property .prop-name,
+.swagger-ui .model .property .prop-type,
+.swagger-ui .model .property .prop-format {
+  word-break: keep-all !important;
+  white-space: nowrap !important;
+}
+
+/* Enable horizontal scrolling for deeply nested schema containers */
+.swagger-ui .model .object,
+.swagger-ui .model .array,
+.swagger-ui .model .primitive {
+  overflow-x: auto !important;
+  max-width: none !important;
+}
+
+/* Fix the specific issue with renderedMarkdown in description sections */
+.swagger-ui .description .renderedMarkdown {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  max-width: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+.swagger-ui .description .renderedMarkdown p,
+.swagger-ui .description .renderedMarkdown div,
+.swagger-ui .description .renderedMarkdown span {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  display: block !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+/* Ensure the parent description container doesn't constrain width */
+.swagger-ui .description {
+  max-width: none !important;
+  width: auto !important;
+  flex-basis: auto !important;
+  min-width: 0 !important;
+}
+
+/* Fix any overly constrained flex containers that might cause the 1-2 char issue */
+.swagger-ui .model .property .description,
+.swagger-ui .property .description {
+  flex: 1 1 auto !important;
+  min-width: 200px !important;
+  max-width: none !important;
+}
+
+/* Prevent layout shifts when nested schemas are expanded */
+.swagger-ui .model .property {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.swagger-ui .property .property-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+}
+
+/* Keep description in a fixed position within the property row */
+.swagger-ui .property .property-row .description {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  min-width: 300px !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure nested content appears below the main property row, not shifting it */
+.swagger-ui .property .inner-object,
+.swagger-ui .property .model,
+.swagger-ui .property .object {
+  width: 100% !important;
+  margin-top: 10px !important;
+  margin-left: 20px !important;
+  position: relative !important;
+  clear: both !important;
+}
+
+/* Prevent the description from being affected by nested content layout */
+.swagger-ui .description .renderedMarkdown {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix the double scrollbar issue on model-box-control hover */
+.swagger-ui .model-box-control,
+.swagger-ui .model-box-control:hover {
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.swagger-ui .model-box,
+.swagger-ui .model-box:hover {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Prevent any hover effects from creating additional scrollbars */
+.swagger-ui .model-box-control:hover .model,
+.swagger-ui .model-box-control:hover .model-box {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: none !important;
+}
+
+/* Ensure model containers don't create duplicate scrollbars on interaction */
+.swagger-ui .model-container,
+.swagger-ui .model-container:hover {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* Fix schema button alignment in the schemas section */
+.swagger-ui .models .model-container .model-box-control {
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  width: 100% !important;
+  padding-right: 8px !important;
+}
+
+.swagger-ui .models .model-container .model-box-control .model-box-control-title {
+  display: flex !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  margin-right: 0 !important;
+}
+
+/* Create a spacer element to push arrow to the right with consistent gap */
+.swagger-ui .models .model-container .model-box-control::before {
+  content: '' !important;
+  flex: 1 1 auto !important;
+  min-width: 8px !important;
+  max-width: 8px !important;
+  height: 0 !important;
+  line-height: 0 !important;
+  align-self: center !important;
+}
+
+.swagger-ui .models .model-container .model-box-control .model-toggle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  margin-left: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Ensure schema name and arrow are on the same line */
+.swagger-ui .models .model-container .model-box-control > span,
+.swagger-ui .models .model-container .model-box-control > div {
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+}
+
+/* Fix any text elements that might be causing line breaks */
+.swagger-ui .models .model-container .model-box-control .model-title,
+.swagger-ui .models .model-container .model-box-control .title {
+  display: inline !important;
+  white-space: nowrap !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure the arrow/chevron stays aligned to the right with fixed spacing */
+.swagger-ui .models .model-container .model-box-control:after,
+.swagger-ui .models .model-container .model-box-control .arrow,
+.swagger-ui .models .model-container .model-box-control .chevron {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  margin-left: 0 !important;
+  flex-shrink: 0 !important;
+  height: 100% !important;
+  line-height: 1 !important;
+  align-self: center !important;
+}
