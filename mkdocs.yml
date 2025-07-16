@@ -20,6 +20,13 @@ theme:
   logo: assets/bear_logo_white.png
 extra_css:
   - stylesheets/extra.css
+extra_javascript:
+  - swagger-ui/swagger-horizontal-improvements.js
+plugins:
+  - search
+  - render_swagger:
+      javascript: ../../../swagger-ui/swagger-ui-bundle.js
+      css: ../../../swagger-ui/swagger-ui.css
 markdown_extensions:
   - admonition
   - toc:
@@ -54,7 +61,8 @@ nav:
       - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
       - v1.0:
-          - Core resources:
+          - REST API: v1.0/resources/RestAPI.md
+          - gRPC API:
               - Mission: v1.0/resources/Mission.md
               - Locations & Maps: v1.0/resources/LocationsAndMaps.md
               - Localization & Navigation: v1.0/resources/Localization.md
