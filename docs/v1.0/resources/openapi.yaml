@@ -9,7 +9,7 @@ tags:
     - name: APIService
       description: Robot control, navigation, monitoring, and fleet management endpoints
 servers:
-  - url: http://api.bearrobotics.ai
+  - url: https://api.bearrobotics.ai
 security:
     - BearerAuth: []
 paths:
