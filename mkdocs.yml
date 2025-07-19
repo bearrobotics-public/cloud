@@ -61,15 +61,15 @@ nav:
       - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
       - v1.0:
-          - REST API: v1.0/resources/RestAPI.md
           - gRPC API:
               - Mission: v1.0/resources/Mission.md
               - Locations & Maps: v1.0/resources/LocationsAndMaps.md
               - Localization & Navigation: v1.0/resources/Localization.md
               - Robot Status: v1.0/resources/RobotStatus.md
               - Fleet Management: v1.0/resources/FleetManagement.md
-          - Carti: v1.0/resources/Carti.md
-          - Servi: v1.0/resources/Servi.md
+              - Carti: v1.0/resources/Carti.md
+              - Servi: v1.0/resources/Servi.md
+          - REST API: v1.0/resources/RestAPI.md
       - v0.1Beta:
           - Services:
               - Cloud API Service: v0.1/cloud/CloudApiService.md
