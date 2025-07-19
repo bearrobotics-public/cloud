@@ -1,3 +1,8 @@
+!!! warning
+
+    - This REST API currently supports a subset of our gRPC APIs and is under active development.
+    - API specifications may change without prior notice during the development phase.
+
 Starting from the v1.0 API, REST endpoints are also available for unary RPCs. Given an identical payload and target RPC, a REST API call would perform the exact same operation with that of gRPC.
 
 !!! note
