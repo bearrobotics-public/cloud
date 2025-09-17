@@ -1,7 +1,8 @@
+# Fleet Management
+
 Utilities for managing multiple robots within an account or workspace.
 
------------
-## ListRobotIDs
+## ListRobotIDs 
 Retrieves a list of robot IDs the user has access to, filtered by optional criteria. <br />
 The list includes all known robots, regardless of their current connection state. <br />
 
@@ -51,13 +52,13 @@ A response message has 2 fields: <br/>
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
+| `INVALID_ARGUMENT` | Invalid API key or request parameters. |
 | `PERMISSION_DENIED` | Attempting to retrieve Robot IDs with a `location_id` you don't own. <br /> Tips: check the spelling of all `location_id` values.|
-
+| `INTERNAL` | Internal server error occurred while processing the request. |
 
 -----------
 ## GetAvailableLocations
-
-Returns a map of locations the user has access to.
+Returns a map of locations the user has access to. <br />
 
 The map consists of the location ID (key) paired with its human-readable name (value).
 
@@ -74,7 +75,8 @@ The map consists of the location ID (key) paired with its human-readable name (v
 ### Response
 
 ##### locations `map<string, string>`
-A mapping of location ID (key) with its corresponding, human-readable location name.
+A mapping of location ID (key) with its corresponding, human-readable location name. <br />
+e.g. { "1D9X": "785_Platform" }
 
 ##### JSON Response Example
 === "JSON"
@@ -82,8 +84,8 @@ A mapping of location ID (key) with its corresponding, human-readable location n
       {
         "locations": {
           "1D9X": "785_Platform",
-          "3R0A": "Main_Kitchen",
-          "QSVS": "Warehouse_A"
+          "3R0A": "Main Office Building",
+          "5K2B": "Warehouse Facility"
         }
       }
     ```
@@ -91,4 +93,5 @@ A mapping of location ID (key) with its corresponding, human-readable location n
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `PERMISSION_DENIED` | User does not have permission to access location information. |
+| `INVALID_ARGUMENT` | Invalid API key or request parameters. |
+| `INTERNAL` | Internal server error occurred while processing the request. |
