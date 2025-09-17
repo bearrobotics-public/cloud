@@ -74,7 +74,7 @@ Represents a target destination or pose for the robot to navigate to.
 | Field (*oneof*) | Message Type | Description |
 |------|------|-------------|
 |`destination_id`| `string` | ID of a predefined destination on the map. |
-|`pose`| [`Pose`](Localization.md#pose) | Direct pose coordinates (x, y, heading). |
+|`pose`| [`Pose`](../LocalizationAndNavigation#pose) | Direct pose coordinates (x, y, heading). |
 
 ##### bussing_patrol_mission `BussingPatrolMission`
 A mission that continuously loops through goals, stopping at each for a set amount of time or until weight exceeds a threshold.
