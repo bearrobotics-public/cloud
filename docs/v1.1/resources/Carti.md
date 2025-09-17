@@ -5,7 +5,7 @@ These endpoints and their message types are only available for the **Carti** rob
 Use the shared `CreateMission` endpoint to send missions for Carti robots. Carti-specific missions must be sent using the appropriate request message format. <br/>
 
 !!! Note
-    When sending a Carti mission, `carti.Feedback` is returned in [`SubscribeMissionStatus`](Mission.md#subscribemissionstatus) response message.
+    When sending a Carti mission, `carti.Feedback` and `CartiType` are returned in [`SubscribeMissionStatus`](Mission.md#subscribemissionstatus) response message.
     
     ##### carti.Feedback `enum`
 
@@ -16,6 +16,16 @@ Use the shared `CreateMission` endpoint to send missions for Carti robots. Carti
     | STATUS_ARRIVED         | 2      | The robot has arrived at a goal. |
     | STATUS_DOCKING     | 3      | The robot is performing a docking maneuver.|
     | STATUS_UNDOCKING         | 4      | The robot is performing an undocking maneuver.|
+
+    ##### CartiType `enum`
+
+    | Name | Number | Description |
+    |------|--------|-------------|
+    | CARTI_TYPE_UNKNOWN | 0 | Default value. This should never be used explicitly. |
+    | CARTI_TYPE_TRAVERSE | 1 | A traverse mission that follows a sequence of goals. |
+    | CARTI_TYPE_TRAVERSE_PATROL | 2 | A traverse patrol mission that follows a sequence of goals on loops. |
+    | CARTI_TYPE_NAVIGATE | 3 | A single navigation mission with a predefined goal. |
+    | CARTI_TYPE_NAVIGATE_AUTO | 4 | An automated navigation mission that selects the best available goal from a list. |
 
 ### Request
 ##### robot_id `string` `required`
@@ -70,16 +80,6 @@ A mission that automatically selects the first unoccupied and unclaimed goal fro
 |------|------|-------------|
 |`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 
-##### CartiType `enum`
-Defines the mission types from carti mission API.
-
-| Name | Number | Description |
-|------|--------|-------------|
-| CARTI_TYPE_UNKNOWN | 0 | Default value. This should never be used explicitly. |
-| CARTI_TYPE_TRAVERSE | 1 | A traverse mission that follows a sequence of goals. |
-| CARTI_TYPE_TRAVERSE_PATROL | 2 | A traverse patrol mission that follows a sequence of goals on loops. |
-| CARTI_TYPE_NAVIGATE | 3 | A single navigation mission with a predefined goal. |
-| CARTI_TYPE_NAVIGATE_AUTO | 4 | An automated navigation mission that selects the best available goal from a list. |
 
 ##### JSON Request Example
 === "JSON"
