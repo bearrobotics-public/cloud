@@ -222,7 +222,7 @@ The robotID the message is associated with.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `missions` | repeated [`MissionState`](#mission_state-missionstate) | List of all missions assigned to the robot, in order from first to last assigned mission. |
+| `missions` | *repeated* [`MissionState`](#mission_state-missionstate) | List of all missions assigned to the robot, in order from first to last assigned mission. |
 | `current_mission_index` | `int32` | Index of the currently active mission in the missions list. -1 if no mission is currently active. |
 
 ##### mission_state `MissionState`
