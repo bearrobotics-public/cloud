@@ -27,10 +27,10 @@ Contains system-level information about the robot.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `software_version` | string | The distribution version currently installed and running on the robot. |
-| `robot_family` | RobotFamily *enum* | The classification or family of the robot. |
-| `robot_id` | string | Unique identifier for the robot. |
-| `display_name` | string | A user-friendly name for the robot, typically used for display purposes. |
+| `software_version` | `string` | The distribution version currently installed and running on the robot. |
+| `robot_family` | [`RobotFamily`](#robotfamily-enum) *enum* | The classification or family of the robot. |
+| `robot_id` | `string` | Unique identifier for the robot. |
+| `display_name` | `string` | A user-friendly name for the robot, typically used for display purposes. |
 
 ##### RobotFamily `enum`
 | Name | Number | Description |
@@ -59,8 +59,9 @@ Contains system-level information about the robot.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
+| `INVALID_ARGUMENT` | Invalid request parameters. <br /> Tips: check that `robot_id` is not empty. |
 | `PERMISSION_DENIED` | Attempting to retrieve system information for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
-| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
+| `INTERNAL` | Internal server error occurred while processing the request. |
 
 -----------
 ## RunSystemCommand
@@ -86,7 +87,7 @@ The system command to execute on the robot.
 ##### Reboot
 | Field | Message Type | Description |
 |------|------|-------------|
-| `type` | Type *enum* | The type of reboot to perform. |
+| `type` | [`Type`](#type-enum) *enum* | The type of reboot to perform. |
 
 ##### Type `enum`
 | Name | Number | Description |
