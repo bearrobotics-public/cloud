@@ -31,28 +31,55 @@ Universal wrapper for mission types. Only one [mission type](../../concepts/miss
 |`carti_mission`	|[`carti.Mission`](#carti_mission-cartimission)| Carti missions are specific to the Carti robot family. |
 
 ##### carti_mission `carti.Mission`
-Use the field `carti_mission` to create and send a mission. Current API version supports 2 types of Carti missions.
+Use the field `carti_mission` to create and send a mission.
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`traverse_mission`   |`TraverseMission`	| Create a carti mission of type `Traverse`. |
-|`traverse_patrol_mission`	|`TraversePatrolMission`| Create a carti mission of type `TraversePatrol`. |
+|`traverse_mission`   |[`TraverseMission`](#traversemission)	| Create a carti mission of type `Traverse`. |
+|`traverse_patrol_mission`	|[`TraversePatrolMission`](#traversepatrolmission)| Create a carti mission of type `TraversePatrol`. |
+|`navigate_mission`	|[`NavigateMission`](#navigatemission)| Create a carti mission of type `Navigate`. |
+|`navigate_auto_mission`	|[`NavigateAutoMission`](#navigateautomission)| Create a carti mission of type `NavigateAuto`. |
 
-**TraverseMission** <br />
+##### TraverseMission
 A traverse mission that navigates to one or more goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`TraverseParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-**TraversePatrolMission** <br />
+##### TraversePatrolMission
 A traverse patrol mission that navigates to one or more goals and continuously loops through the goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* `Goal` <br />`required`| a list of [`Goal`](Mission.md#goal-goal-required) |
+|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`TraversePatrolParam` <br />`optional`|  ***There is no param defined in this API version.*** |
+
+##### NavigateMission
+A mission consisting of a single, explicitly defined goal.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`goal`| [`Goal`](Mission.md/#goal-goal-required) <br />`required`| A single `Goal` |
+
+##### NavigateAutoMission
+A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
+
+##### CartiType `enum`
+Defines the mission types from carti mission API.
+
+| Name | Number | Description |
+|------|--------|-------------|
+| CARTI_TYPE_UNKNOWN | 0 | Default value. This should never be used explicitly. |
+| CARTI_TYPE_TRAVERSE | 1 | A traverse mission that follows a sequence of goals. |
+| CARTI_TYPE_TRAVERSE_PATROL | 2 | A traverse patrol mission that follows a sequence of goals on loops. |
+| CARTI_TYPE_NAVIGATE | 3 | A single navigation mission with a predefined goal. |
+| CARTI_TYPE_NAVIGATE_AUTO | 4 | An automated navigation mission that selects the best available goal from a list. |
 
 ##### JSON Request Example
 === "JSON"
@@ -64,7 +91,13 @@ A traverse patrol mission that navigates to one or more goals and continuously l
             "traverseMission": {
               "goals": [
                 { "destinationId": "room-a" },
-                { "destinationId": "room-b" }
+                { 
+                  "pose": {
+                    "xMeters": 5.2,
+                    "yMeters": 3.1,
+                    "headingRadians": 1.57
+                  }
+                }
               ],
               "params": {}
             }
@@ -89,7 +122,10 @@ The ID of the mission created.
 
 | ErrorCode  | Description |
 |------------|-------------|
-|`INVALID_ARGUMENT`      | This command is sending to is not a Carti family robot. |
+|`INVALID_ARGUMENT`      | Invalid request parameters or this command is being sent to a non-Carti family robot. <br /> Tips: check that `robot_id` is not empty, `mission` is not null, or the robot is a Carti family robot. |
+|`PERMISSION_DENIED`     | Attempting to create a mission for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
+|`NOT_FOUND`            | The specified robot ID does not exist or is not accessible. |
+|`INTERNAL`             | Internal server error occurred while processing the request. |
 |`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](Mission.md#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
 
 -----------
@@ -160,11 +196,11 @@ Represents the state of a single conveyor.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `index` | int32 | Unique identifier for the conveyor (logical position). |
-| `operation_state` | OperationState *enum* | Current operation state of the conveyor motor. |
-| `payload_state` | PayloadState *enum* | Current state of the payload on the conveyor. |
-| `health_state` | HealthState *enum* | Current health of the conveyor. |
-| `installation_state` | InstallationState *enum* | Current installation state of the conveyor. |
+| `index` | `int32` | Unique identifier for the conveyor (logical position). |
+| `operation_state` | [`OperationState`](#operationstate-enum) *enum* | Current operation state of the conveyor motor. |
+| `payload_state` | [`PayloadState`](#payloadstate-enum) *enum* | Current state of the payload on the conveyor. |
+| `health_state` | [`HealthState`](#healthstate-enum) *enum* | Current health of the conveyor. |
+| `installation_state` | [`InstallationState`](#installationstate-enum) *enum* | Current installation state of the conveyor. |
 
 ##### OperationState `enum`
 | Name | Number | Description |
@@ -221,6 +257,7 @@ Represents the state of a single conveyor.
 | ErrorCode  | Description |
 |------------|-------------|
 | `PERMISSION_DENIED` | Attempting to request conveyor status for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
+| `INTERNAL` | Internal server error occurred while processing the request. |
 
 -----------
 ## ControlConveyor
@@ -238,8 +275,8 @@ List of conveyor motor commands to execute.
 ##### ConveyorMotorCommand
 | Field | Message Type | Description |
 |------|------|-------------|
-| `index` | int32 | The target conveyor to control. |
-| `command` | CommandConveyorMotor *enum* | The motor command to execute. |
+| `index` | `int32` | The target conveyor to control. |
+| `command` | [`CommandConveyorMotor`](#commandconveyormotor-enum) *enum* | The motor command to execute. |
 
 ##### CommandConveyorMotor `enum`
 | Name | Number | Description |
@@ -280,6 +317,7 @@ List of conveyor motor commands to execute.
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-| `INTERNAL` | Internal server error occurred while processing the request. |
 | `INVALID_ARGUMENT` | This command is being sent to a non-Carti family robot, or one or more conveyor indexes are not installed on the robot. |
+| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
+| `INTERNAL` | Internal server error occurred while processing the request. |
 | `FAILED_PRECONDITION` | The robot is in an error state that prevents conveyor control. |
