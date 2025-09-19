@@ -28,22 +28,22 @@ Map represents a navigable map used by robots, including metadata and associated
 | Field | Message Type | Description |
 |------|------|-------------|
 | `map_id`       | `string` | Unique identifier for the map.<br />e.g., "9578" |
-| `created_time` | `Timestamp` | Indicating when the map was created. |
-| `modified_time`| `Timestamp` | Indicating the last time the map was modified. |
+| `created_time` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Indicating when the map was created. |
+| `modified_time`| [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Indicating the last time the map was modified. |
 | `display_name` | `string` | Display name of the map, matching the name used in [Bear Universe](https://universe.bearrobotics.ai). <br />e.g., "ITCT SEOUL" |
 | `annotation`   | [`Annotation`](#annotation) | Annotation associated with this map, defining specific <br / >areas and destinations. |
 
-##### Annotation
+#### Annotation
 Annotation defines a specific area on the map, often used to group destinations or assign special parameters. 
 
 | Field | Message Type | Description |
 |------|------|-------------|
 | `annotation_id` | `string` | Unique identifier for the annotation.<br />e.g., "67305" |
 | `display_name` | `string` | Descriptive name for the annotation.<br />e.g., "ITCT annotation A" |
-| `created_time` | `Timestamp` | Timestamp indicating when the annotation <br /> was created. |
+| `created_time` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Timestamp indicating when the annotation <br /> was created. |
 | `destinations` | `map<string, Destination>` <br /> See [Destination](#destination) | A collection of destinations associated with <br /> this annotation. Each entry pairs a destination ID (key) <br /> with its corresponding Destination message (value). |
 
-##### Destination
+#### Destination
 Destination represents a single point of interest on the map that a robot can navigate to and align itself with.
 
 | Field | Message Type | Description |
@@ -111,12 +111,12 @@ Location represents a physical space where robots operate, containing floors, se
 | Field | Message Type | Description |
 |------|------|-------------|
 | `location_id` | `string` | A 4 character alphanumeric identifier for the location. <br />e.g., "3R0A" |
-| `created_time` | `Timestamp` | Timestamp indicating when the location was created. |
-| `modified_time` | `Timestamp` | Timestamp indicating the last time the location was modified. |
+| `created_time` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Timestamp indicating when the location was created. |
+| `modified_time` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Timestamp indicating the last time the location was modified. |
 | `display_name` | `string` | Display name of the location, matching the name shown in Universe. <br />e.g., "City Deli & Grill", "KNTH" |
 | `floors` | map<`int32`, [`Floor`](#floor)> | Map of floors in the location, keyed by their floor level. <br />The floor level is any non-negative integer starting from 0. |
 
-##### Floor
+#### Floor
 Represents a single floor within a location.
 
 | Field | Message Type | Description |
@@ -124,7 +124,7 @@ Represents a single floor within a location.
 | `display_name` | `string` | Display name of the floor, matching the name shown in Universe. |
 | `sections` | *repeated* [`Section`](#section) | List of sections on this floor. |
 
-##### Section
+#### Section
 Represents a section within a floor.
 
 | Field | Message Type | Description |
@@ -198,15 +198,15 @@ Map represents a navigable map used by robots, including metadata and associated
 | Field | Message Type | Description |
 |------|------|-------------|
 | `map_id`       | `string` | Unique identifier for the map. <br />e.g., "9578" |
-| `created_time` | `Timestamp` | Indicating when the map was created. |
-| `modified_time`| `Timestamp` | Indicating the last time the map was modified. |
+| `created_time` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Indicating when the map was created. |
+| `modified_time`| [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Indicating the last time the map was modified. |
 | `display_name` | `string` | Display name of the map, matching the name used in [Bear Universe](https://universe.bearrobotics.ai). <br />e.g., "ITCT SEOUL" |
 | `annotation`   | [`Annotation`](#annotation) | Annotation associated with this map, defining specific areas and destinations. |
 | `image_download_info` | [`MapImageDownloadInfo`](#mapimagedownloadinfo) | Information for downloading the map image, including signed URL and file metadata. <br />This field is typically populated by the cloud service. |
 | `origin` | [`Origin`](#origin) | Origin of the map relative to the map frame. |
 | `resolution` | `float` | Resolution of the map in meters per pixel. |
 
-##### MapImageDownloadInfo
+#### MapImageDownloadInfo
 Contains the information needed to download a map image.
 
 | Field | Message Type | Description |
@@ -214,23 +214,7 @@ Contains the information needed to download a map image.
 | `file_info` | [`MapImageFileInfo`](#mapimagefileinfo) | Information about the map image file for integrity verification. |
 | `download_url` | [`SignedURL`](#signedurl) | The signed URL for downloading the map image. |
 
-##### MapImageFileInfo
-Contains metadata about the map image file for integrity verification.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-| `checksum` | `uint32` | CRC32C checksum of the map image file. |
-| `size` | `int64` | Size of the map image file in bytes. |
-
-##### SignedURL
-Represents a signed URL for file access with expiration.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-| `url` | `string` | The signed URL for file access. |
-| `expires_at` | `Timestamp` | Timestamp when the signed URL expires. |
-
-##### Origin
+#### Origin
 Represents the starting point of the map in terms of its coordinates and orientation.
 
 | Field | Message Type | Description |
@@ -238,6 +222,23 @@ Represents the starting point of the map in terms of its coordinates and orienta
 | `x_m` | `float` | X-coordinate of the map origin in meters. |
 | `y_m` | `float` | Y-coordinate of the map origin in meters. |
 | `yaw_radians` | `float` | Orientation (yaw) of the map origin in radians. |
+
+#### MapImageFileInfo
+Contains metadata about the map image file for integrity verification.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `checksum` | `uint32` | CRC32C checksum of the map image file. |
+| `size` | `int64` | Size of the map image file in bytes. |
+
+#### SignedURL
+Represents a signed URL for file access with expiration.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `url` | `string` | The signed URL for file access. |
+| `expires_at` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | Timestamp when the signed URL expires. |
+
 
 ##### JSON Response Example
 === "JSON"
