@@ -50,35 +50,35 @@ Use the field `carti_mission` to create and send a mission.
 |`navigate_mission`	|[`NavigateMission`](#navigatemission)| Create a carti mission of type `Navigate`. |
 |`navigate_auto_mission`	|[`NavigateAutoMission`](#navigateautomission)| Create a carti mission of type `NavigateAuto`. |
 
-##### TraverseMission
+#### TraverseMission
 A traverse mission that navigates to one or more goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](LocalizationAndNavigation.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`TraverseParams` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-##### TraversePatrolMission
+#### TraversePatrolMission
 A traverse patrol mission that navigates to one or more goals and continuously loops through the goals, stopping at each for a set amount of time or until directed to continue.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](LocalizationAndNavigation.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`TraversePatrolParam` <br />`optional`|  ***There is no param defined in this API version.*** |
 
-##### NavigateMission
+#### NavigateMission
 A mission consisting of a single, explicitly defined goal.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goal`| [`Goal`](Mission.md/#goal-goal-required) <br />`required`| A single `Goal` |
+|`goal`| [`Goal`](LocalizationAndNavigation.md/#goal-goal-required) <br />`required`| A single `Goal` |
 
-##### NavigateAutoMission
+#### NavigateAutoMission
 A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md/#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](LocalizationAndNavigation.md/#goal-goal-required) <br />`required`| a list of `Goal` |
 
 
 ##### JSON Request Example
@@ -202,28 +202,28 @@ Represents the state of a single conveyor.
 | `health_state` | [`HealthState`](#healthstate-enum) *enum* | Current health of the conveyor. |
 | `installation_state` | [`InstallationState`](#installationstate-enum) *enum* | Current installation state of the conveyor. |
 
-##### OperationState `enum`
+#### OperationState `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | OPERATION_STATE_UNKNOWN | 0 | Default value. It means the `operation_state` field is not returned. |
 | OPERATION_STATE_ROLLING | 1 | The conveyor's motor is rolling in any direction. |
 | OPERATION_STATE_STOP | 2 | The conveyor's motor is stopped. |
 
-##### PayloadState `enum`
+#### PayloadState `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | PAYLOAD_STATE_UNKNOWN | 0 | Default value. It means the `payload_state` field is not returned. |
 | PAYLOAD_STATE_LOADED | 1 | The conveyor has a payload. |
 | PAYLOAD_STATE_EMPTY | 2 | The conveyor is empty. |
 
-##### HealthState `enum`
+#### HealthState `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | HEALTH_STATE_UNKNOWN | 0 | Default value. It means the `health_state` field is not returned. |
 | HEALTH_STATE_OK | 1 | The conveyor is installed and functioning. |
 | HEALTH_STATE_ERROR | 2 | The conveyor is not functioning. |
 
-##### InstallationState `enum`
+#### InstallationState `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | INSTALLATION_STATE_UNKNOWN | 0 | Default value. It means the `installation_state` field is not returned. |
@@ -278,7 +278,7 @@ List of conveyor motor commands to execute.
 | `index` | `int32` | The target conveyor to control. |
 | `command` | [`CommandConveyorMotor`](#commandconveyormotor-enum) *enum* | The motor command to execute. |
 
-##### CommandConveyorMotor `enum`
+#### CommandConveyorMotor `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | COMMAND_CONVEYOR_MOTOR_UNKNOWN | 0 | Default value. This should never be used explicitly. |
