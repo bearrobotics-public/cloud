@@ -42,14 +42,7 @@ Represents the online connection state between the cloud and the robot.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `state` | [`State`](#connectionstate-enum) *enum* | Current connection state of the robot. |
-
-##### ConnectionState `enum`
-| Name | Number | Description |
-|------|--------|-------------|
-| STATE_UNKNOWN | 0 | Default value. It means the `state` field is not returned. |
-| STATE_CONNECTED | 1 | The robot is connected to Bear cloud services. |
-| STATE_DISCONNECTED | 2 | The robot is offline or unreachable from the cloud. |
+| `state` | [`State`](#robotconnection-state-enum) *enum* | Current connection state of the robot. |
 
 ##### BatteryState
 Represents the state of the robot's battery system.
@@ -57,24 +50,8 @@ Represents the state of the robot's battery system.
 | Field | Message Type | Description |
 |------|------|-------------|
 | `charge_percent` | `int32` | State of charge, from 0 (empty) to 100 (fully charged). |
-| `state` | [`State`](#batterystate-enum) *enum* | High-level charging state of the battery. |
+| `state` | [`State`](#batterystate-state-enum) *enum* | High-level charging state of the battery. |
 | `charge_method` | [`ChargeMethod`](#chargemethod-enum) *enum* | Method by which the robot is being charged. |
-
-##### State `enum`
-| Name | Number | Description |
-|------|--------|-------------|
-| STATE_UNKNOWN | 0 | Default value. It means the `state` field is not returned. |
-| STATE_CHARGING | 1 | Battery is currently charging. |
-| STATE_DISCHARGING | 2 | Robot is not connected to a charger and is consuming battery power. |
-| STATE_FULL | 3 | Battery is fully charged while connected to a charger; no additional energy is being stored. |
-
-##### ChargeMethod `enum`
-| Name | Number | Description |
-|------|--------|-------------|
-| CHARGE_METHOD_UNKNOWN | 0 | Default value. It means the `charge_method` field is not returned. |
-| CHARGE_METHOD_NONE | 1 | No charging method is currently active or applicable. |
-| CHARGE_METHOD_WIRED | 2 | Charging via a wired connection. |
-| CHARGE_METHOD_CONTACT | 3 | Charging via contact-based interface (e.g., docking station). |
 
 ##### EmergencyStopState
 Represents the state of the robot's emergency stop system.
@@ -83,13 +60,6 @@ Represents the state of the robot's emergency stop system.
 |------|------|-------------|
 | `emergency` | [`Emergency`](#emergency-enum) *enum* | Whether the software level emergency stop is engaged. |
 | `button_pressed` | [`Emergency`](#emergency-enum) *enum* | Whether the physical emergency stop button is engaged. |
-
-##### Emergency `enum`
-| Name | Number | Description |
-|------|--------|-------------|
-| EMERGENCY_UNKNOWN | 0 | Default value. It means the `emergency` field is not returned. |
-| EMERGENCY_ENGAGED | 1 | Triggers an emergency stop. Overrides and sets navigation-related velocity command to 0 to the motor. |
-| EMERGENCY_DISENGAGED | 2 | Wheels will resume acting upon software navigation commands. |
 
 ##### ErrorCodes
 Represents the error codes returned by the robot.
@@ -105,6 +75,37 @@ Robot type-specific state information. Only one type may be set at a time.
 |------|------|-------------|
 | `servi_state` | `ServiState` | Servi-specific robot state (only for Servi robots). |
 | `carti_state` | `CartiState`| Carti-specific robot state (only for Carti robots). |
+
+#### (RobotConnection) State `enum`
+| Name | Number | Description |
+|------|--------|-------------|
+| STATE_UNKNOWN | 0 | Default value. It means the `state` field is not returned. |
+| STATE_CONNECTED | 1 | The robot is connected to Bear cloud services. |
+| STATE_DISCONNECTED | 2 | The robot is offline or unreachable from the cloud. |
+
+
+#### (BatteryState) State `enum`
+| Name | Number | Description |
+|------|--------|-------------|
+| STATE_UNKNOWN | 0 | Default value. It means the `state` field is not returned. |
+| STATE_CHARGING | 1 | Battery is currently charging. |
+| STATE_DISCHARGING | 2 | Robot is not connected to a charger and is consuming battery power. |
+| STATE_FULL | 3 | Battery is fully charged while connected to a charger; no additional energy is being stored. |
+
+#### ChargeMethod `enum`
+| Name | Number | Description |
+|------|--------|-------------|
+| CHARGE_METHOD_UNKNOWN | 0 | Default value. It means the `charge_method` field is not returned. |
+| CHARGE_METHOD_NONE | 1 | No charging method is currently active or applicable. |
+| CHARGE_METHOD_WIRED | 2 | Charging via a wired connection. |
+| CHARGE_METHOD_CONTACT | 3 | Charging via contact-based interface (e.g., docking station). |
+
+#### Emergency `enum`
+| Name | Number | Description |
+|------|--------|-------------|
+| EMERGENCY_UNKNOWN | 0 | Default value. It means the `emergency` field is not returned. |
+| EMERGENCY_ENGAGED | 1 | Triggers an emergency stop. Overrides and sets navigation-related velocity command to 0 to the motor. |
+| EMERGENCY_DISENGAGED | 2 | Wheels will resume acting upon software navigation commands. |
 
 ##### JSON Response Example
 === "JSON"
@@ -214,7 +215,7 @@ Represents the state of the robot's battery system.
 | `state` | [`State`](#state-enum) *enum*|  High-level charging state of the battery. |
 | `charge_method` | [`ChargeMethod`](#chargemethod-enum) *enum* | Method by which the robot is being charged.|
 
-##### State `enum`
+#### State `enum`
 | Name                   | Number | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | STATE_UNKNOWN          | 0      | Default value. It means the `state` field is not returned. |
@@ -222,7 +223,7 @@ Represents the state of the robot's battery system.
 | STATE_DISCHARGING          | 2      | Robot is not connected to a charger and is consuming battery power.         |
 | STATE_FULL           | 3      | Battery is fully charged while connected to a charger; <br />no additional energy is being stored.                    |
 
-##### ChargeMethod `enum`
+#### ChargeMethod `enum`
 | Name                   | Number | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | CHARGE_METHOD_UNKNOWN          | 0      | Default value. It means the `charge_method` field is not returned. |
@@ -414,14 +415,14 @@ Note that each robot maintains its own metadata, so messages should be correlate
 | `metadata` | [`EventMetadata`](#metadata-eventmetadata) | Metadata associated with the error codes. |
 | `codes` | *repeated* [`ErrorCode`](#errorcode) | The error codes reported by the robot. |
 
-##### ErrorCode
+#### ErrorCode
 | Field | Message Type | Description |
 |------|------|-------------|
 | `code` | `int32` | Integer code indicating the type of error. Does not indicate severity. |
 | `severity` | [`Severity`](#severity-enum) *enum* | Level of criticality of an error. |
 | `message` | `string` | Message about the error e.g. "Up camera process error." |
 
-##### Severity `enum`
+#### Severity `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | SEVERITY_UNKNOWN | 0 | Default value. It means the `severity` field is not returned. |
@@ -510,7 +511,7 @@ Note that each robot maintains its own metadata, so messages should be correlate
 | `metadata` | [`EventMetadata`](#metadata-eventmetadata) | Metadata associated with the network state. |
 | `connected_wifi` | [`Wifi`](#wifi) *optional* | Current network connection of the robot. If the field is not set, it indicates that the robot is not connected to any Wi-Fi networks. |
 
-##### Wifi
+#### Wifi
 Represents the Wifi connection of a robot.
 
 | Field | Message Type | Description |
@@ -520,7 +521,7 @@ Represents the Wifi connection of a robot.
 | `link_quality` | `int32` | Link quality of the Wifi. Ranges from 0 to 70, where 70 is highest quality. |
 | `security` | [`Security`](#security-enum) *enum* | Security requirements for the network. |
 
-##### Security `enum`
+#### Security `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | SECURITY_UNKNOWN | 0 | Default value. It means the `security` field is not returned. |
