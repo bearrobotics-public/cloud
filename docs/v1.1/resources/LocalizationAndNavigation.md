@@ -16,8 +16,16 @@ The ID of the robot that the localization command is sent to.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
-|[destination_id](../../v1.0/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
-|[Pose](../../concepts/localization.md)| [`Pose`](../../v1.0/resources/Localization.md#pose) |`x_meters` *float* X-coordinate in meters within the map. <br/> `x_meters` *float* Y-coordinate in meters within the map. <br/> `heading_radians` *float* The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis.|
+|[destination_id](../../v1.1/resources/LocationsAndMaps.md) | `string` | Unique identifier for the destination.|
+|[Pose](../../concepts/localization.md)| [`Pose`](#pose) | Pose of the robot on the map.|
+
+##### Pose
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `x_meters` | `float` | X-coordinate in meters within the map. |
+| `y_meters` | `float` | Y-coordinate in meters within the map. |
+| `heading_radians` | `float` | The heading of the robot in radians.<br>Ranges from -π to π, where 0.0 points along the positive x-axis. |
 
 ##### JSON Request Example
 === "JSON"
@@ -86,7 +94,7 @@ The current emergency stop state of the robot.
 | `emergency` | [`Emergency`](#emergency-enum) *enum* | Whether the software level emergency stop is engaged. |
 | `button_pressed` | [`Emergency`](#emergency-enum) *enum* | Whether the physical emergency stop button is engaged. |
 
-##### Emergency `enum`
+#### Emergency `enum`
 | Name                   | Number | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | EMERGENCY_UNKNOWN          | 0      | Default value. It means the `state` field is not returned. |
@@ -203,13 +211,6 @@ A mapping of robot IDs to their current pose estimates. Each entry pairs a robot
 | `metadata` | [`EventMetadata`](RobotStatus.md#metadata-eventmetadata) | Metadata associated with the event. |
 | `pose` | [`Pose`](#pose) | Pose of the robot on the map. |
 
-##### Pose
-
-| Field | Message Type | Description |
-|------|------|-------------|
-| `x_meters` | `float` | X-coordinate in meters within the map. |
-| `y_meters` | `float` | Y-coordinate in meters within the map. |
-| `heading_radians` | `float` | The heading of the robot in radians.<br>Ranges from -π to π, where 0.0 points along the positive x-axis. |
 
 ##### JSON Response Example
 === "JSON"
@@ -259,13 +260,7 @@ Sets the robot's current pose to a specified position and orientation.
 The ID of the robot to set the pose for.
 
 ##### pose `Pose` `required`
-The new pose for the robot.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-| `x_meters` | `float` | X coordinate in meters. |
-| `y_meters` | `float` | Y coordinate in meters. |
-| `heading_radians` | `float` | Heading angle in radians. |
+The new [`pose`](#pose) for the robot.
 
 ##### JSON Request Example
 === "JSON"
