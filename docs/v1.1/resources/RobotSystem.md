@@ -32,7 +32,7 @@ Contains system-level information about the robot.
 | `robot_id` | `string` | Unique identifier for the robot. |
 | `display_name` | `string` | A user-friendly name for the robot, typically used for display purposes. |
 
-##### RobotFamily `enum`
+#### RobotFamily `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | ROBOT_FAMILY_UNKNOWN | 0 | Default value. It means the `robot_family` field is not returned. |
@@ -82,14 +82,14 @@ The system command to execute on the robot.
 ##### SystemCommand
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-| `reboot` | `Reboot` | Reboot the robot with specified type. |
+| `reboot` | [`Reboot`](#reboot) | Reboot the robot with specified type. |
 
-##### Reboot
+#### Reboot
 | Field | Message Type | Description |
 |------|------|-------------|
 | `type` | [`Type`](#type-enum) *enum* | The type of reboot to perform. |
 
-##### Type `enum`
+#### Type `enum`
 | Name | Number | Description |
 |------|--------|-------------|
 | TYPE_UNKNOWN | 0 | Default value. This should never be used explicitly. |
