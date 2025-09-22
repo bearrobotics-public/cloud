@@ -60,7 +60,15 @@ Use the field `servi_mission` to create and send a servi mission. Current API ve
 |`navigate_mission`   |[`NavigateMission`](#navigate_mission-navigatemission)	| Create a servi mission of type `Navigate`. |
 |`navigate_auto_mission`	|[`NavigateAutoMission`](#navigate_auto_mission-navigateautomission)| Create a servi mission of type `NavigateAuto`. |
 
-##### bussing_mission `BussingMission`
+#### delivery_mission `DeliveryMission`
+A mission that navigates to one or more goals, stopping at each for a set amount of time or until some weight is removed.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`params`|[`DeliveryParams`](#deliveryparams-deliveryparams)| Parameters for delivery mission. |
+
+#### bussing_mission `BussingMission`
 A mission that navigates to one or more goals, stopping at each for a set amount of time or until some weight is added.
 
 | Field | Message Type | Description |
@@ -68,46 +76,7 @@ A mission that navigates to one or more goals, stopping at each for a set amount
 |`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`BussingParams`|  ***There is no param defined in this API version.*** |
 
-##### Goal `Goal`
-Represents a target destination or pose for the robot to navigate to.
-
-| Field (*oneof*) | Message Type | Description |
-|------|------|-------------|
-|`destination_id`| `string` | ID of a predefined destination on the map. |
-|`pose`| [`Pose`](../LocalizationAndNavigation#pose) | Direct pose coordinates (x, y, heading). |
-
-##### bussing_patrol_mission `BussingPatrolMission`
-A mission that continuously loops through goals, stopping at each for a set amount of time or until weight exceeds a threshold.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
-|`params`|`BussingPatrolParams`|  ***There is no param defined in this API version.*** |
-
-##### delivery_mission `DeliveryMission`
-A mission that navigates to one or more goals, stopping at each for a set amount of time or until some weight is removed.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
-|`params`|`DeliveryParams`| Parameters for delivery mission. |
-
-##### DeliveryParams `DeliveryParams`
-Parameters for a delivery mission.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-|`tray_mappings`| *repeated* `TrayMapping` | Tray mappings for the delivery mission. Only supported for Servi+ robots. |
-
-##### TrayMapping `TrayMapping`
-Mapping between a given tray to a goal. Note: Tray mapping is only supported for Servi+ robots.
-
-| Field | Message Type | Description |
-|------|------|-------------|
-|`tray_name`| `string` | Name of the tray. |
-|`goal`| [`Goal`](Mission.md#goal-goal-required) | Target goal for this tray. |
-
-##### delivery_patrol_mission `DeliveryPatrolMission`
+#### delivery_patrol_mission `DeliveryPatrolMission`
 A mission that continuously loops through goals, stopping at each for a set amount of time or until all weight is removed.
 
 | Field | Message Type | Description |
@@ -115,19 +84,43 @@ A mission that continuously loops through goals, stopping at each for a set amou
 |`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`DeliveryPatrolParams`|  ***There is no param defined in this API version.*** |
 
-##### navigate_mission `NavigateMission`
+
+#### bussing_patrol_mission `BussingPatrolMission`
+A mission that continuously loops through goals, stopping at each for a set amount of time or until weight exceeds a threshold.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`params`|`BussingPatrolParams`|  ***There is no param defined in this API version.*** |
+
+#### navigate_mission `NavigateMission`
 A mission consisting of a single, explicitly defined goal.
 
 | Field | Message Type | Description |
 |------|------|-------------|
 |`goal`| [`Goal`](Mission.md#goal-goal-required) <br />`required`| Single target goal for navigation. |
 
-##### navigate_auto_mission `NavigateAutoMission`
+#### navigate_auto_mission `NavigateAutoMission`u
 A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values. For example, when sending a robot to one of several possible goals [T1, T2, T3], it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3. If all goals are occupied or claimed, the mission will fail.
 
 | Field | Message Type | Description |
 |------|------|-------------|
 |`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| List of potential goals to choose from. |
+
+#### DeliveryParams `DeliveryParams`
+Parameters for a delivery mission.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`tray_mappings`| *repeated* [`TrayMapping`](#traymapping-traymapping) | Tray mappings for the delivery mission. Only supported for Servi+ robots. |
+
+#### TrayMapping `TrayMapping`
+Mapping between a given tray to a goal. Note: Tray mapping is only supported for Servi+ robots.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`tray_name`| `string` | Name of the tray. |
+|`goal`| [`Goal`](Mission.md#goal-goal-required) | Target goal for this tray. |
 
 ##### JSON Request Example
 === "JSON"
@@ -258,13 +251,13 @@ A mapping of tray states reported by individual robots. Each entry pairs a robot
 ##### TrayStatesWithMetadata
 | Field | Message Type | Description |
 |------|------|-------------|
-| `metadata` | `EventMetadata` | Metadata associated with the tray states. |
-| `tray_states` | [`TrayStates`](#traystate) | The tray states reported by the robot. |
+| `metadata` | [`EventMetadata`](../Mission/#metadata-eventmetadata) | Metadata associated with the tray states. |
+| `tray_states` | [`TrayStates`](#traystates-traystate-repeated) | The tray states reported by the robot. |
 
-##### TrayStates `TrayState` `repeated`
+##### TrayStates [`TrayState`](#traystate) `repeated`
 State of enabled trays, ordered from the top-most tray on the robot to the bottom.
 
-##### TrayState
+#### TrayState
 Represents the state of a single tray.
 
 | Field | Message Type | Description |
@@ -274,7 +267,7 @@ Represents the state of a single tray.
 | `weight_kg` | `float` | Weight on the tray in kilograms. Minimum precision is 10g. |
 | `load_ratio` | `float` | Ratio of the current load to the tray's maximum load capacity.<br />This value may exceed 1.0 if the tray is overloaded.<br /> Caveats:<br>- If the maximum load is misconfigured (e.g., set to 0.0),<br />  this value may return NaN. |
 
-##### LoadState `enum`
+#### LoadState `enum`
 | Name                   | Number | Description                                      |
 |------------------------|--------|--------------------------------------------------|
 | LOAD_STATE_UNKNOWN          | 0      | Default value. It means the `load_state` field is not returned. |
