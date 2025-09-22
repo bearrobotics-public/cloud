@@ -65,7 +65,7 @@ A mission that navigates to one or more goals, stopping at each for a set amount
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|[`DeliveryParams`](#deliveryparams-deliveryparams)| Parameters for delivery mission. |
 
 #### bussing_mission `BussingMission`
@@ -73,7 +73,7 @@ A mission that navigates to one or more goals, stopping at each for a set amount
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`BussingParams`|  ***There is no param defined in this API version.*** |
 
 #### delivery_patrol_mission `DeliveryPatrolMission`
@@ -81,7 +81,7 @@ A mission that continuously loops through goals, stopping at each for a set amou
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`DeliveryPatrolParams`|  ***There is no param defined in this API version.*** |
 
 
@@ -90,7 +90,7 @@ A mission that continuously loops through goals, stopping at each for a set amou
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| a list of `Goal` |
+|`goals`| *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| a list of `Goal` |
 |`params`|`BussingPatrolParams`|  ***There is no param defined in this API version.*** |
 
 #### navigate_mission `NavigateMission`
@@ -98,14 +98,14 @@ A mission consisting of a single, explicitly defined goal.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goal`| [`Goal`](Mission.md#goal-goal-required) <br />`required`| Single target goal for navigation. |
+|`goal`| [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| Single target goal for navigation. |
 
 #### navigate_auto_mission `NavigateAutoMission`u
 A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values. For example, when sending a robot to one of several possible goals [T1, T2, T3], it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3. If all goals are occupied or claimed, the mission will fail.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-|`goals`| *repeated* [`Goal`](Mission.md#goal-goal-required) <br />`required`| List of potential goals to choose from. |
+|`goals`| *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) <br />`required`| List of potential goals to choose from. |
 
 #### DeliveryParams `DeliveryParams`
 Parameters for a delivery mission.
@@ -120,7 +120,7 @@ Mapping between a given tray to a goal. Note: Tray mapping is only supported for
 | Field | Message Type | Description |
 |------|------|-------------|
 |`tray_name`| `string` | Name of the tray. |
-|`goal`| [`Goal`](Mission.md#goal-goal-required) | Target goal for this tray. |
+|`goal`| [`Goal`](../LocalizationAndNavigation/#goal-goal-required) | Target goal for this tray. |
 
 ##### JSON Request Example
 === "JSON"
