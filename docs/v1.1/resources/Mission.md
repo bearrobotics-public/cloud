@@ -18,19 +18,19 @@ Universal wrapper for mission types. Only one [mission type](../../concepts/miss
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`base_mission`   |[`BaseMission`](#base_mission-basemission)	| Base missions are applicable to all robot families. |
+|`base_mission`   |[`BaseMission`](#base_mission-basemission)	| Base missions are specific to the Base units. |
 |`servi_mission`	|[`servi.Mission`](Servi.md#servi_mission-servimission) | Servi missions are specific to the Servi robot family. <br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
 |`carti_mission`	|[`carti.Mission`](Carti.md#carti_mission-cartimission)	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission. |
 
-#### base_mission `BaseMission`
-Use field `base_mission` to send a base mission. Current API version supports 2 types of base missions.
+#### `BaseMission`
+Use the `base_mission` field to send a mission to a Base unit. Current API version supports 2 types of base missions.
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
 |`navigate_mission`   |[`NavigateMission`](#navigate_mission-navigatemission)	| Create a base mission of type `Navigate`. |
 |`navigate_auto_mission`	|[`NavigateAutoMission`](#navigate_auto_mission-navigateautomission)| Create a base mission of type `NavigateAuto`. |
 
-#### navigate_mission `NavigateMission`
+#### `NavigateMission`
 A mission consisting of a single, explicitly defined goal.
 
 | Field  | Message Type | Description |
@@ -38,8 +38,8 @@ A mission consisting of a single, explicitly defined goal.
 |`goal`   |[`Goal`](../LocalizationAndNavigation/#goal-goal-required)<br>`required`	| The target destination for the mission. |
 
 
-#### navigate_auto_mission `NavigateAutoMission`
-A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values. For example, when sending a robot to one of several possible goals [T1, T2, T3], it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3. If all goals are occupied or claimed, the mission will fail.
+#### `NavigateAutoMission`
+A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values. For example, when sending a robot to one of several possible goals [T1, T2, T3], it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3. If all goals are occupied (other robot is already present) or claimed (other robot is already en route to the destination), the mission will fail.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
@@ -76,28 +76,27 @@ The ID of the mission created.
 === "JSON"
     ```js
       {
-        "missionId": "mission-xyz-123"
+        "missionId": "cbd47ab1-df21-479e-9f72-677b81ab55b0"
       }
     ```
 
 ### Errors
 | ErrorCode  | Description |
 |------------|-------------|
-|`FAILED_PRECONDITION`   |  The robot is already executing another mission. This command is valid if current mission is in [terminal state](#state-enum). </br> e.g., Cancelled, Succeeded, Failed |
+|`FAILED_PRECONDITION`   |  The robot is already executing another mission. `CreateMission` is only valid if there is no running mission on the target robot, with its state in one of the [terminal states](#state-enum), i.e., Cancelled, Succeeded, Failed, Default |
 |`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |
 |`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry creating the mission.
 |`DEADLINE_EXCEEDED`    |  The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry creating the mission. |
 
 -----------
 ## AppendMission 
-Appends a mission to the end of the [mission queue](../../concepts/mission.md#mission-queue). <br/>
-Use this when a mission is currently running; otherwise, prefer [CreateMission](#createmission). <br/>
+Appends a mission to the end of the [mission queue](../../concepts/mission.md#mission-queue).
+Use this when a mission is currently running; otherwise, prefer [CreateMission](#createmission). 
 Missions are executed in the order they are appended.
 
 ### JSON Request / Response Example
-!!! note ""
-    AppendMission request and response message types are the same as [CreateMission](#createmission).  
-    See [CreateMission JSON Examples](#json-request-example).
+!!! note 
+    AppendMission request and response message types are the same as [CreateMission](#createmission). See [CreateMission JSON Examples](#json-request-example).
 
 ### Errors
 | ErrorCode  | Description |
@@ -197,7 +196,7 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
 This endpoint returns a stream of messages in response. <br/>
 Each message includes:
 
-##### metadata `EventMetadata`
+##### `EventMetadata`
 
 | Field | Message Type | Description |
 |------|------|-------------|
@@ -207,14 +206,14 @@ Each message includes:
 ##### robot_id `string`
 The robotID the message is associated with. 
 
-##### mission_states `MissionStates`
+##### `MissionStates`
 
 | Field | Message Type | Description |
 |------|------|-------------|
 | `missions` | *repeated* [`MissionState`](#mission_state-missionstate) | List of all missions assigned to the robot, in order from first to last assigned mission. |
 | `current_mission_index` | `int32` | Index of the currently active mission in the missions list. -1 if no mission is currently active. |
 
-#### mission_state `MissionState`
+#### `MissionState`
 
 | Field | Message Type | Description |
 |------|------|-------------|
@@ -244,7 +243,7 @@ Provides mission-specific runtime information.
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`base_feedback` | [`BaseFeedback`](#basefeedback) | Generic feedback applicable to base mission types (e.g., `NavigateMission`). |
+|`base_feedback` | [`BaseFeedback`](#basefeedback) | Feedback specific to Base unit mission types. |
 |`servi_feedback` | [`servi.Feedback`](#servifeedback-enum) | Feedback specific to Servi missions. |
 |`carti_feedback` | [`carti.Feedback`](#cartifeedback-enum) | Feedback specific to Carti missions. |
 
@@ -253,7 +252,7 @@ Defines the different types of missions that can be executed.
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`base_type` | [`BaseType`](#basetype-enum) *enum* | Base mission types. |
+|`base_type` | [`BaseType`](#basetype-enum) *enum* | Base-specific mission types. |
 |`servi_type` | [`servi.ServiType`](#serviservitype-enum) *enum* | Servi-specific mission types. |
 |`carti_type` | [`carti.CartiType`](#carticartitype-enum) *enum* | Carti-specific mission types. |
 
@@ -302,7 +301,7 @@ Defines the different types of missions that can be executed.
 | SERVI_TYPE_BUSSING | 3 | A bussing mission that navigates to goals, stopping until weight is added. |
 | SERVI_TYPE_BUSSING_PATROL | 4 | A bussing patrol mission that continuously loops until weight exceeds threshold. |
 | SERVI_TYPE_NAVIGATE | 5 | A single navigation mission with a predefined goal. |
-| SERVI_TYPE_NAVIGATE_AUTO | 6 | An automated navigation mission that selects the best available goal from a list. |
+| SERVI_TYPE_NAVIGATE_AUTO | 6 | An automated navigation mission that selects the first available goal from a list. |
 
 #### carti.CartiType `enum`
 
@@ -312,7 +311,7 @@ Defines the different types of missions that can be executed.
 | CARTI_TYPE_TRAVERSE | 1 | A traverse mission that follows a sequence of goals. |
 | CARTI_TYPE_TRAVERSE_PATROL | 2 | A traverse patrol mission that follows a sequence of goals on loops. |
 | CARTI_TYPE_NAVIGATE | 3 | A single navigation mission with a predefined goal. |
-| CARTI_TYPE_NAVIGATE_AUTO | 4 | An automated navigation mission that selects the best available goal from a list. |
+| CARTI_TYPE_NAVIGATE_AUTO | 4 | An automated navigation mission that selects the first available goal from a list. |
 
 #### Status `enum`
 
@@ -373,10 +372,7 @@ Defines the different types of missions that can be executed.
     
 -----------
 ## ChargeRobot
-`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. <br />
-
-This command is only supported on robots equipped with a contact-based charging dock. Robots without a compatible dock will return an `INVALID_ARGUMENT` error. <br />
-
+`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. This command is only supported on robots equipped with a contact-based charging dock.
 You can use [`SubscribeBatteryStatus`](RobotStatus.md#subscribebatterystatus) to monitor the charging process. 
 
 ### Request
@@ -384,7 +380,7 @@ You can use [`SubscribeBatteryStatus`](RobotStatus.md#subscribebatterystatus) to
 ##### robot_id `string` `required`
 The ID of the robot that will receive this command.
 
-##### JSON Reqeuest Example
+##### JSON Request Example
 === "JSON" 
     ```js
     {
