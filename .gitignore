@@ -42,3 +42,5 @@ examples/java/build/
 **/generated/
 **/__init__.py
 **/__pycache__/
+
+.vscode/

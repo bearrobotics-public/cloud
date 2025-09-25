@@ -1,0 +1,6 @@
+obj/Debug/net8.0/bearrobotics/api/v0/location/Map.cs: proto/cloud/bearrobotics/api/v0/common/math.proto\
+ proto/cloud/bearrobotics/api/v0/location/types.proto\
+ proto/cloud/bearrobotics/api/v0/location/zones.proto\
+ /home/siva/.nuget/packages/grpc.tools/2.59.0/build/native/include/google/protobuf/timestamp.proto\
+ proto/cloud/bearrobotics/api/v0/location/annotation.proto\
+ proto/cloud/bearrobotics/api/v0/location/map.proto

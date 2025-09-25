@@ -1,0 +1,2 @@
+obj/Debug/net8.0/bearrobotics/api/v0/robot/Localization.cs: proto/cloud/bearrobotics/api/v0/robot/robot.proto\
+ proto/cloud/bearrobotics/api/v0/robot/localization.proto
