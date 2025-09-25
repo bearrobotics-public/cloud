@@ -44,3 +44,45 @@ examples/java/build/
 **/__pycache__/
 
 .vscode/
+
+# C#/.NET build outputs
+examples/C#/bin/
+examples/C#/obj/
+examples/C#/**/bin/
+examples/C#/**/obj/
+
+# .NET specific
+*.dll
+*.exe
+*.pdb
+*.cache
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+.nuget/
+
+# Visual Studio
+.vs/
+*.suo
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/

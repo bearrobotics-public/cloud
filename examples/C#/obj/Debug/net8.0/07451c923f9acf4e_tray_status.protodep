@@ -1,3 +1,0 @@
-obj/Debug/net8.0/bearrobotics/api/v1/servi/TrayStatus.cs: /home/siva/.nuget/packages/grpc.tools/2.59.0/build/native/include/google/protobuf/timestamp.proto\
- proto/cloud/bearrobotics/api/v1/core/metadata.proto\
- proto/cloud/bearrobotics/api/v1/servi/tray_status.proto

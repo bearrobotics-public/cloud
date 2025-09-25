@@ -1,5 +1,0 @@
-obj/Debug/net8.0/bearrobotics/api/v1/core/Map.cs: /home/siva/.nuget/packages/grpc.tools/2.59.0/build/native/include/google/protobuf/timestamp.proto\
- proto/cloud/bearrobotics/api/v1/core/metadata.proto\
- proto/cloud/bearrobotics/api/v1/core/pose.proto\
- proto/cloud/bearrobotics/api/v1/core/annotation.proto\
- proto/cloud/bearrobotics/api/v1/core/map.proto
