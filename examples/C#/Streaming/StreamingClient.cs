@@ -86,7 +86,8 @@ namespace BearRoboticsCloudAPI.Streaming
             return statusCode == StatusCode.Unavailable ||
                    statusCode == StatusCode.Internal ||
                    statusCode == StatusCode.DeadlineExceeded ||
-                   statusCode == StatusCode.Unauthenticated;
+                   statusCode == StatusCode.Unauthenticated ||
+                   statusCode == StatusCode.PermissionDenied;
         }
 
         public void StopStreaming()

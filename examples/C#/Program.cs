@@ -24,8 +24,8 @@ namespace BearRoboticsExamples
         /// This is a SERVER STREAMING RPC - the server sends multiple messages to the client.
         /// </summary>
         /// <param name="robotId">The ID of the robot to monitor</param>
-        /// <returns>Status message confirming stream initialization</returns>
-        public async Task<string> BasicBatteryStatusExample(string robotId)
+        /// <returns>The streaming client instance for battery status updates</returns>
+        public async Task<StreamingClient<SubscribeBatteryStatusRequest, SubscribeBatteryStatusResponse>> BasicBatteryStatusExample(string robotId)
         {
             Console.WriteLine("=== Battery Status Example ===");
 
@@ -68,9 +68,18 @@ namespace BearRoboticsExamples
             // - Begin receiving messages from the server
             // - Call observer.OnNext() for each message
             // - Automatically reconnect on network failures
-            await streamingClient.StartStreamingAsync();
 
-            return $"Successfully started battery status stream for robot: {robotId}";
+            // Start streaming in background task to keep it alive
+            var streamTask = Task.Run(async () =>
+            {
+                await streamingClient.StartStreamingAsync();
+            });
+
+            // Give the stream a moment to initialize
+            await Task.Delay(100);
+
+            Console.WriteLine($"Successfully started battery status stream for robot: {robotId}");
+            return streamingClient;
         }
 
         /// <summary>
@@ -301,19 +310,32 @@ namespace BearRoboticsExamples
                     case "basic":
                         // Demonstrates server streaming RPC
                         // Server continuously sends battery updates to client
-                        var basicResult = await examples.BasicBatteryStatusExample(robotId);
-                        Console.WriteLine("\n=== RESPONSE SUMMARY ===");
-                        Console.WriteLine(basicResult);
-                        Console.WriteLine("Note: Battery status updates will continue to stream above.");
+                        var streamingClient = await examples.BasicBatteryStatusExample(robotId);
+                        Console.WriteLine("\n=== STREAMING STATUS ===");
+                        Console.WriteLine($"Battery status stream is active for robot: {robotId}");
+                        Console.WriteLine("Waiting for battery status updates...");
+                        Console.WriteLine("The stream will automatically reconnect if disconnected.");
+                        Console.WriteLine("Battery updates will appear above as they are received.");
+
+                        // Keep the stream alive - wait for updates 
+                        await Task.Delay(TimeSpan.FromSeconds(30));
+                        Console.WriteLine("\n[Stream will continue in background]");
                         break;
 
                     case "concurrent":
                         // Demonstrates multiple concurrent streaming RPCs
                         // Shows how to manage multiple real-time data streams
                         var concurrentResult = await examples.MultipleConcurrentStreamsExample(robotId);
-                        Console.WriteLine("\n=== RESPONSE SUMMARY ===");
+                        Console.WriteLine("\n=== STREAMING STATUS ===");
                         Console.WriteLine(concurrentResult);
-                        Console.WriteLine("Note: Status updates will continue to stream above.");
+                        Console.WriteLine($"Multiple concurrent streams are active for robot: {robotId}");
+                        Console.WriteLine("Waiting for mission and robot status updates...");
+                        Console.WriteLine("The streams will automatically reconnect if disconnected.");
+                        Console.WriteLine("Status updates will appear above as they are received.");
+
+                        // Keep the streams alive - wait for updates
+                        await Task.Delay(TimeSpan.FromSeconds(30));
+                        Console.WriteLine("\n[Streams will continue in background]");
                         break;
 
                     case "unary":
@@ -375,10 +397,10 @@ namespace BearRoboticsExamples
                 Console.WriteLine("   destination_id: (Optional) Required for unary example");
 
                 // Show stack trace in debug mode
-                #if DEBUG
+#if DEBUG
                 Console.WriteLine("\n🔍 Stack Trace (Debug Mode):");
                 Console.WriteLine(ex.StackTrace);
-                #endif
+#endif
             }
         }
     }
@@ -396,10 +418,16 @@ namespace BearRoboticsExamples
         /// <param name="response">The battery status update from the server</param>
         public void OnNext(SubscribeBatteryStatusResponse response)
         {
+            // Log the complete response object for debugging
+            Console.WriteLine("\n=== Battery Status Update Received ===");
+            Console.WriteLine($"Full Response: {response}");
+
             // Extract and display relevant fields from the response
             Console.WriteLine($"Robot ID: {response.RobotId}");
-            Console.WriteLine($"Battery percent: {response.BatteryState.ChargePercent}");
+            Console.WriteLine($"Battery percent: {response.BatteryState.ChargePercent}%");
             Console.WriteLine($"Charge method: {response.BatteryState.ChargeMethod}");
+            Console.WriteLine($"Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            Console.WriteLine("=====================================\n");
 
             // You can add additional processing here:
             // - Store in database
