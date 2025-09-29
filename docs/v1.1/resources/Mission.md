@@ -39,7 +39,9 @@ A mission consisting of a single, explicitly defined goal.
 
 
 #### `NavigateAutoMission`
-A mission that automatically selects the first unoccupied and unclaimed goal from the provided list, preferring goals with lower index values. For example, when sending a robot to one of several possible goals [T1, T2, T3], it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3. If all goals are occupied (other robot is already present) or claimed (other robot is already en route to the destination), the mission will fail.
+A mission that automatically selects the **first unoccupied and unclaimed goal** from the provided list, preferring goals with lower index values.
+
+For example, when sending a robot to one of several possible goals `[T1, T2, T3]`, it will first check if `T1` is unoccupied and unclaimed, then `T2`, and finally `T3`. If all goals are occupied (other robot is already present) or claimed (other robot is already en route to the destination), the mission will fail.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
@@ -94,7 +96,7 @@ Appends a mission to the end of the [mission queue](../../concepts/mission.md#mi
 Use this when a mission is currently running; otherwise, prefer [CreateMission](#createmission). 
 Missions are executed in the order they are appended.
 
-### JSON Request / Response Example
+### Request / Response
 !!! note 
     AppendMission request and response message types are the same as [CreateMission](#createmission). See [CreateMission JSON Examples](#json-request-example).
 

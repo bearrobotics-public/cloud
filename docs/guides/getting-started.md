@@ -1,6 +1,6 @@
 # Getting Started
 
-This section aims to provide a fast, code-free way of invoking the APIs. For complete, runnable end-to-end examples in Python and Java, refer to the `examples` under the [**public repository**](https://github.com/bearrobotics-public/cloud/tree/main).
+This section aims to provide a fast, code-free way of invoking the APIs. For complete, runnable end-to-end examples in Python, Java, and C# (DotNet), refer to the `examples` under the [**public repository**](https://github.com/bearrobotics-public/cloud/tree/main).
 
 ## Get Your Credentials
 
