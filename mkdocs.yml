@@ -60,6 +60,16 @@ nav:
       - Authentication: guides/authentication.md
       - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
+      - v1.1:
+          - gRPC API:
+              - Mission: v1.1/resources/Mission.md
+              - Locations & Maps: v1.1/resources/LocationsAndMaps.md
+              - Localization & Navigation: v1.1/resources/LocalizationAndNavigation.md
+              - Robot Status: v1.1/resources/RobotStatus.md
+              - Robot System: v1.1/resources/RobotSystem.md
+              - Fleet Management: v1.1/resources/FleetManagement.md
+              - Carti: v1.1/resources/Carti.md
+              - Servi: v1.1/resources/Servi.md
       - v1.0:
           - gRPC API:
               - Mission: v1.0/resources/Mission.md
