@@ -13,7 +13,6 @@ package bearrobotics.api.v1.core;
 
 // Represents the current state of the localization process.
 message LocalizationState {
-
   // Current state of the localization process.
   enum State {
     STATE_UNKNOWN = 0;

@@ -14,6 +14,40 @@ import "bearrobotics/api/v1/core/annotation.proto";
 import "google/protobuf/timestamp.proto";
 
 
+// Origin represents the starting point of the map in terms of its coordinates and orientation.
+message Origin {
+  // X-coordinate of the map origin in meters.
+  float x_m = 1;
+
+  // Y-coordinate of the map origin in meters.
+  float y_m = 2;
+
+  // Orientation (yaw) of the map origin in radians.
+  float yaw_radians = 3;
+}
+
+// MapImageFileInfo contains metadata about the map image file for integrity verification.
+message MapImageFileInfo {
+  // CRC32C checksum of the map image file.
+  uint32 checksum = 1;
+  // Size of the map image file in bytes.
+  int64 size = 2;
+}
+
+// SignedURL represents a signed URL for file access with expiration.
+message SignedURL {
+  string url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+// MapImageDownloadInfo contains the information needed to download a map image.
+message MapImageDownloadInfo {
+  // Information about the map image file for integrity verification.
+  MapImageFileInfo file_info = 1;
+  // The signed URL for downloading the map image.
+  SignedURL download_url = 2;
+}
+
 // Map represents a navigable map used by robots, including metadata and associated annotations.
 message Map {
   // Unique identifier for the map.
@@ -32,4 +66,24 @@ message Map {
 
   // Annotation associated with this map, defining specific areas and destinations.
   Annotation annotation = 5;
+
+  // Information for downloading the map image, including signed URL and file metadata.
+  // This field is typically populated by the cloud service.
+  // When retrieving map data directly from the robot (e.g., via GetCurrentMap),
+  // this value may be empty.
+  MapImageDownloadInfo image_download_info = 6;
+
+  // Origin of the map relative to the map frame.
+  Origin origin = 7;
+
+  // Resolution of the map in meters per pixel.
+  float resolution = 8;
+}
+
+// MapSelector contains the indices used to select a specific map on a robot.
+message MapSelector {
+  // Positive integer floor_level begins at 1.
+  int32 floor_level = 1;
+  // Non-negative integer section_index begins at 0.
+  int32 section_index = 2;
 }

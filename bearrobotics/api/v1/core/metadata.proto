@@ -13,7 +13,7 @@ package bearrobotics.api.v1.core;
 import "google/protobuf/timestamp.proto";
 
 
-// Metadata is a message returned by streaming endpoints.
+// EventMetadata is a message returned by streaming endpoints.
 message EventMetadata {
   // The time when the event was recorded.
   google.protobuf.Timestamp timestamp = 1;

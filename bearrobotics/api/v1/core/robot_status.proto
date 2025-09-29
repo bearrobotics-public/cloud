@@ -10,6 +10,12 @@ syntax = "proto3";
 
 package bearrobotics.api.v1.core;
 
+import "bearrobotics/api/v1/carti/conveyor.proto";
+import "bearrobotics/api/v1/core/errors.proto";
+import "bearrobotics/api/v1/core/mission_status.proto";
+import "bearrobotics/api/v1/core/pose.proto";
+import "bearrobotics/api/v1/servi/tray_status.proto";
+
 
 // Represents the state of the robot's battery system.
 message BatteryState {
@@ -49,8 +55,6 @@ message BatteryState {
 
 // Represents the state of the robot's emergency stop system.
 message EmergencyStopState {
-
-  // State of the emergency stop system.
   enum Emergency {
     EMERGENCY_UNKNOWN = 0;
 
@@ -61,12 +65,16 @@ message EmergencyStopState {
     // Wheels will resume acting upon software navigation commands.
     EMERGENCY_DISENGAGED = 2;
   }
+
+  // Whether the software level emergency stop is engaged.
   Emergency emergency = 1;
+
+  // Whether the physical emergency stop button is engaged.
+  Emergency button_pressed = 2;
 }
 
 // Represents the online connection state between the cloud and the robot.
 message RobotConnection {
-  
   // Current connection state of the robot.
   enum State {
     STATE_UNKNOWN = 0;
@@ -80,8 +88,42 @@ message RobotConnection {
   State state = 1;
 }
 
+// Represents the set of robot states specifically for Servi robots.
+message ServiState {
+  // A collection of individual tray states from different trays.
+  servi.TrayStates tray_states = 1;
+}
+
+// Represents the set of robot states specifically for Carti robots.
+message CartiState {
+  // Conveyor state, only available for robots with a conveyor installed.
+  optional carti.ConveyorState conveyor_state = 1;
+}
+
 // Represents the overall state of the robot.
 message RobotState {
   // Connection state of the robot.
   RobotConnection connection = 1;
+
+  // Battery state of the robot.
+  BatteryState battery = 2;
+
+  // Emergency stop state of the robot.
+  EmergencyStopState emergency_stop = 3;
+
+  // Mission state of the robot.
+  core.MissionState mission = 4;
+
+  // Pose of the robot.
+  core.Pose pose = 5;
+
+  // Error codes returned by the robot.
+  core.ErrorCodes error_codes = 6;
+
+  oneof typed_status {
+    // Populated when the robot type is a Servi.
+    ServiState servi_state = 7;
+    // Populated when the robot type is a Carti.
+    CartiState carti_state = 8;
+  }
 }

@@ -12,13 +12,13 @@ package bearrobotics.api.v1.core;
 
 import "bearrobotics/api/v1/carti/mission.proto";
 import "bearrobotics/api/v1/core/annotation.proto";
+import "bearrobotics/api/v1/core/mission.proto";
 import "bearrobotics/api/v1/servi/mission.proto";
 
 
 // BaseFeedback provides status updates on mission progress,
 // specific to base missions.
 message BaseFeedback {
-
   // Current feedback status of the robot.
   enum Status {
     STATUS_UNKNOWN = 0;
@@ -27,6 +27,17 @@ message BaseFeedback {
     STATUS_NAVIGATING = 1;
   }
   Status status = 1;
+}
+
+// MissionType defines the different types of missions that can be executed.
+// This uses a oneof structure to categorize mission types by their source.
+// The individual enum types are defined in their respective mission.proto files.
+message MissionType {
+  oneof type {
+    core.BaseType base_type = 1;
+    servi.ServiType servi_type = 2;
+    carti.CartiType carti_type = 3;
+  }
 }
 
 // MissionState represents the current state of a mission assigned to a robot.
@@ -80,4 +91,20 @@ message MissionState {
 
   // Latest feedback for the mission.
   MissionFeedback mission_feedback = 5;
+
+  // Type of the mission
+  MissionType mission_type = 6;
+
+  // Owner of the mission (e.g., "touchscreen", "api", etc.)
+  string owner = 7;
+}
+
+// MissionStates represents a collection of missions with tracking of the current active mission.
+message MissionStates {
+  // List of all missions assigned to the robot, in order from first to last assigned mission.
+  repeated MissionState missions = 1;
+
+  // Index of the currently active mission in the missions list.
+  // -1 if no mission is currently active.
+  int32 current_mission_index = 2;
 }

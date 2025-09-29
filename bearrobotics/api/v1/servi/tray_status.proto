@@ -13,6 +13,21 @@ package bearrobotics.api.v1.servi;
 import "bearrobotics/api/v1/core/metadata.proto";
 
 
+// TraySelector defines a filter for selecting specific trays.
+// It supports selection by a list of tray names.
+// The valid tray names are (case-sensitive):
+// - "roof"
+// - "top"
+// - "upper_middle"
+// - "middle"
+// - "lower_middle"
+// - "bottom"
+//
+// If no tray names are provided, all trays will be selected.
+message TraySelector {
+  repeated string tray_names = 1;
+}
+
 // Represents the state of a single tray.
 message TrayState {
   // Unique string name for the given tray. e.g. "top", "middle", "bottom"

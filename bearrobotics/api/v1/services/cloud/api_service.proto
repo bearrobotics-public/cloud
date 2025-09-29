@@ -10,15 +10,20 @@ syntax = "proto3";
 
 package bearrobotics.api.v1.services.cloud;
 
+import "bearrobotics/api/v1/carti/conveyor.proto";
 import "bearrobotics/api/v1/core/annotation.proto";
+import "bearrobotics/api/v1/core/errors.proto";
 import "bearrobotics/api/v1/core/fleet_selector.proto";
 import "bearrobotics/api/v1/core/localization.proto";
+import "bearrobotics/api/v1/core/location.proto";
 import "bearrobotics/api/v1/core/map.proto";
 import "bearrobotics/api/v1/core/metadata.proto";
 import "bearrobotics/api/v1/core/mission.proto";
 import "bearrobotics/api/v1/core/mission_status.proto";
+import "bearrobotics/api/v1/core/network_status.proto";
 import "bearrobotics/api/v1/core/pose.proto";
 import "bearrobotics/api/v1/core/robot_status.proto";
+import "bearrobotics/api/v1/core/robot_system.proto";
 import "bearrobotics/api/v1/servi/tray_status.proto";
 import "google/api/annotations.proto";
 
@@ -29,11 +34,35 @@ import "google/api/annotations.proto";
 service APIService {
   // === Mission Commands =====================================================
   //
-  // Missions are atomic units of behavior that define a robot's high-level actions.
-  // This API enables users to control robot behavior—from simple navigation
-  // tasks to complex, conditional workflows.
+  // Missions are atomic units of behavior that define a robot's high-level
+  // actions. This API enables users to control robot behavior—from simple
+  // navigation tasks to complex, conditional workflows.
 
-  // Creates a new mission of a specified type.
+  // Append a mission to the end of the mission queue.
+  //
+  // Use this when a mission is currently running; otherwise, prefer
+  // CreateMission. Missions are executed in the order they are appended.
+  rpc AppendMission(AppendMissionRequest) returns (AppendMissionResponse) {
+    option (google.api.http) = {post: "/v1/mission/append"};
+  }
+
+  // Instruct the robot to begin charging, regardless of its current battery
+  // level.
+  //
+  // This call will fail if:
+  // - The robot is already executing a mission.
+  //   The current mission must be canceled before issuing this command.
+  //
+  // Notes:
+  // - This command is only supported on robots equipped with a contact-based
+  // charging dock.
+  //   Robots without a compatible dock will return a INVALID_ARGUMENT error.
+  // - Use `SubscribeBatteryStatus` to monitor the charging process.
+  rpc ChargeRobot(ChargeRobotRequest) returns (ChargeRobotResponse) {
+    option (google.api.http) = {post: "/v1/robot/charge"};
+  }
+
+  // Create a new mission of a specified type.
   //
   // This call will fail if:
   // - The robot is already executing another mission.
@@ -42,47 +71,23 @@ service APIService {
     option (google.api.http) = {post: "/v1/mission/create"};
   }
 
-  // Appends a mission to the end of the mission queue.
+  // Subscribe to updates on the robot's mission status.
   //
-  // Use this when a mission is currently running; otherwise, prefer CreateMission.
-  // Missions are executed in the order they are appended.
-  rpc AppendMission(AppendMissionRequest) returns (AppendMissionResponse) {
-    option (google.api.http) = {post: "/v1/mission/append"};
+  // Upon subscription:
+  // - The latest known mission status is sent immediately.
+  // - Subsequent updates are streamed as the status changes.
+  rpc SubscribeMissionStatus(SubscribeMissionStatusRequest) returns (stream SubscribeMissionStatusResponse) {
+    option (google.api.http) = {post: "/v1/mission-status/subscribe"};
   }
 
-  // Issues a command to control or update the current mission (e.g., pause, cancel).
+  // Issue a command to control or update the current mission (e.g., pause,
+  // cancel).
   //
   // This call will fail if:
   // - The robot is not on the specified mission.
   // - The command is invalid for the robot's current state.
   rpc UpdateMission(UpdateMissionRequest) returns (UpdateMissionResponse) {
     option (google.api.http) = {post: "/v1/mission/update"};
-  }
-
-  // Instructs the robot to begin charging, regardless of its current battery level.
-  //
-  // This call will fail if:
-  // - The robot is already executing a mission.
-  //   The current mission must be canceled before issuing this command.
-  //
-  // Notes:
-  // - This command is only supported on robots equipped with a contact-based charging dock.
-  //   Robots without a compatible dock will return a INVALID_ARGUMENT error.
-  // - Use `SubscribeBatteryStatus` to monitor the charging process.
-  rpc ChargeRobot(ChargeRobotRequest) returns (ChargeRobotResponse) {
-    option (google.api.http) = {post: "/v1/robot/charge"};
-  }
-
-  // Subscribes to updates on the robot's mission state.
-  //
-  // Upon subscription:
-  // - The latest known mission state is sent immediately.
-  // - Subsequent updates are streamed as the state changes.
-  rpc SubscribeMissionStatus(SubscribeMissionStatusRequest)
-      returns (stream SubscribeMissionStatusResponse) {
-    option (google.api.http) = {
-      post: "/v1/mission-status/subscribe"
-    };
   }
 
   // === Maps & Locations =====================================================
@@ -94,8 +99,43 @@ service APIService {
   //
   // The returned map includes annotations and destinations, which can be used
   // in mission destination, localization goals, and navigation.
+  //
+  // Note:
+  // - This API communicates directly with the robot.
+  // - image_url may be empty, as the robot does not serve rendered images.
   rpc GetCurrentMap(GetCurrentMapRequest) returns (GetCurrentMapResponse) {
     option (google.api.http) = {post: "/v1/current-map/get"};
+  }
+
+  // Retrieve information about a specific location by its ID.
+  //
+  // The location includes metadata such as floors, sections, and their
+  // associated maps.
+  //
+  // Note:
+  // - This does not require robot connectivity.
+  rpc GetLocationInfo(GetLocationInfoRequest) returns (GetLocationInfoResponse) {
+    option (google.api.http) = {post: "/v1/location-info/get"};
+  }
+
+  // Retrieve a saved map by map_id from the cloud.
+  //
+  // Use this to fetch a stored map from the cloud database.
+  //
+  // Note:
+  // - This does not require robot connectivity.
+  rpc GetMap(GetMapRequest) returns (GetMapResponse) {
+    option (google.api.http) = {post: "/v1/map/get"};
+  }
+
+  // Switch the robot's current map to a specified map.
+  //
+  // The request must specify the floor level and section index of the desired
+  // map.
+  // Returns an INVALID_ARGUMENT error if there is no matching map.
+  // Returns the map_id of the new map if successful.
+  rpc SwitchMap(SwitchMapRequest) returns (SwitchMapResponse) {
+    option (google.api.http) = {post: "/v1/map/switch"};
   }
 
   // === Localization & Navigation ============================================
@@ -113,84 +153,140 @@ service APIService {
     option (google.api.http) = {post: "/v1/robot/localize"};
   }
 
+  // Update the robot's expected pose on the map.
+  //
+  // Unlike LocalizeRobot, the robot will not attempt to verify whether the pose
+  // that is set align's with its camera view.
+  rpc SetPose(SetPoseRequest) returns (SetPoseResponse) {
+    option (google.api.http) = {post: "/v1/pose/set"};
+  }
+
   // Subscribe to the software emergency stop state.
   //
   // Upon subscription, the server sends the current emergency stop state,
   // followed by updates whenever the emergency stop state changes.
-  rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest)
-      returns (stream SubscribeEmergencyStopStatusResponse) {
-	  option (google.api.http) = {
-	    post: "/v1/estop-status/subscribe"
-	  };
+  rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest) returns (stream SubscribeEmergencyStopStatusResponse) {
+    option (google.api.http) = {post: "/v1/estop-status/subscribe"};
   }
 
-  // Subscribes to the robot’s localization state.
+  // Subscribe to the robot’s localization status.
   //
   // Upon subscription:
-  // - The latest localization state is sent immediately.
-  // - State updates are streamed while localization is active.
-  rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest)
-      returns (stream SubscribeLocalizationStatusResponse) {
-    option (google.api.http) = {
-      post: "/v1/localization-status/subscribe"
-    };
+  // - The latest localization status is sent immediately.
+  // - Status updates are streamed while localization is active.
+  rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest) returns (stream SubscribeLocalizationStatusResponse) {
+    option (google.api.http) = {post: "/v1/localization-status/subscribe"};
   }
 
-  // Subscribes to the robot's pose estimates at a regular frequency. (~10Hz)
+  // Subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
   //
-  // Use this to track the robot's position in real time.
-  rpc SubscribeRobotPose(SubscribeRobotPoseRequest)
-      returns (stream SubscribeRobotPoseResponse) {
-    option (google.api.http) = {
-      post: "/v1/robot-pose/subscribe"
-    };
+  // Current implementation supports up to 5 robots. Requests with more than 5
+  // robots will return a INVALID_ARGUMENT error.
+  //
+  // Use this to track the robot's estimated position in real time.
+  rpc SubscribeRobotPose(SubscribeRobotPoseRequest) returns (stream SubscribeRobotPoseResponse) {
+    option (google.api.http) = {post: "/v1/robot-pose/subscribe"};
   }
 
   // === Robot Status =========================================================
   // Streaming endpoints that provide real-time updates on robot health,
   // including battery levels, charging state, and connectivity.
 
-  // Subscribes to battery state updates for the robot.
+  // Get the latest robot state.
+  //
+  // Robot state includes connectivity and operational states.
+  rpc GetRobotStatus(GetRobotStatusRequest) returns (GetRobotStatusResponse) {
+    option (google.api.http) = {post: "/v1/robot-state/get"};
+  }
+
+  // Subscribe to battery status updates for the robot.
   //
   // Upon subscription:
   // - The latest battery state is sent immediately.
   // - Updates are streamed whenever the state changes.
-  rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest)
-      returns (stream SubscribeBatteryStatusResponse) {
-    option (google.api.http) = {
-      post: "/v1/battery-status/subscribe"
-    };
+  rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest) returns (stream SubscribeBatteryStatusResponse) {
+    option (google.api.http) = {post: "/v1/battery-status/subscribe"};
   }
 
-  // Subscribes to the robot's connectivity and operational state.
+  // Subscribe to the robot's connectivity and operational state.
   //
   // Upon subscription:
-  // - The current robot state is sent immediately.
+  // - The current robot status is sent immediately.
   // - Updates are streamed as the robot's state changes.
-  rpc SubscribeRobotStatus(SubscribeRobotStatusRequest)
-      returns (stream SubscribeRobotStatusResponse) {
-    option (google.api.http) = {
-      post: "/v1/robot-status/subscribe"
-    };
+  rpc SubscribeRobotStatus(SubscribeRobotStatusRequest) returns (stream SubscribeRobotStatusResponse) {
+    option (google.api.http) = {post: "/v1/robot-status/subscribe"};
+  }
+
+  // === Robot System =========================================================
+
+  // Get the overall robot system information.
+  //
+  // When called, the server returns robot system information. The system info
+  // tends to be static and does not change often.
+  rpc GetRobotSystemInfo(GetRobotSystemInfoRequest) returns (GetRobotSystemInfoResponse) {
+    option (google.api.http) = {post: "/v0/robot-system-info/get"};
+  }
+
+  // Execute a OS-level command on a robot.
+  //
+  // When rebooting the robot, a response will return immediately to acknowledge
+  // the request but may take several minutes before the robot reconnects.
+  rpc RunSystemCommand(RunSystemCommandRequest) returns (RunSystemCommandResponse) {
+    option (google.api.http) = {post: "/v1/system-command/run"};
+  }
+
+  // Subscribe to current network-related info of robots.
+  //
+  // Network status will include Wi-Fi and connectivity info.
+  rpc SubscribeNetworkStatus(SubscribeNetworkStatusRequest) returns (stream SubscribeNetworkStatusResponse) {
+    option (google.api.http) = {post: "/v1/network-status/subscribe"};
+  }
+
+  // === Errors ===============================================================
+
+  // Subscribe to error codes returned by the robot.
+  rpc SubscribeErrorCodes(SubscribeErrorCodesRequest) returns (stream SubscribeErrorCodesResponse) {
+    option (google.api.http) = {post: "/v1/error-codes/subscribe"};
   }
 
   // === Fleet Management =====================================================
   // Utilities for managing multiple robots within an account or workspace.
 
-  // Returns a list of robot IDs the user has access to, filtered by optional criteria.
+  // Return a map of locations of the user has access to.
   //
-  // The list includes all known robots, regardless of their current connection state.
+  // The map consists of the location ID (key) paired with its human-readable
+  // name (value).
+  rpc GetAvailableLocations(GetAvailableLocationsRequest) returns (GetAvailableLocationsResponse) {
+    option (google.api.http) = {post: "/v1/available-locations/get"};
+  }
+
+  // Return a list of robot IDs the user has access to, filtered by optional
+  // criteria.
+  //
+  // The list includes all known robots, regardless of their current connection
+  // status.
   rpc ListRobotIDs(ListRobotIDsRequest) returns (ListRobotIDsResponse) {
     option (google.api.http) = {post: "/v1/robot-ids/list"};
   }
 
-  // === Servi-Specific =======================================================
+  // === Servi-Specific Extensions ============================================
   // These endpoints are only available for the Servi robot family.
-  // Attempting to run a Servi commands on a non Servi robot
+  // Attempting to run a Servi command on a non-Servi robot
   // will result in an INVALID_ARGUMENT error.
 
+  // Calibrate the trays on the robot.
+  //
+  // Only applicable for tray-equipped robots (e.g., Servi, Servi Plus).
+  //
+  // Calibrates all trays if no tray names are provided.
+  // Returns an INVALID_ARGUMENT error and rejects the request if any tray name
+  // is invalid.
+  // Returns an empty response on success.
+  rpc CalibrateTrays(CalibrateTraysRequest) returns (CalibrateTraysResponse) {
+    option (google.api.http) = {post: "/v1/trays/calibrate"};
+  }
 
-  // Subscribes to the robot’s tray states updates.
+  // Subscribe to the robot’s tray status updates.
   //
   // Only applicable for tray-equipped robots (e.g., Servi, Servi Plus).
   //
@@ -200,14 +296,58 @@ service APIService {
   //
   // Notes:
   // - Weight changes are reported with 10g precision.
-  // - Robots without weight sensors will return INVALID_ARGUMENT error.
-  rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest)
-      returns (stream SubscribeTrayStatusesResponse) {
-    option (google.api.http) = {
-      post: "/v1/tray-statuses/subscribe"
-    };
+  // - Robots without weight sensors will report UNKNOWN state and omit weight
+  // data.
+  rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest) returns (stream SubscribeTrayStatusesResponse) {
+    option (google.api.http) = {post: "/v1/tray-statuses/subscribe"};
   }
 
+  // === Conveyor =============================================================
+  // These endpoints are only available for Carti robot family.
+  // Attempting to run conveyor commands on a non-Carti robot
+  // will result in an INVALID_ARGUMENT error.
+
+  // Control conveyor motor operations for the specified conveyor indexes.
+  //
+  // This call allows manual control of conveyor motors for
+  // clockwise/counter-clockwise rotation or stop commands.
+  //
+  // This call will fail if:
+  // - Any specified conveyor index is not installed on the robot.
+  // - The robot is in an error state that prevents conveyor control.
+  //
+  // Notes:
+  // - Carti 100: CW = right, CCW = left (X-axis rotation)
+  // - Carti 600: CW = front→rear, CCW = rear→front (Y-axis rotation)
+  rpc ControlConveyor(ControlConveyorRequest) returns (ControlConveyorResponse) {
+    option (google.api.http) = {post: "/v1/conveyor/control"};
+  }
+
+  // Retrieves the configured conveyor indexes for the robot.
+  //
+  // Indexes represent logical positions, not physical installation:
+  // - Carti 100 (vertical): INDEX_1ST = uppermost conveyor
+  // - Carti 600 (horizontal): INDEX_1ST = front facing conveyor
+  rpc GetConveyorIndex(GetConveyorIndexRequest) returns (GetConveyorIndexResponse) {
+    option (google.api.http) = {post: "/v1/conveyor-index/get"};
+  }
+
+  // Subscribe to conveyor status updates for every conveyor index.
+  //
+  // Upon subscription:
+  // - The latest known conveyor states are sent immediately.
+  // - Updates are streamed when any conveyor state changes.
+  //
+  // Status includes: operation (rolling/stopped), payload (loaded/empty),
+  // health (ok/error), installation (installed/not installed).
+  //
+  // Notes:
+  // - Only installed conveyors report status updates.
+  // - Payload detection may have false positives due to beam sensor
+  //   limitations.
+  rpc SubscribeConveyorStatus(SubscribeConveyorStatusRequest) returns (stream SubscribeConveyorStatusResponse) {
+    option (google.api.http) = {post: "/v1/conveyor-status/subscribe"};
+  }
 }
 
 message AppendMissionRequest {
@@ -219,6 +359,13 @@ message AppendMissionResponse {
   string mission_id = 1;
 }
 
+message CalibrateTraysRequest {
+  string robot_id = 1;
+  servi.TraySelector selector = 2;
+}
+
+message CalibrateTraysResponse {}
+
 message ChargeRobotRequest {
   string robot_id = 1;
 }
@@ -226,6 +373,13 @@ message ChargeRobotRequest {
 message ChargeRobotResponse {
   string mission_id = 1;
 }
+
+message ControlConveyorRequest {
+  string robot_id = 1;
+  repeated carti.ConveyorMotorCommand commands = 2;
+}
+
+message ControlConveyorResponse {}
 
 message CreateMissionRequest {
   string robot_id = 1;
@@ -236,12 +390,63 @@ message CreateMissionResponse {
   string mission_id = 1;
 }
 
+message GetAvailableLocationsRequest {}
+
+message GetAvailableLocationsResponse {
+  // A mapping of location ID (key) with its corresponding, human-readable
+  // location name.
+  // e.g. { “1D9X”: “785_Platform” }
+  map<string, string> locations = 1;
+}
+
+message GetConveyorIndexRequest {
+  string robot_id = 1;
+}
+
+message GetConveyorIndexResponse {
+  repeated int32 indexes = 1;
+}
+
 message GetCurrentMapRequest {
   string robot_id = 1;
 }
 
 message GetCurrentMapResponse {
   core.Map map = 1;
+}
+
+message GetLocationInfoRequest {
+  // The location_id is a 4 character alphanumeric identifier for the location.
+  // Example: "3R0A"
+  string location_id = 1;
+}
+
+message GetLocationInfoResponse {
+  core.Location location = 1;
+}
+
+message GetMapRequest {
+  string map_id = 1;
+}
+
+message GetMapResponse {
+  core.Map map = 1;
+}
+
+message GetRobotStatusRequest {
+  string robot_id = 1;
+}
+
+message GetRobotStatusResponse {
+  core.RobotState robot_state = 1;
+}
+
+message GetRobotSystemInfoRequest {
+  string robot_id = 1;
+}
+
+message GetRobotSystemInfoResponse {
+  core.SystemInfo system_info = 1;
 }
 
 message ListRobotIDsRequest {
@@ -264,6 +469,20 @@ message LocalizeRobotRequest {
 
 message LocalizeRobotResponse {}
 
+message RunSystemCommandRequest {
+  string robot_id = 1;
+  core.SystemCommand system_command = 2;
+}
+
+message RunSystemCommandResponse {}
+
+message SetPoseRequest {
+  string robot_id = 1;
+  core.Pose pose = 2;
+}
+
+message SetPoseResponse {}
+
 message SubscribeBatteryStatusRequest {
   core.RobotSelector selector = 1;
 }
@@ -274,6 +493,14 @@ message SubscribeBatteryStatusResponse {
   core.BatteryState battery_state = 3;
 }
 
+message SubscribeConveyorStatusRequest {
+  string robot_id = 1;
+}
+
+message SubscribeConveyorStatusResponse {
+  repeated carti.ConveyorState states = 1;
+}
+
 message SubscribeEmergencyStopStatusRequest {
   string robot_id = 1;
 }
@@ -281,6 +508,19 @@ message SubscribeEmergencyStopStatusRequest {
 message SubscribeEmergencyStopStatusResponse {
   core.EventMetadata metadata = 1;
   core.EmergencyStopState e_stop_state = 2;
+}
+
+message SubscribeErrorCodesRequest {
+  core.RobotSelector selector = 1;
+}
+
+message SubscribeErrorCodesResponse {
+  // A mapping of error codes returned by individual robots.
+  // Each entry pairs a robot ID (key) with a corresponding error code and
+  // metadata.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
+  map<string, core.ErrorCodesWithMetadata> error_codes = 1;
 }
 
 message SubscribeLocalizationStatusRequest {
@@ -299,20 +539,36 @@ message SubscribeMissionStatusRequest {
 message SubscribeMissionStatusResponse {
   core.EventMetadata metadata = 1;
   string robot_id = 2;
+
+  // Deprecated field, should use mission_states instead
   core.MissionState mission_state = 3;
+
+  core.MissionStates mission_states = 4;
+}
+
+message SubscribeNetworkStatusRequest {
+  core.RobotSelector selector = 1;
+}
+
+message SubscribeNetworkStatusResponse {
+  // A mapping of network states reported by individual robots.
+  // Each entry pairs a robot ID (key) with its corresponding network state and
+  // metadata.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
+  map<string, core.NetworkStateWithMetadata> network_states = 1;
 }
 
 message SubscribeRobotPoseRequest {
-
-  // The current implementation supports up to 5 robots.
-  // Using location_id as a selector returns pose estimates
-  // for the first 5 robots at that location, sorted alphabetically.
   core.RobotSelector selector = 1;
 }
 
 message SubscribeRobotPoseResponse {
   // A mapping of robot IDs to their current pose estimates.
-  // Each entry pairs a robot ID (key) with its corresponding pose estimate.
+  // Each entry pairs a robot ID (key) with its corresponding pose estimate and
+  // metadata.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
   map<string, core.PoseWithMetadata> poses = 2;
 }
 
@@ -332,8 +588,20 @@ message SubscribeTrayStatusesRequest {
 
 message SubscribeTrayStatusesResponse {
   // A mapping of tray states reported by individual robots.
-  // Each entry pairs a robot ID (key) with its corresponding tray states.
+  // Each entry pairs a robot ID (key) with its corresponding tray state and
+  // metadata.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
   map<string, servi.TrayStatesWithMetadata> tray_states = 2;
+}
+
+message SwitchMapRequest {
+  string robot_id = 1;
+  core.MapSelector map_selector = 2;
+}
+
+message SwitchMapResponse {
+  string map_id = 1;
 }
 
 message UpdateMissionRequest {

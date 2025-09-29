@@ -16,7 +16,6 @@ import "bearrobotics/api/v1/core/annotation.proto";
 // Feedback provides status updates on mission progress,
 // specific to Carti Family robot missions.
 message Feedback {
-  
   // Current status of the robot.
   enum Status {
     STATUS_UNKNOWN = 0;
@@ -48,15 +47,47 @@ message TraverseMission {
 // Parameters for a traverse patrol mission (reserved for future use).
 message TraversePatrolParams {}
 
-// A traverse patrol mission that navigates to one or more goals 
-// and continuously loops through the goals stopping at each for a time limit
+// A traverse patrol mission that navigates to one or more goals
+// and continuously loops through the goals stopping at each for a time limit.
 message TraversePatrolMission {
   repeated core.Goal goals = 1;
   TraversePatrolParams params = 2;
 }
 
+// A mission consisting of a single, explicitly defined goal.
+message NavigateMission {
+  core.Goal goal = 1;
+}
+
+// A mission that automatically selects the first unoccupied and unclaimed goal
+// from the provided list, preferring goals with lower index values.
+// For example, when sending a robot to one of several possible goals [T1, T2, T3],
+// it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3.
+// If all goals are occupied or claimed, the mission will fail.
+message NavigateAutoMission {
+  repeated core.Goal goals = 1;
+}
+
+// CartiType defines the mission types from carti mission API.
+enum CartiType {
+  // Default value for carti type.
+  CARTI_TYPE_UNKNOWN = 0;
+
+  // A traverse mission that follows a sequence of goals.
+  CARTI_TYPE_TRAVERSE = 1;
+
+  // A traverse patrol mission that follows a sequence of goals on loops.
+  CARTI_TYPE_TRAVERSE_PATROL = 2;
+
+  // A single navigation mission with a predefined goal.
+  CARTI_TYPE_NAVIGATE = 3;
+
+  // An automated navigation mission that selects the best available goal from a list.
+  CARTI_TYPE_NAVIGATE_AUTO = 4;
+}
+
 // Carti missions are specific to the Carti robot family.
-// Attempting to run a Carti mission on a non Carti robot 
+// Attempting to run a Carti mission on a non Carti robot
 // will result in INVALID_ARGUMENT error.
 message Mission {
   oneof mission {
@@ -65,5 +96,11 @@ message Mission {
 
     // A traverse patrol mission that follows a sequence of goals on loops.
     TraversePatrolMission traverse_patrol_mission = 2;
+
+    // A single navigation mission with a predefined goal.
+    NavigateMission navigate_mission = 3;
+
+    // An automated navigation mission that selects the best available goal from a list.
+    NavigateAutoMission navigate_auto_mission = 4;
   }
 }
