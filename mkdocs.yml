@@ -70,6 +70,7 @@ nav:
               - Fleet Management: v1.1/resources/FleetManagement.md
               - Carti: v1.1/resources/Carti.md
               - Servi: v1.1/resources/Servi.md
+          - REST API: v1.1/resources/RestAPI.md
       - v1.0:
           - gRPC API:
               - Mission: v1.0/resources/Mission.md
@@ -109,5 +110,6 @@ nav:
       - Location: concepts/location.md
       - Status: concepts/status.md
   - Changelog:
+    - v1.1: changelog/v1.1.md
     - v1.0: changelog/v1.0.md
     - v0.1Beta: changelog/v0.1beta.md
