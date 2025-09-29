@@ -32,8 +32,8 @@ The current robot state including connectivity, battery, emergency stop, mission
 | `connection` | [`RobotConnection`](#robotconnection) | Connection state of the robot. |
 | `battery` | [`BatteryState`](#batterystate) | Battery state of the robot. |
 | `emergency_stop` | [`EmergencyStopState`](#emergencystopstate) | Emergency stop state of the robot. |
-| `mission` | [`MissionState`](../Mission/#mission_state-missionstate) | Mission state of the robot. |
-| `pose` | [`Pose`](../LocalizationAndNavigation/#pose) | Current pose of the robot. |
+| `mission` | [`MissionState`](Mission.md#missionstate) | Mission state of the robot. |
+| `pose` | [`Pose`](LocalizationAndNavigation.md#pose) | Current pose of the robot. |
 | `error_codes` | [`ErrorCodes`](#errorcodes) | Error codes returned by the robot. |
 | `typed_status` | *oneof* | Robot type-specific state information. Only one type may be set at a time. |
 
@@ -312,8 +312,8 @@ The current robot state including connectivity, battery, emergency stop, mission
 | `connection` | [`RobotConnection`](#robotconnection) | Connection state of the robot. |
 | `battery` | [`BatteryState`](#batterystate) | Battery state of the robot. |
 | `emergency_stop` | [`EmergencyStopState`](#emergencystopstate) | Emergency stop state of the robot. |
-| `mission` | [`MissionState`](../Mission/#mission_state-missionstate) | Mission state of the robot. |
-| `pose` | [`Pose`](../LocalizationAndNavigation/#pose) | Current pose of the robot. |
+| `mission` | [`MissionState`](Mission.md#missionstate) | Mission state of the robot. |
+| `pose` | [`Pose`](LocalizationAndNavigation.md#pose) | Current pose of the robot. |
 | `error_codes` | [`ErrorCodes`](#errorcodes) | Error codes returned by the robot. |
 | `typed_status` | *oneof* | Robot type-specific state information. Only one type may be set at a time. |
 

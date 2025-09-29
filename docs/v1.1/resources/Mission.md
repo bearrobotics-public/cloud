@@ -18,7 +18,7 @@ Universal wrapper for mission types. Only one [mission type](../../concepts/miss
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`base_mission`   |[`BaseMission`](#base_mission-basemission)	| Base missions are specific to the Base units. |
+|`base_mission`   |[`BaseMission`](#basemission)	| Base missions are specific to the Base units. |
 |`servi_mission`	|[`servi.Mission`](Servi.md#servi_mission-servimission) | Servi missions are specific to the Servi robot family. <br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
 |`carti_mission`	|[`carti.Mission`](Carti.md#carti_mission-cartimission)	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission. |
 
@@ -27,15 +27,15 @@ Use the `base_mission` field to send a mission to a Base unit. Current API versi
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`navigate_mission`   |[`NavigateMission`](#navigate_mission-navigatemission)	| Create a base mission of type `Navigate`. |
-|`navigate_auto_mission`	|[`NavigateAutoMission`](#navigate_auto_mission-navigateautomission)| Create a base mission of type `NavigateAuto`. |
+|`navigate_mission`   |[`NavigateMission`](#navigatemission)	| Create a base mission of type `Navigate`. |
+|`navigate_auto_mission`	|[`NavigateAutoMission`](#navigateautomission)| Create a base mission of type `NavigateAuto`. |
 
 #### `NavigateMission`
 A mission consisting of a single, explicitly defined goal.
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
-|`goal`   |[`Goal`](../LocalizationAndNavigation/#goal-goal-required)<br>`required`	| The target destination for the mission. |
+|`goal`   |[`Goal`](LocalizationAndNavigation.md#goal-goal-required)<br>`required`	| The target destination for the mission. |
 
 
 #### `NavigateAutoMission`
@@ -45,7 +45,7 @@ For example, when sending a robot to one of several possible goals `[T1, T2, T3]
 
 | Field  | Message Type | Description |
 |------------|-------------| ---|
-|`goals`   |*repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required)<br>`required`	| The **list** of target destinations for the mission. |
+|`goals`   |*repeated* [`Goal`](LocalizationAndNavigation.md#goal-goal-required)<br>`required`	| The **list** of target destinations for the mission. |
 
 
 ##### JSON Request Example
@@ -212,7 +212,7 @@ The robotID the message is associated with.
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `missions` | *repeated* [`MissionState`](#mission_state-missionstate) | List of all missions assigned to the robot, in order from first to last assigned mission. |
+| `missions` | *repeated* [`MissionState`](#missionstate) | List of all missions assigned to the robot, in order from first to last assigned mission. |
 | `current_mission_index` | `int32` | Index of the currently active mission in the missions list. -1 if no mission is currently active. |
 
 #### `MissionState`
@@ -221,7 +221,7 @@ The robotID the message is associated with.
 |------|------|-------------|
 | `mission_id` | `string` | Unique identifier for the mission. |
 | `state` | [`State`](#state-enum) *enum* | Current lifecycle state of the mission. |
-| `goals` | *repeated* [`Goal`](../LocalizationAndNavigation/#goal-goal-required) | All goals associated with the mission, <br />in the order the request was given. |
+| `goals` | *repeated* [`Goal`](LocalizationAndNavigation.md#goal-goal-required) | All goals associated with the mission, <br />in the order the request was given. |
 | `current_goal_index` | `int32` | Index of the currently active goal in the goals list. |
 | `mission_feedback` | [`MissionFeedback`](#missionfeedback) | Latest feedback for the mission. |
 | `mission_type` | [`MissionType`](#missiontype) | Type of the mission. |
