@@ -1,0 +1,103 @@
+// File: conveyor.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.carti;
+
+
+// The index is the logical position of the equipment on the robot,
+// and it does not indicate the physical height/position of the conveyor.
+// To know the physical installation of the conveyor,
+// use the ConveyorState.installation_state field.
+// For instance:
+//   - If there is only one conveyor installed,
+//     the index will be 1 regardless of the height of its placement
+//   - If there are two conveyors installed, the upper one's index is 1
+//     and the bottom one's index is 2.
+// The index value represents the logical position of the conveyor:
+//   - 0: Unknown/undefined index
+//   - 1: In Carti 100, which features a vertical conveyor layout,
+//        represents the uppermost conveyor of the robot.
+//        In Carti 600 which has a horizontal layout of conveyors,
+//        represents the front facing conveyor.
+//   - 2: In Carti 100, which features a vertical conveyor layout,
+//        represents the conveyor positioned second from the top of the robot.
+//        In Carti 600 which has a horizontal layout of conveyors,
+//        represents the rear facing conveyor.
+
+// Conveyor state includes the operation status, payload status, and health status.
+message ConveyorState {
+  // Unique identifier for the conveyor.
+  int32 index = 1;
+  // The operation status is the current state of the conveyor motor.
+  enum OperationState {
+    OPERATION_STATE_UNKNOWN = 0;
+    // When the conveyor's motor is rolling in any direction(clockwise or counter-clockwise).
+    OPERATION_STATE_ROLLING = 1;
+    // When the conveyor's motor is stopped.
+    OPERATION_STATE_STOP = 2;
+  }
+  OperationState operation_state = 2;
+
+  // The payload status is the current state of the payload on the conveyor.
+  enum PayloadState {
+    PAYLOAD_STATE_UNKNOWN = 0;
+    // When the conveyor has a payload.
+    // Since current Cati 100 conveyor model doesn't have a load sensor,
+    // and have a beam sensor to detect the payload, PayloadState is PAYLOAD_STATE_LOADED
+    // if the beam sensor is blocked. But this could have a false positive like a place
+    // the small object between beam sensor and the conveyor.
+    PAYLOAD_STATE_LOADED = 1;
+    // When the conveyor is empty.
+    PAYLOAD_STATE_EMPTY = 2;
+  }
+  PayloadState payload_state = 3;
+
+  // The health status is the current health of the conveyor.
+  enum HealthState {
+    HEALTH_STATE_UNKNOWN = 0;
+    // When the conveyor is installed and functioning.
+    HEALTH_STATE_OK = 1;
+    // When the conveyor is not functioning.
+    HEALTH_STATE_ERROR = 2;
+  }
+  HealthState health_state = 4;
+
+  // The installation state refers to whether the conveyor is installed physically on the robot.
+  // This is installation data from the firmware side.
+  // Currently, the status only indicates installed or not installed,
+  // But in the future, additional states like "installed but error" may be added by the firmware side.
+  enum InstallationState {
+    INSTALLATION_STATE_UNKNOWN = 0;
+    INSTALLATION_STATE_INSTALLED = 1;
+    INSTALLATION_STATE_NOT_INSTALLED = 2;
+  }
+  InstallationState installation_state = 5;
+}
+
+// This ControlConveyor allows manual control of conveyor motors for CW/CCW rotation or stop commands.
+// The control commands are sent to specific conveyor indexes and can control multiple
+// conveyors. Each command specifies the target conveyor and the desired
+// motor action (stop, clockwise or counter-clockwise rotation).
+// For Carti100: Motor rotates about the X-axis (robot's forward direction).
+//   - CW rotation moves conveyor right, CCW rotation moves conveyor left from robot’s perspective.
+// For Carti600: Motor rotates about the Y-axis with front/rear conveyor sections.
+//   - CW rotation moves from front to rear, CCW rotation moves from rear to front.
+message ConveyorMotorCommand {
+  // Target conveyor to control.
+  int32 index = 1;
+  // Motor command to execute.
+  enum CommandConveyorMotor {
+    COMMAND_CONVEYOR_MOTOR_UNKNOWN = 0;
+    COMMAND_CONVEYOR_MOTOR_STOP = 1;
+    COMMAND_CONVEYOR_MOTOR_CW = 2;
+    COMMAND_CONVEYOR_MOTOR_CCW = 3;
+  }
+  CommandConveyorMotor command = 2;
+}

@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: annotation.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -23,9 +23,11 @@ message Destination {
   // Human-readable name for the destination.
   string display_name = 2;
 
+  // Position of the destination in the robot's map coordinate system.
+  Pose pose = 3;
 }
 
-// Annotation defines a specific area on the map, often used to 
+// Annotation defines a specific area on the map, often used to
 // group destinations or assign special parameters.
 message Annotation {
   // Unique identifier for the annotation.
@@ -40,15 +42,15 @@ message Annotation {
   google.protobuf.Timestamp created_time = 3;
 
   // A collection of destinations associated with this annotation.
-  // Each entry pairs a destination ID (key) with its 
+  // Each entry pairs a destination ID (key) with its
   // corresponding Destination message (value).
   map<string, Destination> destinations = 4;
 }
 
-
-// Goal represents a target destination for the robot to navigate to.
+// Goal represents a target destination or pose for the robot to navigate to.
 message Goal {
   oneof goal {
     string destination_id = 1;
+    Pose pose = 2;
   }
 }

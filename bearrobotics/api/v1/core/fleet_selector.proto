@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: fleet_selector.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -13,8 +13,8 @@ package bearrobotics.api.v1.core;
 
 // RobotFilter defines the conditions for selecting robots.
 message RobotFilter {
-  // An empty location_id return all robots assigned to all
-  // locations created and owned by API key user.
+  // An empty location_id returns all robots authorized
+  // to the authenticated API key user.
   string location_id = 1;
 }
 

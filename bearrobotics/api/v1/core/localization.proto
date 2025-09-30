@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: localization.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -13,7 +13,6 @@ package bearrobotics.api.v1.core;
 
 // Represents the current state of the localization process.
 message LocalizationState {
-
   // Current state of the localization process.
   enum State {
     STATE_UNKNOWN = 0;

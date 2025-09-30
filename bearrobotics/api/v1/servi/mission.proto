@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: mission.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -16,7 +16,6 @@ import "bearrobotics/api/v1/core/annotation.proto";
 // Feedback provides status updates on mission progress,
 // specific to Servi Family robot missions.
 message Feedback {
-  
   // Current status of the robot.
   enum Status {
     STATUS_UNKNOWN = 0;
@@ -36,17 +35,17 @@ message Feedback {
   Status status = 1;
 }
 
-// Parameters for a bussing mission (reserved for future use).
+// Parameters for a bussing mission.
 message BussingParams {}
 
 // A bussing mission that navigates to one or more goals,
 // stopping at each for a time limit or until weight is added.
 message BussingMission {
-  repeated core.Goal goals = 1;  
+  repeated core.Goal goals = 1;
   BussingParams params = 2;
 }
 
-// Parameters for a bussing patrol mission (reserved for future use).
+// Parameters for a bussing patrol mission.
 message BussingPatrolParams {}
 
 // A bussing patrol mission that continuously loops through goals,
@@ -56,8 +55,11 @@ message BussingPatrolMission {
   BussingPatrolParams params = 2;
 }
 
-// Parameters for a delivery mission (reserved for future use).
-message DeliveryParams {}
+// Parameters for a delivery mission.
+message DeliveryParams {
+  // Tray mappings for the delivery mission. Only supported for Servi+ robots.
+  repeated TrayMapping tray_mappings = 1;
+}
 
 // A delivery mission that navigates to one or more goals,
 // stopping at each for a time limit or until weight is removed.
@@ -66,18 +68,63 @@ message DeliveryMission {
   DeliveryParams params = 2;
 }
 
-// Parameters for a delivery patrol mission (reserved for future use).
+// Parameters for a delivery patrol mission.
 message DeliveryPatrolParams {}
 
 // A delivery patrol mission that continuously loops through goals,
 // stopping at each for a time limit until all weight is removed.
 message DeliveryPatrolMission {
-  repeated core.Goal goals = 1;  
+  repeated core.Goal goals = 1;
   DeliveryPatrolParams params = 2;
 }
 
+// Mapping between a given tray to a goal.
+// Note: Tray mapping is only supported for Servi+ robots.
+message TrayMapping {
+  string tray_name = 1;
+  core.Goal goal = 2;
+}
+
+// A mission consisting of a single, explicitly defined goal.
+message NavigateMission {
+  core.Goal goal = 1;
+}
+
+// A mission that automatically selects the first unoccupied and unclaimed goal
+// from the provided list, preferring goals with lower index values.
+// For example, when sending a robot to one of several possible goals [T1, T2, T3],
+// it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3.
+// If all goals are occupied or claimed, the mission will fail.
+message NavigateAutoMission {
+  repeated core.Goal goals = 1;
+}
+
+// ServiType defines the mission types from servi mission API.
+enum ServiType {
+  // Default value for servi type.
+  SERVI_TYPE_UNKNOWN = 0;
+
+  // A serving mission that navigates to goals, stopping until weight is removed.
+  SERVI_TYPE_SERVING = 1;
+
+  // A serving patrol mission that continuously loops until all weight is removed.
+  SERVI_TYPE_SERVING_PATROL = 2;
+
+  // A bussing mission that navigates to goals, stopping until weight is added.
+  SERVI_TYPE_BUSSING = 3;
+
+  // A bussing patrol mission that continuously loops until weight exceeds threshold.
+  SERVI_TYPE_BUSSING_PATROL = 4;
+
+  // A single navigation mission with a predefined goal.
+  SERVI_TYPE_NAVIGATE = 5;
+
+  // An automated navigation mission that selects the best available goal from a list.
+  SERVI_TYPE_NAVIGATE_AUTO = 6;
+}
+
 // Servi missions are specific to the Servi robot family.
-// Attempting to run a Servi mission on a non Servi robot 
+// Attempting to run a Servi mission on a non Servi robot
 // will result in an INVALID_ARGUMENT error.
 message Mission {
   oneof mission {
@@ -92,5 +139,11 @@ message Mission {
 
     // A bussing patrol mission that loops until weight exceeds a threshold.
     BussingPatrolMission bussing_patrol_mission = 4;
+
+    // A single navigation mission with a predefined goal.
+    NavigateMission navigate_mission = 5;
+
+    // An automated navigation mission that selects the best available goal from a list.
+    NavigateAutoMission navigate_auto_mission = 6;
   }
 }

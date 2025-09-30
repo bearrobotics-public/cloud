@@ -1,0 +1,87 @@
+// File: location.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "google/protobuf/timestamp.proto";
+
+
+// Location represents a physical location with multiple floors and sections,
+// including metadata such as creation and modification timestamps.
+message Location {
+  // A 4 character alphanumeric identifier for the location. This is unique
+  // among all locations in a Universe.
+  // Example: "3R0A"
+  // Legacy locations may use the display_name as the identifier, in which case
+  // the identifier may be longer or shorter than 4 characters.
+  string location_id = 1;
+
+  // Timestamp indicating when the location was created.
+  google.protobuf.Timestamp created_time = 2;
+  // Timestamp indicating the last time the location was modified.
+  google.protobuf.Timestamp modified_time = 3;
+
+  // Display name of the location, matching the name shown in Universe.
+  // Examples: "City Deli & Grill", "KNTH"
+  string display_name = 4;
+
+  // Floor represents a single floor in the location, containing multiple
+  // sections.
+  message Floor {
+    // Display name of the floor, matching the name shown in Universe.
+    // Example: "Ground"
+    string display_name = 1;
+
+    // Represents a section of a floor.
+    // Each Section corresponds to an area on a floor that may have its own
+    // map(s). We assume sections are disconnected; if connected sections are
+    // needed in the future, additional information will be added to represent
+    // the connections.
+    message Section {
+      // Display name of the section, matching the name shown in Universe.
+      string display_name = 1;
+
+      // ID of the current map associated with the section.
+      string current_map_id = 2;
+    }
+
+    // List of sections on this floor.
+    repeated Section sections = 2;
+  }
+
+  // Map of floors in the location, keyed by their floor level.
+  // The floor level is any non-negative integer starting from 0.
+  // Floor level is not necessarily sequential.
+  // Example:
+  // floors [
+  //   {
+  //     key: 0
+  //     value: {
+  //       display_name: "Ground Floor"
+  //       sections: [...]
+  //     }
+  //   }
+  //   {
+  //     key: 1
+  //     value: {
+  //       display_name: "Second Floor"
+  //       sections: [...]
+  //     }
+  //   }
+  //   {
+  //     key: 99
+  //     value: {
+  //       display_name: "Roof"
+  //       sections: [...]
+  //     }
+  //   }
+  // ]
+  map<int32, Floor> floors = 5;
+}

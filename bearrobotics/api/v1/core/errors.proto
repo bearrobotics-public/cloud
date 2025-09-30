@@ -1,0 +1,47 @@
+// File: errors.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/metadata.proto";
+
+
+message ErrorCode {
+  // Integer code indicating the type of error. Does not indicate severity.
+  // Please refer to the error code documentation for more details.
+  int32 code = 1;
+
+  enum Severity {
+    SEVERITY_UNKNOWN = 0;
+    // Low severity indicates an identified issue that is not visible.
+    SEVERITY_LOW = 1;
+    // Medium severity indicates an identified issue that does not block operation.
+    SEVERITY_MEDIUM = 2;
+    // High severity indicates an identified issue that blocks operation.
+    SEVERITY_HIGH = 3;
+  }
+  // Level of criticality of an error.
+  Severity severity = 2;
+
+  // Message about the error e.g. "Up camera process error."
+  string message = 3;
+}
+
+message ErrorCodes {
+  repeated ErrorCode codes = 1;
+}
+
+message ErrorCodesWithMetadata {
+  // Metadata associated with the event.
+  core.EventMetadata metadata = 1;
+
+  // Error codes returned by the robot during the event.
+  repeated ErrorCode codes = 2;
+}

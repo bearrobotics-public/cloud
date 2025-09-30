@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: mission.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -13,13 +13,14 @@ package bearrobotics.api.v1.core;
 import "bearrobotics/api/v1/carti/mission.proto";
 import "bearrobotics/api/v1/core/annotation.proto";
 import "bearrobotics/api/v1/servi/mission.proto";
+import "google/protobuf/any.proto";
 
 
-// A mission that automatically selects the best available goal 
-// from the provided list.
-// For example, when sending a robot to one of several possible goals,
-// the system will automatically choose an available one, 
-// avoiding goals currently occupied by other robots.
+// A mission that automatically selects the first unoccupied and unclaimed goal
+// from the provided list, preferring goals with lower index values.
+// For example, when sending a robot to one of several possible goals [T1, T2, T3],
+// it will first check if T1 is unoccupied and unclaimed, then T2, and finally T3.
+// If all goals are occupied or claimed, the mission will fail.
 message NavigateAutoMission {
   repeated Goal goals = 1;
 }
@@ -40,6 +41,17 @@ message BaseMission {
   }
 }
 
+// BaseType defines the mission types from core mission API.
+enum BaseType {
+  // Default value for base type.
+  BASE_TYPE_UNKNOWN = 0;
+
+  // A single navigation mission with a predefined goal.
+  BASE_TYPE_NAVIGATE = 1;
+
+  // An automated navigation mission that selects the best available goal from a list.
+  BASE_TYPE_NAVIGATE_AUTO = 2;
+}
 
 // Wrapper for all supported mission types.
 // Only one mission type can be set per Mission instance.
@@ -54,6 +66,9 @@ message Mission {
     // Carti missions are specific to the Carti robot family.
     carti.Mission carti_mission = 3;
   }
+
+  // Flexible experimental mission type for experimental APIs.
+  google.protobuf.Any extension = 888;
 }
 
 // Command message used to update the state of an active mission.
