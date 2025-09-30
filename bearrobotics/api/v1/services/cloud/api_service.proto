@@ -1,4 +1,4 @@
-// File: cloud_api_service.proto
+// File: api_service.proto
 //
 // Copyright 2025 Bear Robotics, Inc. All rights reserved.
 //
@@ -26,7 +26,6 @@ import "bearrobotics/api/v1/core/robot_status.proto";
 import "bearrobotics/api/v1/core/robot_system.proto";
 import "bearrobotics/api/v1/servi/tray_status.proto";
 import "google/api/annotations.proto";
-
 
 // APIService defines the control, navigation, monitoring, and fleet management
 // interface for robots. This includes mission orchestration, localization,
@@ -76,9 +75,7 @@ service APIService {
   // Upon subscription:
   // - The latest known mission status is sent immediately.
   // - Subsequent updates are streamed as the status changes.
-  rpc SubscribeMissionStatus(SubscribeMissionStatusRequest) returns (stream SubscribeMissionStatusResponse) {
-    option (google.api.http) = {post: "/v1/mission-status/subscribe"};
-  }
+  rpc SubscribeMissionStatus(SubscribeMissionStatusRequest) returns (stream SubscribeMissionStatusResponse);
 
   // Issue a command to control or update the current mission (e.g., pause,
   // cancel).
@@ -165,18 +162,14 @@ service APIService {
   //
   // Upon subscription, the server sends the current emergency stop state,
   // followed by updates whenever the emergency stop state changes.
-  rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest) returns (stream SubscribeEmergencyStopStatusResponse) {
-    option (google.api.http) = {post: "/v1/estop-status/subscribe"};
-  }
+  rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest) returns (stream SubscribeEmergencyStopStatusResponse);
 
   // Subscribe to the robot’s localization status.
   //
   // Upon subscription:
   // - The latest localization status is sent immediately.
   // - Status updates are streamed while localization is active.
-  rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest) returns (stream SubscribeLocalizationStatusResponse) {
-    option (google.api.http) = {post: "/v1/localization-status/subscribe"};
-  }
+  rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest) returns (stream SubscribeLocalizationStatusResponse);
 
   // Subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
   //
@@ -184,9 +177,7 @@ service APIService {
   // robots will return a INVALID_ARGUMENT error.
   //
   // Use this to track the robot's estimated position in real time.
-  rpc SubscribeRobotPose(SubscribeRobotPoseRequest) returns (stream SubscribeRobotPoseResponse) {
-    option (google.api.http) = {post: "/v1/robot-pose/subscribe"};
-  }
+  rpc SubscribeRobotPose(SubscribeRobotPoseRequest) returns (stream SubscribeRobotPoseResponse);
 
   // === Robot Status =========================================================
   // Streaming endpoints that provide real-time updates on robot health,
@@ -204,18 +195,14 @@ service APIService {
   // Upon subscription:
   // - The latest battery state is sent immediately.
   // - Updates are streamed whenever the state changes.
-  rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest) returns (stream SubscribeBatteryStatusResponse) {
-    option (google.api.http) = {post: "/v1/battery-status/subscribe"};
-  }
+  rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest) returns (stream SubscribeBatteryStatusResponse);
 
   // Subscribe to the robot's connectivity and operational state.
   //
   // Upon subscription:
   // - The current robot status is sent immediately.
   // - Updates are streamed as the robot's state changes.
-  rpc SubscribeRobotStatus(SubscribeRobotStatusRequest) returns (stream SubscribeRobotStatusResponse) {
-    option (google.api.http) = {post: "/v1/robot-status/subscribe"};
-  }
+  rpc SubscribeRobotStatus(SubscribeRobotStatusRequest) returns (stream SubscribeRobotStatusResponse);
 
   // === Robot System =========================================================
 
@@ -238,16 +225,12 @@ service APIService {
   // Subscribe to current network-related info of robots.
   //
   // Network status will include Wi-Fi and connectivity info.
-  rpc SubscribeNetworkStatus(SubscribeNetworkStatusRequest) returns (stream SubscribeNetworkStatusResponse) {
-    option (google.api.http) = {post: "/v1/network-status/subscribe"};
-  }
+  rpc SubscribeNetworkStatus(SubscribeNetworkStatusRequest) returns (stream SubscribeNetworkStatusResponse);
 
   // === Errors ===============================================================
 
   // Subscribe to error codes returned by the robot.
-  rpc SubscribeErrorCodes(SubscribeErrorCodesRequest) returns (stream SubscribeErrorCodesResponse) {
-    option (google.api.http) = {post: "/v1/error-codes/subscribe"};
-  }
+  rpc SubscribeErrorCodes(SubscribeErrorCodesRequest) returns (stream SubscribeErrorCodesResponse);
 
   // === Fleet Management =====================================================
   // Utilities for managing multiple robots within an account or workspace.
@@ -298,9 +281,7 @@ service APIService {
   // - Weight changes are reported with 10g precision.
   // - Robots without weight sensors will report UNKNOWN state and omit weight
   // data.
-  rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest) returns (stream SubscribeTrayStatusesResponse) {
-    option (google.api.http) = {post: "/v1/tray-statuses/subscribe"};
-  }
+  rpc SubscribeTrayStatuses(SubscribeTrayStatusesRequest) returns (stream SubscribeTrayStatusesResponse);
 
   // === Conveyor =============================================================
   // These endpoints are only available for Carti robot family.
@@ -345,9 +326,7 @@ service APIService {
   // - Only installed conveyors report status updates.
   // - Payload detection may have false positives due to beam sensor
   //   limitations.
-  rpc SubscribeConveyorStatus(SubscribeConveyorStatusRequest) returns (stream SubscribeConveyorStatusResponse) {
-    option (google.api.http) = {post: "/v1/conveyor-status/subscribe"};
-  }
+  rpc SubscribeConveyorStatus(SubscribeConveyorStatusRequest) returns (stream SubscribeConveyorStatusResponse);
 }
 
 message AppendMissionRequest {
