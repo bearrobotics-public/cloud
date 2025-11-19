@@ -1,12 +1,13 @@
 #! /bin/bash
 
-pip install grpcio-tools
+uv venv
+uv pip install grpcio-tools requests
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 cd "$REPO_ROOT/examples/python"
 
 PROTO_OUT="generated"
-mkdir "$PROTO_OUT"
+mkdir -p "$PROTO_OUT"
 
 # Create __init__.py to make this a proper Python package
 touch "$PROTO_OUT/__init__.py"
