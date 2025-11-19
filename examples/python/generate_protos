@@ -21,5 +21,5 @@ python3 -m grpc_tools.protoc \
     google/api/*.proto
 
 # Fix imports in generated files
-find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from bearrobotics/from generated.bearrobotics/g' {} +
-find "$PROTO_OUT" -name "*.py" -type f -exec sed -i 's/from google.api/from generated.google.api/g' {} +
+find "$PROTO_OUT" -name "*.py" -type f -exec sed -i '' -e 's/from bearrobotics/from generated.bearrobotics/g' {} +
+find "$PROTO_OUT" -name "*.py" -type f -exec sed -i '' -e 's/from google.api/from generated.google.api/g' {} +
