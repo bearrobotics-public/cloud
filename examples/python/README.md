@@ -4,8 +4,7 @@ This directory contains Python examples for interacting with the Bear Robotics A
 
 ## Prerequisites
 
-- Python 3.x
-- pip (Python package manager)
+- uv (https://docs.astral.sh/uv/#installation)
 
 ## Directory Structure
 
@@ -50,8 +49,9 @@ The main example script (`main.py`) demonstrates how to:
 3. Handle authentication and retries
 
 To run the example:
-```bash
-python3 main.py <robot_id> ["unary"|"streaming"]
+```
+chmod +x main.py
+./main.py <robot_id> [unary|streaming]
 ```
 
 ## API Authentication
