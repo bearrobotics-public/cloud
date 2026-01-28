@@ -48,8 +48,8 @@ Destination represents a single point of interest on the map that a robot can na
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `destination_id` | string | Unique identifier for the destination. |
-| `display_name` | string | Human-readable name for the destination. |
+| `destination_id` | `string` | **Note**: In `GetCurrentMap`, this field returns the destination's display name. |
+| `display_name` | `string` | Human-readable name for the destination. |
 
 ##### JSON Response Example
 === "JSON"
