@@ -1,0 +1,1795 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Bear Cloud API
+    description: |-
+        Bear Cloud APIs define the control, navigation, monitoring, and fleet management
+         interface for robots.
+    version: 1.1.0
+tags:
+    - name: Mission
+      description: Basic mission-related operations
+    - name: Locations & Maps
+      description: Operations for fetching and setting location and map settings
+    - name: Localization & Navigation
+      description: Low-level endpoints for robot pose and localization
+    - name: Robot Status
+      description: Queries for real-time robot status data
+    - name: Robot System
+      description: System-level operations and Queries for static robot configurations
+    - name: Fleet Management
+      description: Fleet-level operations
+    - name: Carti
+      description: Carti-specific operations
+    - name: Servi
+      description: Servi-specific operations
+servers:
+  - url: https://api.bearrobotics.ai
+security:
+    - BearerAuth: []
+paths:
+    /v0/robot-system-info/get:
+        post:
+            tags:
+                - Robot System
+            description: |-
+                Get the overall robot system information.
+
+                 When called, the server returns robot system information. The system info
+                 tends to be static and does not change often.
+            operationId: APIService_GetRobotSystemInfo
+            requestBody:
+                description: Robot identifier for system info retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - robotId
+                            properties:
+                                robotId:
+                                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetRobotSystemInfoResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/available-locations/get:
+        post:
+            tags:
+                - Fleet Management
+            description: |-
+                Return a map of locations of the user has access to.
+
+                The map consists of the location ID (key) paired with its human-readable
+                name (value).
+            operationId: APIService_GetAvailableLocations
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAvailableLocationsResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/conveyor-index/get:
+        post:
+            tags:
+                - Carti
+            description: |-
+                Retrieves the configured conveyor indexes for the robot.
+
+                 Indexes represent logical positions, not physical installation:
+                 - Carti 100 (vertical): INDEX_1ST = uppermost conveyor
+                 - Carti 600 (horizontal): INDEX_1ST = front facing conveyor
+            operationId: APIService_GetConveyorIndex
+            requestBody:
+                description: Robot identifier for conveyor index retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - robotId
+                            properties:
+                                robotId:
+                                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetConveyorIndexResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/conveyor/control:
+        post:
+            tags:
+                - Carti
+            description: |-
+                Control conveyor motor operations for the specified conveyor indexes.
+
+                 This call allows manual control of conveyor motors for
+                 clockwise/counter-clockwise rotation or stop commands.
+
+                 This call will fail if:
+                 - Any specified conveyor index is not installed on the robot.
+                 - The robot is in an error state that prevents conveyor control.
+
+                 Notes:
+                 - Carti 100: CW = right, CCW = left (X-axis rotation)
+                 - Carti 600: CW = front→rear, CCW = rear→front (Y-axis rotation)
+            operationId: APIService_ControlConveyor
+            requestBody:
+                description: Robot identifier and conveyor control commands
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - robotId
+                            properties:
+                                robotId:
+                                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ControlConveyorResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/current-map/get:
+        post:
+            tags:
+                - Locations & Maps
+            description: |-
+                Retrieves the current map used by the robot.
+
+                 The returned map includes annotations and destinations, which can be used
+                 in mission destination, localization goals, and navigation.
+
+                 Note:
+                 - This API communicates directly with the robot.
+                 - image_url may be empty, as the robot does not serve rendered images.
+            operationId: APIService_GetCurrentMap
+            requestBody:
+                description: Robot identifier for map retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required:
+                                - robotId
+                            properties:
+                                robotId:
+                                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetCurrentMapResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/location-info/get:
+        post:
+            tags:
+                - Locations & Maps
+            description: |-
+                Retrieve information about a specific location by its ID.
+
+                 The location includes metadata such as floors, sections, and their
+                 associated maps.
+
+                 Note:
+                 - This does not require robot connectivity.
+            operationId: APIService_GetLocationInfo
+            requestBody:
+                description: Location identifier for info retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetLocationInfoRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetLocationInfoResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/map/get:
+        post:
+            tags:
+                - Locations & Maps
+            description: |-
+                Retrieve a saved map by map_id from the cloud.
+
+                 Use this to fetch a stored map from the cloud database.
+
+                 Note:
+                 - This does not require robot connectivity.
+            operationId: APIService_GetMap
+            requestBody:
+                description: Map identifier for retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetMapRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetMapResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/map/switch:
+        post:
+            tags:
+                - Locations & Maps
+            description: |-
+                Switch the robot's current map to a specified map.
+
+                 The request must specify the floor level and section index of the desired
+                 map.
+                 Returns an INVALID_ARGUMENT error if there is no matching map.
+                 Returns the map_id of the new map if successful.
+            operationId: APIService_SwitchMap
+            requestBody:
+                description: Robot identifier and map selector for switching maps
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SwitchMapRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SwitchMapResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission/append:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Append a mission to the end of the mission queue.
+
+                 Use this when a mission is currently running; otherwise, prefer
+                 CreateMission. Missions are executed in the order they are appended.
+            operationId: APIService_AppendMission
+            requestBody:
+                description: Mission details and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AppendMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AppendMissionResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission/create:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Create a new mission of a specified type.
+
+                 This call will fail if:
+                 - The robot is already executing another mission.
+                 - The requested mission is not compatible with the robot's current state.
+            operationId: APIService_CreateMission
+            requestBody:
+                description: Mission details and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateMissionResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission/update:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Issue a command to control or update the current mission (e.g., pause,
+                 cancel).
+
+                 This call will fail if:
+                 - The robot is not on the specified mission.
+                 - The command is invalid for the robot's current state.
+            operationId: APIService_UpdateMission
+            requestBody:
+                description: Mission update command and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateMissionResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/pose/set:
+        post:
+            tags:
+                - Localization & Navigation
+            description: |-
+                Update the robot's expected pose on the map.
+
+                 Unlike LocalizeRobot, the robot will not attempt to verify whether the pose
+                 that is set align's with its camera view.
+            operationId: APIService_SetPose
+            requestBody:
+                description: Robot identifier and pose to set
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SetPoseRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SetPoseResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/robot-ids/list:
+        post:
+            tags:
+                - Fleet Management
+            description: |-
+                Return a list of robot IDs the user has access to, filtered by optional
+                 criteria.
+
+                 The list includes all known robots, regardless of their current connection
+                 status.
+            operationId: APIService_ListRobotIDs
+            requestBody:
+                description: Filter criteria for robot listing
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListRobotIDsRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListRobotIDsResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/robot-state/get:
+        post:
+            tags:
+                - Robot Status
+            description: |-
+                Get the latest robot state.
+
+                 Robot state includes connectivity and operational states.
+            operationId: APIService_GetRobotStatus
+            requestBody:
+                description: Robot identifier for status retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetRobotStatusRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetRobotStatusResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/robot/charge:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Instruct the robot to begin charging, regardless of its current battery
+                 level.
+
+                 This call will fail if:
+                 - The robot is already executing a mission.
+                   The current mission must be canceled before issuing this command.
+
+                 Notes:
+                 - This command is only supported on robots equipped with a contact-based
+                 charging dock.
+                   Robots without a compatible dock will return a INVALID_ARGUMENT error.
+            operationId: APIService_ChargeRobot
+            requestBody:
+                description: Robot identifier for charging command
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ChargeRobotRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ChargeRobotResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/robot/localize:
+        post:
+            tags:
+                - Localization & Navigation
+            description: |-
+                Localizes the robot to a known pose or destination.
+
+                 While the robot is localizing,
+                 any subsequent requests to localize the robot will return a
+                 FAILED_PRECONDITION error until the process is completed.
+            operationId: APIService_LocalizeRobot
+            requestBody:
+                description: Localization goal and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LocalizeRobotRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LocalizeRobotResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/system-command/run:
+        post:
+            tags:
+                - Robot System
+            description: |-
+                Execute a OS-level command on a robot.
+
+                 When rebooting the robot, a response will return immediately to acknowledge
+                 the request but may take several minutes before the robot reconnects.
+            operationId: APIService_RunSystemCommand
+            requestBody:
+                description: Robot identifier and system command to execute
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RunSystemCommandRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RunSystemCommandResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/trays/calibrate:
+        post:
+            tags:
+                - Servi
+            description: |-
+                Calibrate the trays on the robot.
+
+                 Only applicable for tray-equipped robots (e.g., Servi, Servi Plus).
+
+                 Calibrates all trays if no tray names are provided.
+                 Returns an INVALID_ARGUMENT error and rejects the request if any tray name
+                 is invalid.
+                 Returns an empty response on success.
+            operationId: APIService_CalibrateTrays
+            requestBody:
+                description: Robot identifier and tray calibration settings
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CalibrateTraysRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CalibrateTraysResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+components:
+    responses:
+        BadRequest:
+            description: Bad Request, usually caused by malfored request body.
+            headers:
+                grpc-status:
+                    schema:
+                        type: integer
+                    description: "gRPC status code"
+                grpc-message:
+                    schema:
+                        type: string
+                    description: "detailed error message"
+        Unauthorized:
+            description: Unauthorized credentials, ensure the JWT is correct and up to date.
+        InternalServerError:
+            description: Internal Server Error
+        ServiceUnavailable:
+            description: Service is temporarily unavailable, which can usually be resolved by backoff retries.
+        GatewayTimeout:
+            description: Server-side timeout, usually caused by the failure to send/receive commands/responses to the designated robot.
+    schemas:
+        GetRobotSystemInfoRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: Request object for retrieving robot system information
+        GetConveyorIndexRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: Request object for retrieving conveyor indexes
+        ControlConveyorRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: Request object for controlling conveyor operations
+        GetCurrentMapRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: Request object for retrieving the current map
+        GetLocationInfoRequest:
+            type: object
+            required:
+                - locationId
+            properties:
+                locationId:
+                    type: string
+                    description: |-
+                        The location_id is a 4 character alphanumeric identifier for the location.
+                         Example: "3R0A"
+            description: Request object for retrieving location information
+        GetMapRequest:
+            type: object
+            required:
+                - mapId
+            properties:
+                mapId:
+                    type: string
+            description: Request object for retrieving a saved map
+        SwitchMapRequest:
+            type: object
+            required:
+                - robotId
+                - mapSelector
+            properties:
+                robotId:
+                    type: string
+                mapSelector:
+                    type: object
+                    required:
+                        - floorLevel
+                        - sectionIndex
+                    properties:
+                        floorLevel:
+                            type: integer
+                            format: int32
+                            description: Positive integer floor_level begins at 1.
+                        sectionIndex:
+                            type: integer
+                            format: int32
+                            description: Non-negative integer section_index begins at 0.
+            description: Request object for switching robot maps
+        SetPoseRequest:
+            type: object
+            required:
+                - robotId
+                - pose
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                pose:
+                    $ref: '#/components/schemas/Pose'
+            description: Request object for setting robot pose
+        GetRobotStatusRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: Request object for retrieving robot status
+        RunSystemCommandRequest:
+            type: object
+            required:
+                - robotId
+                - systemCommand
+            properties:
+                robotId:
+                    type: string
+                systemCommand:
+                    type: object
+                    properties:
+                        reboot:
+                            type: object
+                            properties:
+                                type:
+                                    type: integer
+                                    format: enum
+            description: Request object for running system commands
+        CalibrateTraysRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+                selector:
+                    type: object
+                    properties:
+                        trayNames:
+                            type: array
+                            items:
+                                type: string
+            description: Request object for calibrating trays
+        AppendMissionRequest:
+            type: object
+            required:
+                - robotId
+                - mission
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                mission:
+                    $ref: '#/components/schemas/Mission'
+            description: Request object for appending a mission
+        CreateMissionRequest:
+            type: object
+            required:
+                - robotId
+                - mission
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                mission:
+                    $ref: '#/components/schemas/Mission'
+            description: Request object for creating a new mission
+        UpdateMissionRequest:
+            type: object
+            required:
+                - robotId
+                - missionCommand
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                missionCommand:
+                    type: object
+                    required:
+                        - missionId
+                        - command
+                    properties:
+                        missionId:
+                            type: string
+                            description: ID of the mission to control
+                        command:
+                            type: integer
+                            format: enum
+                            description: The command to execute on the mission
+            description: Request object for updating a mission
+        LocalizeRobotRequest:
+            type: object
+            required:
+                - robotId
+                - goal
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                goal:
+                    $ref: '#/components/schemas/Goal'
+            description: Request object for localizing a robot
+        Mission:
+            type: object
+            oneOf:
+                - properties:
+                    baseMission:
+                        $ref: '#/components/schemas/BaseMission'
+                  required: [baseMission]
+                - properties:
+                    serviMission:
+                        $ref: '#/components/schemas/ServiMission'
+                  required: [serviMission]
+                - properties:
+                    cartiMission:
+                        $ref: '#/components/schemas/CartiMission'
+                  required: [cartiMission]
+            description: Represents a mission that can be assigned to a robot. Only one mission type can be set per Mission instance.
+        BaseMission:
+            type: object
+            oneOf:
+                - properties:
+                    navigateMission:
+                        $ref: '#/components/schemas/NavigateMission'
+                  required: [navigateMission]
+                - properties:
+                    navigateAutoMission:
+                        $ref: '#/components/schemas/NavigateAutoMission'
+                  required: [navigateAutoMission]
+            description: Base missions are applicable to all robot families
+        NavigateMission:
+            type: object
+            properties:
+                goal:
+                    $ref: '#/components/schemas/Goal'
+            description: A simple mission with a predefined goal
+        NavigateAutoMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+            description: A mission that automatically selects the best available goal from the provided list
+        ServiMission:
+            type: object
+            oneOf:
+                - properties:
+                    deliveryMission:
+                        $ref: '#/components/schemas/DeliveryMission'
+                  required: [deliveryMission]
+                - properties:
+                    bussingMission:
+                        $ref: '#/components/schemas/BussingMission'
+                  required: [bussingMission]
+                - properties:
+                    deliveryPatrolMission:
+                        $ref: '#/components/schemas/DeliveryPatrolMission'
+                  required: [deliveryPatrolMission]
+                - properties:
+                    bussingPatrolMission:
+                        $ref: '#/components/schemas/BussingPatrolMission'
+                  required: [bussingPatrolMission]
+            description: Servi missions are specific to the Servi robot family
+        CartiMission:
+            type: object
+            oneOf:
+                - properties:
+                    traverseMission:
+                        $ref: '#/components/schemas/TraverseMission'
+                  required: [traverseMission]
+                - properties:
+                    traversePatrolMission:
+                        $ref: '#/components/schemas/TraversePatrolMission'
+                  required: [traversePatrolMission]
+            description: Carti missions are specific to the Carti robot family
+        DeliveryMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/DeliveryParams'
+            description: A delivery mission that navigates to one or more goals, stopping at each for a time limit or until weight is removed
+        BussingMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/BussingParams'
+            description: A bussing mission that navigates to one or more goals, stopping at each for a time limit or until weight is added
+        DeliveryPatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/DeliveryPatrolParams'
+            description: A delivery patrol mission that continuously loops through goals, stopping at each for a time limit until all weight is removed
+        BussingPatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/BussingPatrolParams'
+            description: A bussing patrol mission that continuously loops through goals, stopping at each for a time limit until weight exceeds a threshold
+        TraverseMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/TraverseParams'
+            description: A traverse mission that navigates to one or more goals
+        TraversePatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/TraversePatrolParams'
+            description: A traverse patrol mission that navigates to one or more goals and continuously loops through the goals stopping at each for a time limit
+        DeliveryParams:
+            type: object
+            properties: {}
+            description: Parameters for a delivery mission (reserved for future use)
+        BussingParams:
+            type: object
+            properties: {}
+            description: Parameters for a bussing mission (reserved for future use)
+        DeliveryPatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a delivery patrol mission (reserved for future use)
+        BussingPatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a bussing patrol mission (reserved for future use)
+        TraverseParams:
+            type: object
+            properties: {}
+            description: Parameters for a traverse mission (reserved for future use)
+        TraversePatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a traverse patrol mission (reserved for future use)
+        Annotation:
+            type: object
+            properties:
+                annotationId:
+                    type: string
+                    description: |-
+                        Unique identifier for the annotation.
+                         Example: "67305"
+                displayName:
+                    type: string
+                    description: |-
+                        Descriptive name for the annotation.
+                         Example: "ITCT annotation A"
+                createdTime:
+                    type: string
+                    description: Timestamp indicating when the annotation was created.
+                    format: date-time
+                destinations:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/Destination'
+                    description: |-
+                        A collection of destinations associated with this annotation.
+                         Each entry pairs a destination ID (key) with its
+                         corresponding Destination message (value).
+            description: |-
+                Annotation defines a specific area on the map, often used to
+                 group destinations or assign special parameters.
+        AppendMissionResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        BaseFeedback:
+            type: object
+            properties:
+                status:
+                    type: integer
+                    format: enum
+            description: |-
+                BaseFeedback provides status updates on mission progress,
+                 specific to base missions.
+        BatteryState:
+            type: object
+            properties:
+                chargePercent:
+                    type: integer
+                    description: State of charge, from 0 (empty) to 100 (fully charged).
+                    format: int32
+                state:
+                    type: integer
+                    format: enum
+                chargeMethod:
+                    type: integer
+                    format: enum
+            description: Represents the state of the robot's battery system.
+        CalibrateTraysResponse:
+            type: object
+            properties: {}
+        CartiState:
+            type: object
+            properties:
+                conveyorState:
+                    allOf:
+                        - $ref: '#/components/schemas/ConveyorState'
+                    description: Conveyor state, only available for robots with a conveyor installed.
+            description: Represents the set of robot states specifically for Carti robots.
+        ChargeRobotResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        ControlConveyorResponse:
+            type: object
+            properties: {}
+        ConveyorState:
+            type: object
+            properties:
+                index:
+                    type: integer
+                    description: Unique identifier for the conveyor.
+                    format: int32
+                operationState:
+                    type: integer
+                    format: enum
+                payloadState:
+                    type: integer
+                    format: enum
+                healthState:
+                    type: integer
+                    format: enum
+                installationState:
+                    type: integer
+                    format: enum
+            description: Conveyor state includes the operation status, payload status, and health status.
+        CreateMissionResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        Destination:
+            type: object
+            properties:
+                destinationId:
+                    type: string
+                    description: Unique identifier for the destination.
+                displayName:
+                    type: string
+                    description: Human-readable name for the destination.
+                pose:
+                    allOf:
+                        - $ref: '#/components/schemas/Pose'
+                    description: Position of the destination in the robot's map coordinate system.
+            description: |-
+                Destination represents a single point of interest on the map
+                 that a robot can navigate to and align itself with.
+        EmergencyStopState:
+            type: object
+            properties:
+                emergency:
+                    type: integer
+                    description: Whether the software level emergency stop is engaged.
+                    format: enum
+                buttonPressed:
+                    type: integer
+                    description: Whether the physical emergency stop button is engaged.
+                    format: enum
+            description: Represents the state of the robot's emergency stop system.
+        ErrorCode:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: |-
+                        Integer code indicating the type of error. Does not indicate severity.
+                         Please refer to the error code documentation for more details.
+                         TODO(BA-545): Add link to error code documentation.
+                    format: int32
+                severity:
+                    type: integer
+                    description: Level of criticality of an error.
+                    format: enum
+                message:
+                    type: string
+                    description: Message about the error e.g. "Up camera process error."
+        ErrorCodes:
+            type: object
+            properties:
+                codes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ErrorCode'
+        ErrorCodesWithMetadata:
+            type: object
+            properties:
+                metadata:
+                    allOf:
+                        - $ref: '#/components/schemas/EventMetadata'
+                    description: Metadata associated with the event.
+                codes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ErrorCode'
+                    description: Error codes returned by the robot during the event.
+        EventMetadata:
+            type: object
+            properties:
+                timestamp:
+                    type: string
+                    description: The time when the event was recorded.
+                    format: date-time
+                sequenceNumber:
+                    type: string
+                    description: |-
+                        An incremental sequence number generated by the robot.
+                         The sequence number should never be negative and can be reset to 0.
+                         i.e. sequence is valid if it is larger than the previous number or 0.
+            description: EventMetadata is a message returned by streaming endpoints.
+        Feedback:
+            type: object
+            properties:
+                status:
+                    type: integer
+                    format: enum
+            description: |-
+                Feedback provides status updates on mission progress,
+                 specific to Carti Family robot missions.
+        Floor_Section:
+            type: object
+            properties:
+                displayName:
+                    type: string
+                    description: Display name of the section, matching the name shown in Universe.
+                currentMapId:
+                    type: string
+                    description: ID of the current map associated with the section.
+            description: |-
+                Represents a section of a floor.
+                 Each Section corresponds to an area on a floor that may have its own
+                 map(s). We assume sections are disconnected; if connected sections are
+                 needed in the future, additional information will be added to represent
+                 the connections.
+        GetAvailableLocationsResponse:
+            type: object
+            properties:
+                locations:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: |-
+                        A mapping of location ID (key) with its corresponding, human-readable
+                         location name.
+                         e.g. { “1D9X”: “785_Platform” }
+        GetConveyorIndexResponse:
+            type: object
+            properties:
+                indexes:
+                    type: array
+                    items:
+                        type: integer
+                        format: int32
+        GetCurrentMapResponse:
+            type: object
+            properties:
+                map:
+                    $ref: '#/components/schemas/Map'
+        GetLocationInfoResponse:
+            type: object
+            properties:
+                location:
+                    $ref: '#/components/schemas/Location'
+        GetMapResponse:
+            type: object
+            properties:
+                map:
+                    $ref: '#/components/schemas/Map'
+        GetRobotStatusResponse:
+            type: object
+            properties:
+                robotState:
+                    $ref: '#/components/schemas/RobotState'
+        GetRobotSystemInfoResponse:
+            type: object
+            properties:
+                systemInfo:
+                    $ref: '#/components/schemas/SystemInfo'
+        Goal:
+            type: object
+            properties:
+                destinationId:
+                    type: string
+                pose:
+                    $ref: '#/components/schemas/Pose'
+            description: Goal represents a target destination or pose for the robot to navigate to.
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListRobotIDsResponse:
+            type: object
+            properties:
+                totalRobots:
+                    type: integer
+                    format: int32
+                robotIds:
+                    type: array
+                    items:
+                        type: string
+                    description: |-
+                        This might not have all the robot IDs if there are too many.
+                         It will have all the robot IDs if the number of robot_ids is same as
+                         total_robots.
+        LocalizationState:
+            type: object
+            properties:
+                state:
+                    type: integer
+                    format: enum
+            description: Represents the current state of the localization process.
+        LocalizeRobotResponse:
+            type: object
+            properties: {}
+        Location:
+            type: object
+            properties:
+                locationId:
+                    type: string
+                    description: |-
+                        A 4 character alphanumeric identifier for the location. This is unique
+                         among all locations in a Universe.
+                         Example: "3R0A"
+                         Legacy locations may use the display_name as the identifier, in which case
+                         the identifier may be longer or shorter than 4 characters.
+                createdTime:
+                    type: string
+                    description: Timestamp indicating when the location was created.
+                    format: date-time
+                modifiedTime:
+                    type: string
+                    description: Timestamp indicating the last time the location was modified.
+                    format: date-time
+                displayName:
+                    type: string
+                    description: |-
+                        Display name of the location, matching the name shown in Universe.
+                         Examples: "City Deli & Grill", "KNTH"
+                floors:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/Location_Floor'
+                    description: |-
+                        Map of floors in the location, keyed by their floor level.
+                         The floor level is any non-negative integer starting from 0.
+                         Floor level is not necessarily sequential.
+                         Example:
+                         floors [
+                           {
+                             key: 0
+                             value: {
+                               display_name: "Ground Floor"
+                               sections: [...]
+                             }
+                           }
+                           {
+                             key: 1
+                             value: {
+                               display_name: "Second Floor"
+                               sections: [...]
+                             }
+                           }
+                           {
+                             key: 99
+                             value: {
+                               display_name: "Roof"
+                               sections: [...]
+                             }
+                           }
+                         ]
+            description: |-
+                Location represents a physical location with multiple floors and sections,
+                 including metadata such as creation and modification timestamps.
+        Location_Floor:
+            type: object
+            properties:
+                displayName:
+                    type: string
+                    description: |-
+                        Display name of the floor, matching the name shown in Universe.
+                         Example: "Ground"
+                sections:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Floor_Section'
+                    description: List of sections on this floor.
+            description: |-
+                Floor represents a single floor in the location, containing multiple
+                 sections.
+        Map:
+            type: object
+            properties:
+                mapId:
+                    type: string
+                    description: |-
+                        Unique identifier for the map.
+                         Example: "9578"
+                createdTime:
+                    type: string
+                    description: Timestamp indicating when the map was created.
+                    format: date-time
+                modifiedTime:
+                    type: string
+                    description: Timestamp indicating the last time the map was modified.
+                    format: date-time
+                displayName:
+                    type: string
+                    description: |-
+                        Display name of the map, matching the name used in Bear Universe.
+                         Example: "ITCT SEOUL"
+                annotation:
+                    allOf:
+                        - $ref: '#/components/schemas/Annotation'
+                    description: Annotation associated with this map, defining specific areas and destinations.
+                imageDownloadInfo:
+                    allOf:
+                        - $ref: '#/components/schemas/MapImageDownloadInfo'
+                    description: |-
+                        Information for downloading the map image, including signed URL and file metadata.
+                         This field is typically populated by the cloud service.
+                         When retrieving map data directly from the robot (e.g., via GetCurrentMap),
+                         this value may be empty.
+                origin:
+                    allOf:
+                        - $ref: '#/components/schemas/Origin'
+                    description: Origin of the map relative to the map frame.
+                resolution:
+                    type: number
+                    description: Resolution of the map in meters per pixel.
+                    format: float
+            description: Map represents a navigable map used by robots, including metadata and associated annotations.
+        MapImageDownloadInfo:
+            type: object
+            properties:
+                fileInfo:
+                    allOf:
+                        - $ref: '#/components/schemas/MapImageFileInfo'
+                    description: Information about the map image file for integrity verification.
+                downloadUrl:
+                    allOf:
+                        - $ref: '#/components/schemas/SignedURL'
+                    description: The signed URL for downloading the map image.
+            description: MapImageDownloadInfo contains the information needed to download a map image.
+        MapImageFileInfo:
+            type: object
+            properties:
+                checksum:
+                    type: integer
+                    description: CRC32C checksum of the map image file.
+                    format: uint32
+                size:
+                    type: string
+                    description: Size of the map image file in bytes.
+            description: MapImageFileInfo contains metadata about the map image file for integrity verification.
+        MissionState:
+            type: object
+            properties:
+                missionId:
+                    type: string
+                    description: Unique identifier for the mission.
+                state:
+                    type: integer
+                    format: enum
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                    description: All goals associated with the mission, in the order the request was given.
+                currentGoalIndex:
+                    type: integer
+                    description: Index of the currently active goal in the goals list.
+                    format: int32
+                missionFeedback:
+                    allOf:
+                        - $ref: '#/components/schemas/MissionState_MissionFeedback'
+                    description: Latest feedback for the mission.
+                missionType:
+                    allOf:
+                        - $ref: '#/components/schemas/MissionType'
+                    description: Type of the mission
+                owner:
+                    type: string
+                    description: Owner of the mission (e.g., "touchscreen", "api", etc.)
+            description: MissionState represents the current state of a mission assigned to a robot.
+        MissionState_MissionFeedback:
+            type: object
+            properties:
+                baseFeedback:
+                    allOf:
+                        - $ref: '#/components/schemas/BaseFeedback'
+                    description: Generic feedback applicable to base mission types. e,g., NavigateMission.
+                serviFeedback:
+                    allOf:
+                        - $ref: '#/components/schemas/Feedback'
+                    description: Feedback specific to Servi missions.
+                cartiFeedback:
+                    allOf:
+                        - $ref: '#/components/schemas/Feedback'
+                    description: Feedback specific to Carti missions.
+            description: Feedback provides mission-specific runtime information.
+        MissionStates:
+            type: object
+            properties:
+                missions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MissionState'
+                    description: List of all missions assigned to the robot, in order from first to last assigned mission.
+                currentMissionIndex:
+                    type: integer
+                    description: |-
+                        Index of the currently active mission in the missions list.
+                         -1 if no mission is currently active.
+                    format: int32
+            description: MissionStates represents a collection of missions with tracking of the current active mission.
+        MissionType:
+            type: object
+            properties:
+                baseType:
+                    type: integer
+                    format: enum
+                serviType:
+                    type: integer
+                    format: enum
+                cartiType:
+                    type: integer
+                    format: enum
+            description: |-
+                MissionType defines the different types of missions that can be executed.
+                 This uses a oneof structure to categorize mission types by their source.
+                 The individual enum types are defined in their respective mission.proto files.
+        NetworkStateWithMetadata:
+            type: object
+            properties:
+                metadata:
+                    allOf:
+                        - $ref: '#/components/schemas/EventMetadata'
+                    description: Metadata associated with the event.
+                connectedWifi:
+                    allOf:
+                        - $ref: '#/components/schemas/Wifi'
+                    description: |-
+                        Current network connection of the robot.
+                         If the field is not set, it indicates that the robot is not connected to any Wi-Fi networks.
+            description: Represents the current Wifi connection state of the robot
+        Origin:
+            type: object
+            properties:
+                xM:
+                    type: number
+                    description: X-coordinate of the map origin in meters.
+                    format: float
+                yM:
+                    type: number
+                    description: Y-coordinate of the map origin in meters.
+                    format: float
+                yawRadians:
+                    type: number
+                    description: Orientation (yaw) of the map origin in radians.
+                    format: float
+            description: Origin represents the starting point of the map in terms of its coordinates and orientation.
+        Pose:
+            type: object
+            properties:
+                xMeters:
+                    type: number
+                    description: X-coordinate in meters within the map.
+                    format: float
+                yMeters:
+                    type: number
+                    description: Y-coordinate in meters within the map.
+                    format: float
+                headingRadians:
+                    type: number
+                    description: |-
+                        The heading of the robot in radians.
+                         Ranges from -π to π, where 0.0 points along the positive x-axis.
+                    format: float
+            description: Represents the robot's pose on the map.
+        PoseWithMetadata:
+            type: object
+            properties:
+                metadata:
+                    allOf:
+                        - $ref: '#/components/schemas/EventMetadata'
+                    description: Metadata associated with the event.
+                pose:
+                    allOf:
+                        - $ref: '#/components/schemas/Pose'
+                    description: Pose of the robot on the map.
+        RobotConnection:
+            type: object
+            properties:
+                state:
+                    type: integer
+                    format: enum
+            description: Represents the online connection state between the cloud and the robot.
+        RobotState:
+            type: object
+            properties:
+                connection:
+                    allOf:
+                        - $ref: '#/components/schemas/RobotConnection'
+                    description: Connection state of the robot.
+                battery:
+                    allOf:
+                        - $ref: '#/components/schemas/BatteryState'
+                    description: Battery state of the robot.
+                emergencyStop:
+                    allOf:
+                        - $ref: '#/components/schemas/EmergencyStopState'
+                    description: Emergency stop state of the robot.
+                mission:
+                    allOf:
+                        - $ref: '#/components/schemas/MissionState'
+                    description: Mission state of the robot.
+                pose:
+                    allOf:
+                        - $ref: '#/components/schemas/Pose'
+                    description: Pose of the robot.
+                errorCodes:
+                    allOf:
+                        - $ref: '#/components/schemas/ErrorCodes'
+                    description: Error codes returned by the robot.
+                serviState:
+                    allOf:
+                        - $ref: '#/components/schemas/ServiState'
+                    description: Populated when the robot type is a Servi.
+                cartiState:
+                    allOf:
+                        - $ref: '#/components/schemas/CartiState'
+                    description: Populated when the robot type is a Carti.
+            description: Represents the overall state of the robot.
+        RunSystemCommandResponse:
+            type: object
+            properties: {}
+        ServiState:
+            type: object
+            properties:
+                trayStates:
+                    allOf:
+                        - $ref: '#/components/schemas/TrayStates'
+                    description: A collection of individual tray states from different trays.
+            description: Represents the set of robot states specifically for Servi robots.
+        SetPoseResponse:
+            type: object
+            properties: {}
+        SignedURL:
+            type: object
+            properties:
+                url:
+                    type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+            description: SignedURL represents a signed URL for file access with expiration.
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        SwitchMapResponse:
+            type: object
+            properties:
+                mapId:
+                    type: string
+        SystemInfo:
+            type: object
+            properties:
+                softwareVersion:
+                    type: string
+                    description: |-
+                        The distribution version currently installed and running on the robot.
+                         e.g. "servi-24.03"
+                robotFamily:
+                    type: integer
+                    format: enum
+                robotId:
+                    type: string
+                    description: Unique identifier for the robot. e.g. "pennybot-abc123"
+                displayName:
+                    type: string
+                    description: A user-friendly name for the robot, typically used for display purposes.
+            description: SystemInfo contains various system-level data of a robot.
+        TrayState:
+            type: object
+            properties:
+                trayName:
+                    type: string
+                    description: |-
+                        Unique string name for the given tray. e.g. "top", "middle", "bottom"
+                         TODO: link to Tray name definitions.
+                loadState:
+                    type: integer
+                    format: enum
+                weightKg:
+                    type: number
+                    description: Weight on the tray in kilograms. Minimum precision is 10g.
+                    format: float
+                loadRatio:
+                    type: number
+                    description: |-
+                        Ratio of the current load to the tray’s maximum load capacity.
+                         This value may exceed 1.0 if the tray is overloaded.
+
+                         Caveats:
+                         - If the maximum load is misconfigured (e.g., set to 0.0),
+                           this value may return NaN.
+                    format: float
+            description: Represents the state of a single tray.
+        TrayStates:
+            type: object
+            properties:
+                trayStates:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/TrayState'
+                    description: |-
+                        State of enabled trays, ordered from the top-most tray on the robot to the
+                         bottom.
+            description: A list of tray states reported by individual trays.
+        TrayStatesWithMetadata:
+            type: object
+            properties:
+                metadata:
+                    allOf:
+                        - $ref: '#/components/schemas/EventMetadata'
+                    description: Metadata associated with the tray states.
+                trayStates:
+                    allOf:
+                        - $ref: '#/components/schemas/TrayStates'
+                    description: The tray states reported by the robot.
+        UpdateMissionResponse:
+            type: object
+            properties: {}
+        Wifi:
+            type: object
+            properties:
+                ssid:
+                    type: string
+                    description: SSID of the Wi-Fi network (not necessarily unique).
+                signalLevelDbm:
+                    type: integer
+                    description: Signal level of the Wifi in dBm.
+                    format: int32
+                linkQuality:
+                    type: integer
+                    description: Link quality of the Wifi. Ranges from 0 to 70, where 70 is highest quality.
+                    format: int32
+                security:
+                    type: integer
+                    description: Security requirements for the network.
+                    format: enum
+            description: Represents the Wifi connection of a robot.

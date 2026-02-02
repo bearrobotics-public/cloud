@@ -1,0 +1,4578 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://bearrobotics-public.github.io/cloud/v0.1/cloud/CloudApiService/">
+      
+      
+        <link rel="prev" href="../../../v1.0/resources/RestAPI/">
+      
+      
+        <link rel="next" href="../Config/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Cloud API Service - Bear API</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cloud-api-service" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Bear API" class="md-header__button md-logo" aria-label="Bear API" data-md-component="logo">
+      
+  <img src="../../../assets/bear_logo_white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Bear API
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cloud API Service
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
+  
+  
+  Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guides/getting-started/" class="md-tabs__link">
+          
+  
+  
+  Quickstart
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guides/authentication/" class="md-tabs__link">
+          
+  
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../v1.1/resources/Mission/" class="md-tabs__link">
+          
+  
+  
+  Cloud API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../concepts/mission/" class="md-tabs__link">
+          
+  
+  
+  Core Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../changelog/v1.1/" class="md-tabs__link">
+          
+  
+  
+  Changelog
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Bear API" class="md-nav__button md-logo" aria-label="Bear API" data-md-component="logo">
+      
+  <img src="../../../assets/bear_logo_white.png" alt="logo">
+
+    </a>
+    Bear API
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quickstart
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cloud API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v1.1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    v1.1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1_1" id="__nav_4_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    gRPC API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/Mission/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mission
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/LocationsAndMaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Locations & Maps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/LocalizationAndNavigation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Localization & Navigation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/RobotStatus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/RobotSystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/FleetManagement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fleet Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/Carti/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Carti
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/Servi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Servi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.1/resources/RestAPI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v1.0
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    v1.0
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    gRPC API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/Mission/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mission
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/LocationsAndMaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Locations & Maps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/Localization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Localization & Navigation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/RobotStatus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/FleetManagement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fleet Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/Carti/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Carti
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/Servi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Servi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v1.0/resources/RestAPI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.1Beta
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    v0.1Beta
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_1" id="__nav_4_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud API Service
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud API Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fleet-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fleet Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fleet Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#listrobotids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ListRobotIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getcurrentmapcontent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetCurrentMapContent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetLocation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmapannotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMapAnnotation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmapdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMapData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switchmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SwitchMap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mission
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mission">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appendmission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppendMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargerobot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ChargeRobot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createmission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CreateMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribemissionstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeMissionStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updatemission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UpdateMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Navigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#localizerobot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LocalizeRobot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setrobotpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SetRobotPose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribelocalizationstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeLocalizationStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberobotpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeRobotPose
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getprofile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetProfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getrobotprofiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetRobotProfiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsoundfileuploadurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetSoundFileUploadURL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listprofileids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ListProfileIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robot-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robot Status
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robot Status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribebatterystatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeBatteryStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberobotstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeRobotStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribetraystatuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeTrayStatuses
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robot-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robot System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robot System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getrobotsysteminfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetRobotSystemInfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_2" id="__nav_4_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Types
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Message Types
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_2_1" id="__nav_4_3_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_3_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cloud
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RobotSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RobotStatus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_2_2" id="__nav_4_3_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_3_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Common
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../common/Annotations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../common/Math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_2_3" id="__nav_4_3_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Location
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_3_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Location
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../location/Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Annotation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../location/Location/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Location
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../location/Map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../location/Types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../location/Zones/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zones
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3_2_4" id="__nav_4_3_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_3_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Robot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../robot/Localization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Localization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../robot/Mission/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mission
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../robot/Robot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Robot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../robot/Status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/mission/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mission
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/localization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Localization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/location/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Location
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Changelog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/v1.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v1.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/v1.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/v0.1beta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.1Beta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fleet-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fleet Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fleet Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#listrobotids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ListRobotIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getcurrentmapcontent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetCurrentMapContent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlocation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetLocation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmapannotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMapAnnotation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmapdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetMapData
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switchmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SwitchMap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mission
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mission">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appendmission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppendMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargerobot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ChargeRobot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createmission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CreateMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribemissionstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeMissionStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updatemission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UpdateMission
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Navigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#localizerobot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LocalizeRobot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setrobotpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SetRobotPose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribelocalizationstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeLocalizationStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberobotpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeRobotPose
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getprofile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetProfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getrobotprofiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetRobotProfiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsoundfileuploadurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetSoundFileUploadURL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listprofileids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ListProfileIDs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robot-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robot Status
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robot Status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribebatterystatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeBatteryStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberobotstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeRobotStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribetraystatuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SubscribeTrayStatuses
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robot-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robot System
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robot System">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getrobotsysteminfo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetRobotSystemInfo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="cloud-api-service">Cloud API Service<a class="headerlink" href="#cloud-api-service" title="Permanent link">&para;</a></h1>
+<p>The definition of Bear Cloud API service.</p>
+<h3 id="fleet-management">Fleet Management<a class="headerlink" href="#fleet-management" title="Permanent link">&para;</a></h3>
+<h4 id="listrobotids">ListRobotIDs <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#listrobotids" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#listrobotidsrequest">ListRobotIDsRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#listrobotidsresponse">ListRobotIDsResponse</a></li>
+<li><strong>Description:</strong>
+  List all robot IDs that you have permissions for and satisfies the given
+filter options regardless of robot status.</li>
+</ul>
+<h3 id="map">Map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
+<h4 id="getcurrentmapcontent">GetCurrentMapContent <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#getcurrentmapcontent" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getcurrentmapcontentrequest">GetCurrentMapContentRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getcurrentmapcontentresponse">GetCurrentMapContentResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve the current map content data, which is loaded on the robot.</li>
+</ul>
+<h4 id="getlocation">GetLocation <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#getlocation" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getlocationrequest">GetLocationRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getlocationresponse">GetLocationResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve the current location data to which the robot is connected.<br>If the robot is offline, it uses the cached Location data.</li>
+</ul>
+<h4 id="getmap">GetMap <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#getmap" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getmaprequest">GetMapRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getmapresponse">GetMapResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve the map corresponding to a given map_id.<br>If offline, it uses the cached MapData data.</li>
+</ul>
+<h4 id="getmapannotation">GetMapAnnotation<a class="headerlink" href="#getmapannotation" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getmapannotationrequest">GetMapAnnotationRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getmapannotationresponse">GetMapAnnotationResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve annotation data for a specified annotation_id.<br>If offline, it uses the cached Annotation data.</li>
+</ul>
+<h4 id="getmapdata">GetMapData <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#getmapdata" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getmapdatarequest">GetMapDataRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getmapdataresponse">GetMapDataResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve map data for a specified map_data_id.<br>If offline, it uses the cached MapData data.</li>
+</ul>
+<h4 id="switchmap">SwitchMap <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#switchmap" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#switchmaprequest">SwitchMapRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#switchmapresponse">SwitchMapResponse</a></li>
+<li><strong>Description:</strong>
+  Switch the current map to a specified map.<br>The request should specify a floor level and section index to be used.
+Returns the map_id of the switched map.</li>
+</ul>
+<h3 id="mission">Mission<a class="headerlink" href="#mission" title="Permanent link">&para;</a></h3>
+<h4 id="appendmission">AppendMission <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#appendmission" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#appendmissionrequest">AppendMissionRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#appendmissionresponse">AppendMissionResponse</a></li>
+<li><strong>Description:</strong>
+  Append the given mission to the end of the queue.
+The mission will be added in the order it is received.</li>
+</ul>
+<h4 id="chargerobot">ChargeRobot <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#chargerobot" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#chargerobotrequest">ChargeRobotRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#chargerobotresponse">ChargeRobotResponse</a></li>
+<li><strong>Description:</strong>
+  Create a mission to go charge a robot regardless of battery state.<br>The call will fail if the robot is already on a different mission,
+which needs to be canceled before the robot can be charged.</li>
+</ul>
+<h4 id="createmission">CreateMission <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#createmission" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#createmissionrequest">CreateMissionRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#createmissionresponse">CreateMissionResponse</a></li>
+<li><strong>Description:</strong>
+  Create a mission for a given type.<br>The call will fail if the robot cannot go on the requested mission.</li>
+</ul>
+<h4 id="subscribemissionstatus">SubscribeMissionStatus <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#subscribemissionstatus" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscribemissionstatusrequest">SubscribeMissionStatusRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscribemissionstatusresponse">SubscribeMissionStatusResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe to robot's mission status.<br>Upon subscription, the server immediately sends the latest known
+mission status, followed by updates whenever the mission status changes.</li>
+</ul>
+<h4 id="updatemission">UpdateMission <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#updatemission" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#updatemissionrequest">UpdateMissionRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#updatemissionresponse">UpdateMissionResponse</a></li>
+<li><strong>Description:</strong>
+  Update the specified mission with the given command.<br>The call will fail if the robot is not on the specified mission
+or cannot execute the command.</li>
+</ul>
+<h3 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">&para;</a></h3>
+<h4 id="localizerobot">LocalizeRobot<a class="headerlink" href="#localizerobot" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#localizerobotrequest">LocalizeRobotRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#localizerobotresponse">LocalizeRobotResponse</a></li>
+<li><strong>Description:</strong>
+  Localize the robot to a localization goal.<br>If the goal is accepted, subcribe to SubscribeLocalizationStatus to get the
+localization status.</li>
+</ul>
+<h4 id="setrobotpose">SetRobotPose<a class="headerlink" href="#setrobotpose" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#setrobotposerequest">SetRobotPoseRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#setrobotposeresponse">SetRobotPoseResponse</a></li>
+<li><strong>Description:</strong>
+  Manually set the robot pose given a pose on the map and a covariance matrix.</li>
+</ul>
+<h4 id="subscribelocalizationstatus">SubscribeLocalizationStatus<a class="headerlink" href="#subscribelocalizationstatus" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscribelocalizationstatusrequest">SubscribeLocalizationStatusRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscribelocalizationstatusresponse">SubscribeLocalizationStatusResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe to the robot's localization status.<br>Upon subscription, the latest known localization status will be sent.
+If the robot is actively localizing, statuses will be published upon changes.</li>
+</ul>
+<h4 id="subscriberobotpose">SubscribeRobotPose <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#subscriberobotpose" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscriberobotposerequest">SubscribeRobotPoseRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscriberobotposeresponse">SubscribeRobotPoseResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe to the robot's pose.<br>Upon subscription, the server provides regular updates (5Hz) of the
+robot's estimated position.</li>
+</ul>
+<h3 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">&para;</a></h3>
+<h4 id="getprofile">GetProfile<a class="headerlink" href="#getprofile" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getprofilerequest">GetProfileRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getprofileresponse">GetProfileResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve user-defined profile with customizable settings for a profile_id.</li>
+</ul>
+<h4 id="getrobotprofiles">GetRobotProfiles<a class="headerlink" href="#getrobotprofiles" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getrobotprofilesrequest">GetRobotProfilesRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getrobotprofilesresponse">GetRobotProfilesResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve a set of user-defined profiles for a specific robot_id.</li>
+</ul>
+<h4 id="getsoundfileuploadurl">GetSoundFileUploadURL<a class="headerlink" href="#getsoundfileuploadurl" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getsoundfileuploadurlrequest">GetSoundFileUploadURLRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getsoundfileuploadurlresponse">GetSoundFileUploadURLResponse</a></li>
+<li><strong>Description:</strong>
+  Retrieve the sound file upload URL for specific sound_id.</li>
+</ul>
+<h4 id="listprofileids">ListProfileIDs<a class="headerlink" href="#listprofileids" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#listprofileidsrequest">ListProfileIDsRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#listprofileidsresponse">ListProfileIDsResponse</a></li>
+<li><strong>Description:</strong>
+  List all profile IDs for a specific location_id.</li>
+</ul>
+<h3 id="robot-status">Robot Status<a class="headerlink" href="#robot-status" title="Permanent link">&para;</a></h3>
+<h4 id="subscribebatterystatus">SubscribeBatteryStatus <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#subscribebatterystatus" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscribebatterystatusrequest">SubscribeBatteryStatusRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscribebatterystatusresponse">SubscribeBatteryStatusResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe to the robots' battery status.<br>Upon subscription, the server immediately sends the latest known
+battery status, followed by updates whenever the battery status changes.</li>
+</ul>
+<h4 id="subscriberobotstatus">SubscribeRobotStatus<a class="headerlink" href="#subscriberobotstatus" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscriberobotstatusrequest">SubscribeRobotStatusRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscriberobotstatusresponse">SubscribeRobotStatusResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe to connection and operation state of the robot<br>Upon subscription, the server immediately sends the latest known operation
+status, followed by updates whenever the operation status changes.</li>
+</ul>
+<h4 id="subscribetraystatuses">SubscribeTrayStatuses<a class="headerlink" href="#subscribetraystatuses" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#subscribetraystatusesrequest">SubscribeTrayStatusesRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#subscribetraystatusesresponse">SubscribeTrayStatusesResponse</a></li>
+<li><strong>Description:</strong>
+  Subscribe for high level tray status.<br>This is only available for robots with trays (e.g. Servi, Plus).
+Upon subscription, the latest known tray status will be sent, followed by
+snapshot updates of all tray states when any state is updated.
+Weight changes are updated at a 10g granularity threshold. Robots with
+trays that does not have weight sensor will have an UNKNOWN load state and
+no weight data streamed.</li>
+</ul>
+<h3 id="robot-system">Robot System<a class="headerlink" href="#robot-system" title="Permanent link">&para;</a></h3>
+<h4 id="getrobotsysteminfo">GetRobotSystemInfo <a href="../../../changelog/v0.1beta/#february-5-2025" title="Available on Beta"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.41 11.58-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 5"/></svg></span></a><a class="headerlink" href="#getrobotsysteminfo" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Request Type:</strong> <a href="#getrobotsysteminforequest">GetRobotSystemInfoRequest</a></li>
+<li><strong>Response Type:</strong> <a href="#getrobotsysteminforesponse">GetRobotSystemInfoResponse</a></li>
+<li><strong>Description:</strong>
+  Get the overall robot system information.<br>When called, the server returns robot system information. The system info
+tends to be static and does not change often.</li>
+</ul>
+<h2 id="message-types">Message Types<a class="headerlink" href="#message-types" title="Permanent link">&para;</a></h2>
+<h5 id="appendmissionrequest">AppendMissionRequest<a class="headerlink" href="#appendmissionrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mission</code></td>
+<td><a href="../../robot/Mission/#mission">Mission</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="appendmissionresponse">AppendMissionResponse<a class="headerlink" href="#appendmissionresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mission_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="chargerobotrequest">ChargeRobotRequest<a class="headerlink" href="#chargerobotrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="chargerobotresponse">ChargeRobotResponse<a class="headerlink" href="#chargerobotresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mission_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="createmissionrequest">CreateMissionRequest<a class="headerlink" href="#createmissionrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mission</code></td>
+<td><a href="../../robot/Mission/#mission">Mission</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="createmissionresponse">CreateMissionResponse<a class="headerlink" href="#createmissionresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mission_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getcurrentmapcontentrequest">GetCurrentMapContentRequest<a class="headerlink" href="#getcurrentmapcontentrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getcurrentmapcontentresponse">GetCurrentMapContentResponse<a class="headerlink" href="#getcurrentmapcontentresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map_content</code></td>
+<td><a href="../../location/Map/#mapcontent">MapContent</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getlocationrequest">GetLocationRequest<a class="headerlink" href="#getlocationrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>location_id</code></td>
+<td>string</td>
+<td>The unique identifier of the location.<br>The ID is typically a string of uppercase letters and numbers.<br>Example: "QSVS".</td>
+</tr>
+</tbody>
+</table>
+<h5 id="getlocationresponse">GetLocationResponse<a class="headerlink" href="#getlocationresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>location</code></td>
+<td><a href="../../location/Location/#location">Location</a></td>
+<td>Information about the specified location, as represented by a<br>location.Location message.<br>This includes all relevant details about the location, including<br>display name, floor, and section info.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmapannotationrequest">GetMapAnnotationRequest<a class="headerlink" href="#getmapannotationrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>annotation_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmapannotationresponse">GetMapAnnotationResponse<a class="headerlink" href="#getmapannotationresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>annotation</code></td>
+<td><a href="../../location/Annotation/#annotation">Annotation</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmapdatarequest">GetMapDataRequest<a class="headerlink" href="#getmapdatarequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map_data_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmapdataresponse">GetMapDataResponse<a class="headerlink" href="#getmapdataresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map_data</code></td>
+<td><a href="../../location/Map/#mapdata">MapData</a></td>
+<td>Information about the map data which includes all relevant details about<br>the map data, especially the map.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmaprequest">GetMapRequest<a class="headerlink" href="#getmaprequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getmapresponse">GetMapResponse<a class="headerlink" href="#getmapresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map</code></td>
+<td><a href="../../location/Map/#map">Map</a></td>
+<td>Contains all relevant information about the requested map,<br>including its metadata and configuration details.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="getprofilerequest">GetProfileRequest<a class="headerlink" href="#getprofilerequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profile_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getprofileresponse">GetProfileResponse<a class="headerlink" href="#getprofileresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profile</code></td>
+<td><a href="../Profiles/#profile">Profile</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getrobotprofilesrequest">GetRobotProfilesRequest<a class="headerlink" href="#getrobotprofilesrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getrobotprofilesresponse">GetRobotProfilesResponse<a class="headerlink" href="#getrobotprofilesresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profiles</code></td>
+<td><a href="../Profiles/#profile">Profile</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getrobotsysteminforequest">GetRobotSystemInfoRequest<a class="headerlink" href="#getrobotsysteminforequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getrobotsysteminforesponse">GetRobotSystemInfoResponse<a class="headerlink" href="#getrobotsysteminforesponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_system_info</code></td>
+<td><a href="../RobotSettings/#robotsysteminfo">RobotSystemInfo</a></td>
+<td>robot_system_info contains ID, display name, family, <br> and software version of the robot.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="getsoundfileuploadurlrequest">GetSoundFileUploadURLRequest<a class="headerlink" href="#getsoundfileuploadurlrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sound_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="getsoundfileuploadurlresponse">GetSoundFileUploadURLResponse<a class="headerlink" href="#getsoundfileuploadurlresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>upload_url</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="listprofileidsrequest">ListProfileIDsRequest<a class="headerlink" href="#listprofileidsrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>location_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="listprofileidsresponse">ListProfileIDsResponse<a class="headerlink" href="#listprofileidsresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profile_ids</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="listrobotidsrequest">ListRobotIDsRequest<a class="headerlink" href="#listrobotidsrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter</code></td>
+<td><a href="../Config/#robotfilter">RobotFilter</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="listrobotidsresponse">ListRobotIDsResponse<a class="headerlink" href="#listrobotidsresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>total_robots</code></td>
+<td>int32</td>
+<td></td>
+</tr>
+<tr>
+<td><code>robot_ids</code></td>
+<td>string</td>
+<td>This might not have all the robot IDs if there are too many.<br>It will have all the robot IDs if the number of robot_ids is the same as<br>total_robots.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="localizerobotrequest">LocalizeRobotRequest<a class="headerlink" href="#localizerobotrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>goal</code></td>
+<td><a href="../../robot/Localization/#localizationgoal">LocalizationGoal</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="localizerobotresponse">LocalizeRobotResponse<a class="headerlink" href="#localizerobotresponse" title="Permanent link">&para;</a></h5>
+<ul>
+<li><em>(No fields defined)</em></li>
+</ul>
+<h5 id="setrobotposerequest">SetRobotPoseRequest<a class="headerlink" href="#setrobotposerequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>pose_with_covariance</code></td>
+<td><a href="../../robot/Robot/#posewithcovariance">PoseWithCovariance</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="setrobotposeresponse">SetRobotPoseResponse<a class="headerlink" href="#setrobotposeresponse" title="Permanent link">&para;</a></h5>
+<ul>
+<li><em>(No fields defined)</em></li>
+</ul>
+<h5 id="subscribebatterystatusrequest">SubscribeBatteryStatusRequest<a class="headerlink" href="#subscribebatterystatusrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selector</code></td>
+<td><a href="../Config/#robotselector">RobotSelector</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribebatterystatusresponse">SubscribeBatteryStatusResponse<a class="headerlink" href="#subscribebatterystatusresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>battery_state</code></td>
+<td><a href="../../robot/Status/#batterystate">BatteryState</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribelocalizationstatusrequest">SubscribeLocalizationStatusRequest<a class="headerlink" href="#subscribelocalizationstatusrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selector</code></td>
+<td><a href="../Config/#robotselector">RobotSelector</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribelocalizationstatusresponse">SubscribeLocalizationStatusResponse<a class="headerlink" href="#subscribelocalizationstatusresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>localization_state</code></td>
+<td><a href="../../robot/Localization/#localizationstate">LocalizationState</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribemissionstatusrequest">SubscribeMissionStatusRequest<a class="headerlink" href="#subscribemissionstatusrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribemissionstatusresponse">SubscribeMissionStatusResponse<a class="headerlink" href="#subscribemissionstatusresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mission_state</code></td>
+<td><a href="../../robot/Mission/#missionstate">MissionState</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscriberobotposerequest">SubscribeRobotPoseRequest<a class="headerlink" href="#subscriberobotposerequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscriberobotposeresponse">SubscribeRobotPoseResponse<a class="headerlink" href="#subscriberobotposeresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pose</code></td>
+<td><a href="../../robot/Robot/#pose">Pose</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscriberobotstatusrequest">SubscribeRobotStatusRequest<a class="headerlink" href="#subscriberobotstatusrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selector</code></td>
+<td><a href="../Config/#robotselector">RobotSelector</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscriberobotstatusresponse">SubscribeRobotStatusResponse<a class="headerlink" href="#subscriberobotstatusresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>robot_state</code></td>
+<td><a href="../RobotStatus/#robotstate">RobotState</a></td>
+<td>Robot state is not available when robot connection shows disconnected.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribetraystatusesrequest">SubscribeTrayStatusesRequest<a class="headerlink" href="#subscribetraystatusesrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subscribetraystatusesresponse">SubscribeTrayStatusesResponse<a class="headerlink" href="#subscribetraystatusesresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td><a href="../../common/Annotations/#eventmetadata">EventMetadata</a></td>
+<td></td>
+</tr>
+<tr>
+<td><code>tray_states</code></td>
+<td><a href="../../robot/Status/#traystate">TrayState</a></td>
+<td>State of enabled trays, ordered from the top-most tray on the robot to the<br>bottom. This state is only available for robots with trays.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="switchmaprequest">SwitchMapRequest<a class="headerlink" href="#switchmaprequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>floor_level</code></td>
+<td>int32</td>
+<td>Non-negative integer floor_level is the first key used to index the map dict.<br> SwitchMap will raise an exception if there is no matching map.<br>Floor level 0 denotes the lowest reachable floor.</td>
+</tr>
+<tr>
+<td><code>section_index</code></td>
+<td>int32</td>
+<td>Non-negative integer section_index is the second key used to <br> index the map dict.<br> SwitchMap will raise an exception if there is no matching map.<br> Section index begins at 0.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="switchmapresponse">SwitchMapResponse<a class="headerlink" href="#switchmapresponse" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>map_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="updatemissionrequest">UpdateMissionRequest<a class="headerlink" href="#updatemissionrequest" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>robot_id</code></td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mission_command</code></td>
+<td><a href="../../robot/Mission/#missioncommand">MissionCommand</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h5 id="updatemissionresponse">UpdateMissionResponse<a class="headerlink" href="#updatemissionresponse" title="Permanent link">&para;</a></h5>
+<ul>
+<li><em>(No fields defined)</em></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright 2025 Bear Robotics, Inc. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "content.tooltips", "navigation.top", "navigation.tracking", "navigation.tabs", "toc.follow", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../swagger-ui/swagger-horizontal-improvements.js"></script>
+      
+    
+  </body>
+</html>

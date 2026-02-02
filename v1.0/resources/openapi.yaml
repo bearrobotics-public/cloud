@@ -1,0 +1,762 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+tags:
+    # - name: Authentication
+    #   description: API authentication and authorization endpoints
+    - name: APIService
+      description: Robot control, navigation, monitoring, and fleet management endpoints
+servers:
+  - url: https://api.bearrobotics.ai
+security:
+    - BearerAuth: []
+paths:
+    # Disabled now due to lack of CORS support in Auth APIs
+    # /authorizeApiAccess:
+    #     post:
+    #         servers:
+    #             - url: https://api-auth.bearrobotics.ai
+    #               description: Authentication server
+    #         tags:
+    #             - Authentication
+    #         summary: Authorize API Access
+    #         description: |-
+    #             Authenticates API credentials and returns a JWT token for accessing the Bear Cloud API.
+
+    #             Use this endpoint to exchange your API key and secret for a JWT token that can be used
+    #             to authenticate requests to other API endpoints.
+    #         operationId: AuthorizeApiAccess
+    #         requestBody:
+    #             description: API credentials for authentication
+    #             required: true
+    #             content:
+    #                 application/json:
+    #                     schema:
+    #                         $ref: '#/components/schemas/AuthorizeApiAccessRequest'
+    #         responses:
+    #             "200":
+    #                 description: Successfully authenticated. Returns a JWT token.
+    #                 content:
+    #                     text/plain:
+    #                         schema:
+    #                             type: string
+    #                             description: JWT token for API authentication
+    #                             example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    #             "401":
+    #                 description: Unauthorized - Invalid API credentials
+    #                 content:
+    #                     application/json:
+    #                         schema:
+    #                             $ref: '#/components/schemas/Status'
+    #             "400":
+    #                 description: Bad Request - Invalid request format
+    #                 content:
+    #                     application/json:
+    #                         schema:
+    #                             $ref: '#/components/schemas/Status'
+    /v1/current-map/get:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Retrieves the current map used by the robot.
+
+                The returned map includes annotations and destinations, which can be used
+                in mission destination, localization goals, and navigation.
+            operationId: APIService_GetCurrentMap
+            requestBody:
+                description: Robot identifier for map retrieval
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetCurrentMapRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetCurrentMapResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+
+    /v1/mission/append:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Appends a mission to the end of the mission queue.
+
+                 Use this when a mission is currently running; otherwise, prefer CreateMission.
+                 Missions are executed in the order they are appended.
+            operationId: APIService_AppendMission
+            requestBody:
+                description: Mission details and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AppendMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AppendMissionResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+    /v1/mission/create:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Creates a new mission of a specified type.
+
+                 This call will fail if:
+                 - The robot is already executing another mission.
+                 - The requested mission is not compatible with the robot's current state.
+            operationId: APIService_CreateMission
+            requestBody:
+                description: Mission details and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateMissionResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+    /v1/mission/update:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Issues a command to control or update the current mission (e.g., pause, cancel).
+
+                 This call will fail if:
+                 - The robot is not on the specified mission.
+                 - The command is invalid for the robot's current state.
+            operationId: APIService_UpdateMission
+            requestBody:
+                description: Mission update command and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateMissionRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateMissionResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+    /v1/robot-ids/list:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Returns a list of robot IDs the user has access to, filtered by optional criteria.
+
+                 The list includes all known robots, regardless of their current connection status.
+            operationId: APIService_ListRobotIDs
+            requestBody:
+                description: Filter criteria for robot listing
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListRobotIDsRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListRobotIDsResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+    /v1/robot/charge:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Instructs the robot to begin charging, regardless of its current battery level.
+
+                 This call will fail if:
+                 - The robot is already executing a mission.
+                   The current mission must be canceled before issuing this command.
+
+                 Notes:
+                 - This command is only supported on robots equipped with a contact-based charging dock.
+                   Robots without a compatible dock will return a INVALID_ARGUMENT (400) error.
+            operationId: APIService_ChargeRobot
+            requestBody:
+                description: Robot identifier for charging command
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ChargeRobotRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ChargeRobotResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+    /v1/robot/localize:
+        post:
+            tags:
+                - APIService
+            description: |-
+                Localizes the robot to a known pose or destination.
+
+                 While the robot is localizing,
+                 any subsequent requests to localize the robot will return a
+                 FAILED_PRECONDITION error until the process is completed.
+            operationId: APIService_LocalizeRobot
+            requestBody:
+                description: Localization goal and robot identifier
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LocalizeRobotRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LocalizeRobotResponse'
+                "400":
+                    description: Bad Request
+                    headers:
+                        grpc-status:
+                            type: integer
+                            description: "gRPC status code"
+                        grpc-message:
+                            type: string
+                            description: "detailed error message"
+                "401":
+                    description: Unauthorized
+                "500":
+                    description: Internal Server Error
+                "503":
+                    description: Service Unavailable
+                "504":
+                    description: Gateway Timeout
+components:
+    schemas:
+        Annotation:
+            type: object
+            properties:
+                annotationId:
+                    type: string
+                    description: |-
+                        Unique identifier for the annotation.
+                         Example: "67305"
+                displayName:
+                    type: string
+                    description: |-
+                        Descriptive name for the annotation.
+                         Example: "ITCT annotation A"
+                createdTime:
+                    type: string
+                    description: Timestamp indicating when the annotation was created.
+                    format: date-time
+                destinations:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/Destination'
+                    description: |-
+                        A collection of destinations associated with this annotation.
+                         Each entry pairs a destination ID (key) with its
+                         corresponding Destination message (value).
+            description: |-
+                Annotation defines a specific area on the map, often used to
+                 group destinations or assign special parameters.
+        AuthorizeApiAccessRequest:
+            type: object
+            required:
+                - api_key
+                - secret
+                - scope
+            properties:
+                api_key:
+                    type: string
+                    description: Your Bear Robotics API key
+                    example: "your-api-key"
+                secret:
+                    type: string
+                    description: Your Bear Robotics API secret
+                    example: "your-api-secret"
+                scope:
+                    type: string
+                    description: The requested scope for API access
+                    example: "your-scope"
+            description: Request object for API authentication
+        GetCurrentMapRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+            description: object for retrieving the current map
+        UpdateMissionRequest:
+            type: object
+            required:
+                - robotId
+                - missionCommand
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                missionCommand:
+                    type: object
+                    required:
+                        - missionId
+                        - command
+                    properties:
+                        missionId:
+                            type: string
+                            description: ID of the mission to control
+                        command:
+                            type: integer
+                            format: enum
+                            description: The command to execute on the mission
+            description: Request object for updating a mission
+        ListRobotIDsRequest:
+            type: object
+            properties:
+                filter:
+                    type: object
+                    properties:
+                        locationId:
+                            type: string
+                            description: An empty location_id returns all robots authorized to the authenticated API key user
+            description: Request object for listing robot IDs
+        ChargeRobotRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+            description: Request object for charging a robot
+        AppendMissionRequest:
+            type: object
+            required:
+                - robotId
+                - mission
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                mission:
+                    $ref: '#/components/schemas/Mission'
+            description: Request object for appending a mission
+        AppendMissionResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        ChargeRobotResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        CreateMissionRequest:
+            type: object
+            required:
+                - robotId
+                - mission
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                mission:
+                    $ref: '#/components/schemas/Mission'
+            description: Request object for creating a new mission
+        CreateMissionResponse:
+            type: object
+            properties:
+                missionId:
+                    type: string
+        Destination:
+            type: object
+            properties:
+                destinationId:
+                    type: string
+                    description: Unique identifier for the destination.
+                displayName:
+                    type: string
+                    description: Human-readable name for the destination.
+            description: |-
+                Destination represents a single point of interest on the map
+                 that a robot can navigate to and align itself with.
+        GetCurrentMapResponse:
+            type: object
+            properties:
+                map:
+                    $ref: '#/components/schemas/Map'
+        Goal:
+            type: object
+            oneOf:
+                - properties:
+                    destinationId:
+                        type: string
+                  required: [destinationId]
+                - properties:
+                    pose:
+                        $ref: '#/components/schemas/Pose'
+                  required: [pose]
+            description: Goal represents a target destination or pose for the robot to navigate to.
+        ListRobotIDsResponse:
+            type: object
+            properties:
+                totalRobots:
+                    type: integer
+                    format: int32
+                robotIds:
+                    type: array
+                    items:
+                        type: string
+                    description: |-
+                        This might not have all the robot IDs if there are too many.
+                         It will have all the robot IDs if the number of robot_ids is same as
+                         total_robots.
+        LocalizeRobotRequest:
+            type: object
+            required:
+                - robotId
+                - goal
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                goal:
+                    $ref: '#/components/schemas/Goal'
+            description: Request object for localizing a robot
+        LocalizeRobotResponse:
+            type: object
+            properties: {}
+        Map:
+            type: object
+            properties:
+                mapId:
+                    type: string
+                    description: |-
+                        Unique identifier for the map.
+                         Example: "9578"
+                createdTime:
+                    type: string
+                    description: Timestamp indicating when the map was created.
+                    format: date-time
+                modifiedTime:
+                    type: string
+                    description: Timestamp indicating the last time the map was modified.
+                    format: date-time
+                displayName:
+                    type: string
+                    description: |-
+                        Display name of the map, matching the name used in Bear Universe.
+                         Example: "ITCT SEOUL"
+                annotation:
+                    allOf:
+                        - $ref: '#/components/schemas/Annotation'
+                    description: Annotation associated with this map, defining specific areas and destinations.
+            description: Map represents a navigable map used by robots, including metadata and associated annotations.
+        Mission:
+            type: object
+            oneOf:
+                - properties:
+                    baseMission:
+                        $ref: '#/components/schemas/BaseMission'
+                  required: [baseMission]
+                - properties:
+                    serviMission:
+                        $ref: '#/components/schemas/ServiMission'
+                  required: [serviMission]
+                - properties:
+                    cartiMission:
+                        $ref: '#/components/schemas/CartiMission'
+                  required: [cartiMission]
+            description: Represents a mission that can be assigned to a robot. Only one mission type can be set per Mission instance.
+        Pose:
+            type: object
+            properties:
+                xMeters:
+                    type: number
+                    description: X-coordinate in meters within the map.
+                    format: float
+                yMeters:
+                    type: number
+                    description: Y-coordinate in meters within the map.
+                    format: float
+                headingRadians:
+                    type: number
+                    description: |-
+                        The heading of the robot in radians.
+                         Ranges from -π to π, where 0.0 points along the positive x-axis.
+                    format: float
+            description: Represents the robot's pose on the map.
+        BaseMission:
+            type: object
+            oneOf:
+                - properties:
+                    navigateMission:
+                        $ref: '#/components/schemas/NavigateMission'
+                  required: [navigateMission]
+                - properties:
+                    navigateAutoMission:
+                        $ref: '#/components/schemas/NavigateAutoMission'
+                  required: [navigateAutoMission]
+            description: Base missions are applicable to all robot families
+        NavigateMission:
+            type: object
+            properties:
+                goal:
+                    $ref: '#/components/schemas/Goal'
+            description: A simple mission with a predefined goal
+        NavigateAutoMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+            description: A mission that automatically selects the best available goal from the provided list
+        ServiMission:
+            type: object
+            oneOf:
+                - properties:
+                    deliveryMission:
+                        $ref: '#/components/schemas/DeliveryMission'
+                  required: [deliveryMission]
+                - properties:
+                    bussingMission:
+                        $ref: '#/components/schemas/BussingMission'
+                  required: [bussingMission]
+                - properties:
+                    deliveryPatrolMission:
+                        $ref: '#/components/schemas/DeliveryPatrolMission'
+                  required: [deliveryPatrolMission]
+                - properties:
+                    bussingPatrolMission:
+                        $ref: '#/components/schemas/BussingPatrolMission'
+                  required: [bussingPatrolMission]
+            description: Servi missions are specific to the Servi robot family
+        CartiMission:
+            type: object
+            oneOf:
+                - properties:
+                    traverseMission:
+                        $ref: '#/components/schemas/TraverseMission'
+                  required: [traverseMission]
+                - properties:
+                    traversePatrolMission:
+                        $ref: '#/components/schemas/TraversePatrolMission'
+                  required: [traversePatrolMission]
+            description: Carti missions are specific to the Carti robot family
+        DeliveryMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/DeliveryParams'
+            description: A delivery mission that navigates to one or more goals, stopping at each for a time limit or until weight is removed
+        BussingMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/BussingParams'
+            description: A bussing mission that navigates to one or more goals, stopping at each for a time limit or until weight is added
+        DeliveryPatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/DeliveryPatrolParams'
+            description: A delivery patrol mission that continuously loops through goals, stopping at each for a time limit until all weight is removed
+        BussingPatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/BussingPatrolParams'
+            description: A bussing patrol mission that continuously loops through goals, stopping at each for a time limit until weight exceeds a threshold
+        TraverseMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/TraverseParams'
+            description: A traverse mission that navigates to one or more goals
+        TraversePatrolMission:
+            type: object
+            properties:
+                goals:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Goal'
+                params:
+                    $ref: '#/components/schemas/TraversePatrolParams'
+            description: A traverse patrol mission that navigates to one or more goals and continuously loops through the goals stopping at each for a time limit
+        DeliveryParams:
+            type: object
+            properties: {}
+            description: Parameters for a delivery mission (reserved for future use)
+        BussingParams:
+            type: object
+            properties: {}
+            description: Parameters for a bussing mission (reserved for future use)
+        DeliveryPatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a delivery patrol mission (reserved for future use)
+        BussingPatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a bussing patrol mission (reserved for future use)
+        TraverseParams:
+            type: object
+            properties: {}
+            description: Parameters for a traverse mission (reserved for future use)
+        TraversePatrolParams:
+            type: object
+            properties: {}
+            description: Parameters for a traverse patrol mission (reserved for future use)
+        UpdateMissionResponse:
+            type: object
+            properties: {}
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+            description: JWT token obtained from the /authorizeApiAccess endpoint
+
