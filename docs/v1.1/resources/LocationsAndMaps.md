@@ -48,8 +48,11 @@ Destination represents a single point of interest on the map that a robot can na
 
 | Field | Message Type | Description |
 |------|------|-------------|
-| `destination_id` | string | Unique identifier for the destination. |
-| `display_name` | string | Human-readable name for the destination. |
+| `destination_id` | `string` | Unique identifier for the destination. (**refer to the note below**)|
+| `display_name` | `string` | Human-readable name for the destination; used by missions |
+
+!!! note
+    Due to reasons related to backwards compatibility, the `destination_id` field in this response is different from the one used by mission-related RPCs. Missions use the`display_name` field above as `destination_id`, so to create a mission with a destination ID, the `display_name` field should be used instead.
 
 ##### JSON Response Example
 === "JSON"

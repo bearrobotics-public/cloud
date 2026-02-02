@@ -16,6 +16,10 @@ The ID of the robot that will receive this command.
 ##### mission `Mission` `required`
 Universal wrapper for mission types. Only one [mission type](../../concepts/mission.md#mission-types) may be set at a time.
 
+!!! note
+    When using `destination_id` in the Goal, it should match the `display_name` field from the map's annotation destinations. See [LocationsAndMaps](LocationsAndMaps.md#destination) for more details.
+
+
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
 |`base_mission`   |[`BaseMission`](#basemission)	| Base missions are specific to the Base units. |
