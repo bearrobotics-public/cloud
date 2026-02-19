@@ -22,7 +22,7 @@ Universal wrapper for mission types. Only one [mission type](../../concepts/miss
 
 | Field (*oneof*) | Message Type | Description |
 |------------|-------------| ---|
-|`base_mission`   |[`BaseMission`](#basemission)	| Base missions are specific to the Base units. |
+|`base_mission`   |[`BaseMission`](#basemission)	| Base missions are applicable to all robot families. |
 |`servi_mission`	|[`servi.Mission`](Servi.md#servi_mission-servimission) | Servi missions are specific to the Servi robot family. <br /> Refer to [Servi](Servi.md) for how to create and send a servi mission. |
 |`carti_mission`	|[`carti.Mission`](Carti.md#carti_mission-cartimission)	| Carti missions are specific to the Carti robot family.<br /> Refer to [Carti](Carti.md) for how to create and send a carti mission. |
 
