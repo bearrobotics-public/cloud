@@ -110,6 +110,7 @@ nav:
       - Location: concepts/location.md
       - Status: concepts/status.md
   - Changelog:
+    - v1.2: changelog/v1.2.md
     - v1.1: changelog/v1.1.md
     - v1.0: changelog/v1.0.md
     - v0.1Beta: changelog/v0.1beta.md
