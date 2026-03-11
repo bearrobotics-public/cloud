@@ -160,12 +160,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            type: object
-                            required:
-                                - robotId
-                            properties:
-                                robotId:
-                                    type: string
+                            $ref: '#/components/schemas/ControlConveyorRequest'
             responses:
                 "200":
                     description: OK
@@ -895,11 +890,8 @@ components:
                                 properties:
                                     type:
                                         type: integer
-                                        enum: [1, 2]
-                                        description: |
-                                          1 = TYPE_SOFTWARE_ONLY (Perform an OS-level reboot without powering off hardware devices)
-                                          2 = TYPE_WITH_HARDWARE (Perform a full power-cycle including hardware devices)
-                                          Note: TYPE_UNKNOWN (0) is not allowed and will return INVALID_ARGUMENT error
+                                        format: enum
+                                        description: Reboot type (e.g. software-only or full power-cycle). TYPE_UNKNOWN (0) is not allowed.
                           required: [reboot]
                         - properties:
                             shutdown:
@@ -1004,6 +996,11 @@ components:
             description: Request object for skipping a goal
         Mission:
             type: object
+            properties:
+                extension:
+                    allOf:
+                        - $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: Flexible experimental mission type for experimental APIs.
             oneOf:
                 - properties:
                     baseMission:
@@ -1063,6 +1060,14 @@ components:
                     bussingPatrolMission:
                         $ref: '#/components/schemas/BussingPatrolMission'
                   required: [bussingPatrolMission]
+                - properties:
+                    navigateMission:
+                        $ref: '#/components/schemas/NavigateMission'
+                  required: [navigateMission]
+                - properties:
+                    navigateAutoMission:
+                        $ref: '#/components/schemas/NavigateAutoMission'
+                  required: [navigateAutoMission]
             description: Servi missions are specific to the Servi robot family
         CartiMission:
             type: object
@@ -1075,6 +1080,14 @@ components:
                     traversePatrolMission:
                         $ref: '#/components/schemas/TraversePatrolMission'
                   required: [traversePatrolMission]
+                - properties:
+                    navigateMission:
+                        $ref: '#/components/schemas/NavigateMission'
+                  required: [navigateMission]
+                - properties:
+                    navigateAutoMission:
+                        $ref: '#/components/schemas/NavigateAutoMission'
+                  required: [navigateAutoMission]
             description: Carti missions are specific to the Carti robot family
         DeliveryMission:
             type: object
@@ -1247,12 +1260,8 @@ components:
                     description: Target conveyor index to control
                 command:
                     type: integer
-                    enum: [1, 2, 3]
-                    description: |
-                      1 = COMMAND_CONVEYOR_MOTOR_STOP (Stop the conveyor motor)
-                      2 = COMMAND_CONVEYOR_MOTOR_CW (Clockwise rotation)
-                      3 = COMMAND_CONVEYOR_MOTOR_CCW (Counter-clockwise rotation)
-                      Note: COMMAND_CONVEYOR_MOTOR_UNKNOWN (0) is not allowed
+                    format: enum
+                    description: Motor command (stop, clockwise, or counter-clockwise). COMMAND_CONVEYOR_MOTOR_UNKNOWN (0) is not allowed.
             description: Command to control a conveyor motor
         ConveyorState:
             type: object
@@ -1391,7 +1400,7 @@ components:
                     description: |-
                         A mapping of location ID (key) with its corresponding, human-readable
                          location name.
-                         e.g. { “1D9X”: “785_Platform” }
+                         e.g. { "1D9X": "785_Platform" }
         GetConveyorIndexResponse:
             type: object
             properties:
@@ -1427,11 +1436,15 @@ components:
                     $ref: '#/components/schemas/SystemInfo'
         Goal:
             type: object
-            properties:
-                destinationId:
-                    type: string
-                pose:
-                    $ref: '#/components/schemas/Pose'
+            oneOf:
+                - required: [destinationId]
+                  properties:
+                    destinationId:
+                        type: string
+                - required: [pose]
+                  properties:
+                    pose:
+                        $ref: '#/components/schemas/Pose'
             description: Goal represents a target destination or pose for the robot to navigate to.
         GoogleProtobufAny:
             type: object
@@ -1877,7 +1890,7 @@ components:
                 loadRatio:
                     type: number
                     description: |-
-                        Ratio of the current load to the tray’s maximum load capacity.
+                        Ratio of the current load to the tray's maximum load capacity.
                          This value may exceed 1.0 if the tray is overloaded.
 
                          Caveats:
