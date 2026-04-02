@@ -104,3 +104,25 @@ message Mission {
     NavigateAutoMission navigate_auto_mission = 4;
   }
 }
+
+message TraverseWorkflow {
+  // Workflow for traverse missions.
+  // Corresponds to Touchscreen UI:
+  // - Table option
+  repeated core.Goal goals = 1;
+}
+
+message TraversePatrolWorkflow {
+  // Workflow for traverse patrol missions.
+  // Corresponds to Touchscreen UI:
+  // - Patrol option
+  repeated core.Goal goals = 1;
+}
+
+// Carti workflows are specific to the Carti family and mirror touchscreen behavior.
+message MissionWorkflow {
+  oneof workflow {
+    TraverseWorkflow traverse = 1;
+    TraversePatrolWorkflow traverse_patrol = 2;
+  }
+}

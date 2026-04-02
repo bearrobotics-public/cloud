@@ -27,9 +27,14 @@ message SystemCommand {
     Type type = 1;
   }
 
+  // Shuts down the robot system.
+  // Pass in an empty Shutdown message to initiate a shutdown.
+  message Shutdown {}
+
   // Client-specified system command to be executed.
   oneof command {
     Reboot reboot = 1;
+    Shutdown shutdown = 2;
   }
 }
 

@@ -14,6 +14,7 @@ import "bearrobotics/api/v1/carti/conveyor.proto";
 import "bearrobotics/api/v1/core/errors.proto";
 import "bearrobotics/api/v1/core/mission_status.proto";
 import "bearrobotics/api/v1/core/pose.proto";
+import "bearrobotics/api/v1/core/twist.proto";
 import "bearrobotics/api/v1/servi/tray_status.proto";
 
 
@@ -126,4 +127,7 @@ message RobotState {
     // Populated when the robot type is a Carti.
     CartiState carti_state = 8;
   }
+
+  // Linear and angular velocity of the robot.
+  core.Twist twist = 9;
 }

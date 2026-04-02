@@ -94,3 +94,14 @@ message MissionCommand {
   }
   Command command = 2;
 }
+
+// Workflows mirror touchscreen behavior and presets (including automatic return selection).
+message MissionWorkflow {
+  oneof workflow {
+    // Servi workflow
+    servi.MissionWorkflow servi_workflow = 1;
+
+    // Carti workflow
+    carti.MissionWorkflow carti_workflow = 2;
+  }
+}

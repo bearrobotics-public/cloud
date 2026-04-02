@@ -70,6 +70,33 @@ service APIService {
     option (google.api.http) = {post: "/v1/mission/create"};
   }
 
+  // Creates a new mission workflow that mirrors touchscreen presets,
+  // including automatic return point selection.
+  //
+  // This call will fail if:
+  // - The robot is already executing another mission.
+  //   Returns a FAILED_PRECONDITION error.
+  // - The requested workflow is not compatible with the robot's type or current state.
+  //   Returns an INVALID_ARGUMENT error.
+  //
+  // Returns the list of mission_ids for the created missions if successful.
+  rpc CreateMissionWorkflow(CreateMissionWorkflowRequest) returns (CreateMissionWorkflowResponse) {
+    option (google.api.http) = {post: "/v1/mission-workflow/create"};
+  }
+
+  // Moves to the next destination in the current mission.
+  //
+  // This call will fail if:
+  // - The robot is not on a mission.
+  //   Returns a FAILED_PRECONDITION error.
+  // - The skip goal request is not published to ADH.
+  //   Returns an INTERNAL error.
+  //
+  // Returns the mission_id of the current mission where the goal was skipped.
+  rpc SkipGoal(SkipGoalRequest) returns (SkipGoalResponse) {
+    option (google.api.http) = {post: "/v1/goal/skip"};
+  }
+
   // Subscribe to updates on the robot's mission status.
   //
   // Upon subscription:
@@ -172,9 +199,6 @@ service APIService {
   rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest) returns (stream SubscribeLocalizationStatusResponse);
 
   // Subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
-  //
-  // Current implementation supports up to 5 robots. Requests with more than 5
-  // robots will return a INVALID_ARGUMENT error.
   //
   // Use this to track the robot's estimated position in real time.
   rpc SubscribeRobotPose(SubscribeRobotPoseRequest) returns (stream SubscribeRobotPoseResponse);
@@ -369,6 +393,15 @@ message CreateMissionResponse {
   string mission_id = 1;
 }
 
+message CreateMissionWorkflowRequest {
+  string robot_id = 1;
+  core.MissionWorkflow mission_workflow = 2;
+}
+
+message CreateMissionWorkflowResponse {
+  repeated string mission_ids = 1;
+}
+
 message GetAvailableLocationsRequest {}
 
 message GetAvailableLocationsResponse {
@@ -461,6 +494,14 @@ message SetPoseRequest {
 }
 
 message SetPoseResponse {}
+
+message SkipGoalRequest {
+  string robot_id = 1;
+}
+message SkipGoalResponse {
+  // The unique identifier of the mission where the goal was skipped.
+  string mission_id = 1;
+}
 
 message SubscribeBatteryStatusRequest {
   core.RobotSelector selector = 1;

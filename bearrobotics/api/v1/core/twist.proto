@@ -1,0 +1,35 @@
+// File: robot_system.proto
+//
+// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "bearrobotics/api/v1/core/metadata.proto";
+
+
+// Represents velocity in 2D space in linear and angular components.
+message Twist {
+  // The desired speed to drive up to in meters-per-second (m/s).
+  // A positive value should be used for driving forward and a negative
+  // value may be used to drive in reverse.
+  float linear_velocity = 1;
+
+  // The desired rate of rotation in radians-per-second (rad/s).
+  // A positive value is used for a clockwise (right) point turn while a
+  // negative value should be used for counter-clockwise (left) point turn.
+  float angular_velocity = 2;
+}
+
+message TwistWithMetadata {
+  // Metadata associated with the event.
+  EventMetadata metadata = 1;
+
+  // Linear and angular velocity of the robot at the time of publication.
+  Twist twist = 2;
+}

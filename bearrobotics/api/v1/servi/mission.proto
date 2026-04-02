@@ -147,3 +147,65 @@ message Mission {
     NavigateAutoMission navigate_auto_mission = 6;
   }
 }
+
+message DeliveryWorkflow {
+  // Workflow for delivery missions.
+  // Corresponds to Touchscreen UI:
+  // - Serving, Table option
+  repeated core.Goal goals = 1;
+}
+
+message DeliveryPatrolWorkflow {
+  // Workflow for delivery patrol missions.
+  // Corresponds to Touchscreen UI:
+  // - Serving, Patrol option
+  repeated core.Goal goals = 1;
+}
+
+message BussingWorkflow {
+  // Workflow for bussing missions.
+  // Corresponds to Touchscreen UI:
+  // - Bussing, Table option
+  repeated core.Goal goals = 1;
+}
+
+message BussingPatrolWorkflow {
+  // Workflow for bussing patrol missions.
+  // Corresponds to Touchscreen UI:
+  // - Bussing, Patrol option
+  repeated core.Goal goals = 1;
+}
+
+message BirthdayWorkflow {
+  // Workflow for Birthday Mission.
+  // Corresponds to Touchscreen UI:
+  // Birthday Mode
+  core.Goal goal = 1;
+}
+
+// Workflow for hosting missions.
+// Corresponds to Touchscreen UI:
+// - Hosting, Restaurant option
+message HostingWorkflow {
+  repeated core.Goal goals = 1;
+}
+
+// Workflow for hosting patrol missions.
+// Corresponds to Touchscreen UI:
+// - Hosting, Patrol option
+message HostingPatrolWorkflow {
+  repeated core.Goal goals = 1;
+}
+
+// Servi workflows are specific to the Servi family and mirror touchscreen behavior.
+message MissionWorkflow {
+  oneof workflow {
+    DeliveryWorkflow delivery = 1;
+    DeliveryPatrolWorkflow delivery_patrol = 2;
+    BussingWorkflow bussing = 3;
+    BussingPatrolWorkflow bussing_patrol = 4;
+    BirthdayWorkflow birthday = 5;
+    HostingWorkflow hosting = 6;
+    HostingPatrolWorkflow hosting_patrol = 7;
+  }
+}
