@@ -170,6 +170,8 @@ Robot type-specific state information. Only one type may be set at a time.
 
 -----------
 ## SubscribeBatteryStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get battery state updates for the robot. Upon subscription, the latest battery state is sent immediately. Updates are streamed whenever the state changes.
 
 ### Request
@@ -270,6 +272,8 @@ Represents the state of the robot's battery system.
 
 -----------
 ## SubscribeRobotStatus
+Streaming mode: [`hybrid`](../../index.md#hybrid) · [When to use this vs. individual endpoints](../../index.md#consolidated-vs-individual)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get the robot's connectivity and operational state. Upon subscription, the latest battery state is sent immediately. Updates are streamed as the robot's state changes.
 
 ### Request
@@ -378,6 +382,8 @@ The current robot state including connectivity, battery, emergency stop, mission
 
 -----------
 ## SubscribeErrorCodes
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to subscribe to error codes returned by the robot. Upon subscription, the latest known error codes are sent immediately. Updates are streamed when error codes change.
 
 ### Request
@@ -474,6 +480,8 @@ Note that each robot maintains its own metadata, so messages should be correlate
 
 -----------
 ## SubscribeNetworkStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to subscribe to network status updates for robots. Upon subscription, the latest known network states are sent immediately. Updates are streamed when any network state changes.
 
 ### Request

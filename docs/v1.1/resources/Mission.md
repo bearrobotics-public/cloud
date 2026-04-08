@@ -174,6 +174,8 @@ The ID of the robot that will receive this command.
 
 -----------
 ## SubscribeMissionStatus 
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get updates on the robot's mission state. Upon subscription, the latest known mission state is sent immediately. Subsequent updates are streamed as the state changes. 
 
 ### Request

@@ -63,6 +63,8 @@ The ID of the robot that the localization command is sent to.
 -----------
 
 ## SubscribeEmergencyStopStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to Subscribe to the software emergency stop state.
 
 Upon subscription, the latest emergency stop state is sent immediately. State updates are streamed whenever the emergency stop state changes.
@@ -126,6 +128,8 @@ The current emergency stop state of the robot.
 
 -----------
 ## SubscribeLocalizationStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get the robot’s localization state. Upon subscription, the latest localization state is sent immediately. State updates are streamed while localization is active.
 
 ### Request
@@ -178,6 +182,8 @@ The ID of the robot that subscription request is sent to.
 
 -----------
 ## SubscribeRobotPose
+Streaming mode: [`frequency`](../../index.md#frequency-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
 
 Use this to track the robot's position in real time.
