@@ -1,6 +1,8 @@
 These are streaming endpoints that provide real-time updates on robot health, including battery levels, charging state, and connectivity.
 
 ## SubscribeBatteryStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get battery state updates for the robot. Upon subscription, the latest battery state is sent immediately. Updates are streamed whenever the state changes.
 
 ### Request
@@ -98,6 +100,8 @@ Represents the state of the robot's battery system.
 
 -----------
 ## SubscribeRobotStatus
+Streaming mode: [`hybrid`](../../index.md#hybrid) · [When to use this vs. individual endpoints](../../index.md#consolidated-vs-individual)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get the robot's connectivity and operational state. Upon subscription, the latest battery state is sent immediately. Updates are streamed as the robot's state changes.
 
 ### Request

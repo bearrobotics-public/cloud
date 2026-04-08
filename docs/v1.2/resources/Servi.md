@@ -229,6 +229,8 @@ Selector to specify which trays to calibrate.
 
 -----------
 ## SubscribeTrayStatuses
+Streaming mode: [`event`](../../index.md#event-based)
+
 Subscribes to the robot's tray status updates.
 
 Upon subscription, the latest known tray states are sent immediately. Updates are streamed when any tray state changes.

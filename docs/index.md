@@ -44,7 +44,29 @@ sequenceDiagram
 ```
 ## Streaming RPCs
 
-[Server-side streaming RPCs](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) are used for receiving continuous updates, either event-based (e.g., mission status) or frequency-based (e.g., robot pose).
+[Server-side streaming RPCs](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) are used for receiving continuous updates. Streaming RPCs operate in one of the following modes depending on the nature of the data:
+
+- <a id="frequency-based"></a>**Frequency-based** streams deliver updates at a fixed cadence (e.g., ~10Hz),
+  regardless of whether the underlying value has changed. Delivery is
+  best-effort — individual updates may occasionally be dropped, but a fresh
+  one follows shortly after.
+
+    *Example: `SubscribeRobotPose` streams position estimates at ~10Hz. A single
+    dropped update has minimal impact since the next one arrives within
+    milliseconds.*
+
+- <a id="hybrid"></a>**Hybrid** streams combine both modes — updates are delivered at a minimum
+  fixed cadence, with additional updates sent whenever a meaningful state change
+  occurs between intervals.
+
+    *Example: `SubscribeRobotStatus` reports pose at a base rate of 1Hz, with
+    additional updates whenever other statuses change.*
+
+- <a id="event-based"></a>**Event-based** streams deliver updates only when a meaningful state change
+  occurs.
+
+    *Example: `SubscribeMissionStatus` notifies you each time a mission
+    transitions between states (e.g., from `EXECUTING` to `SUCCEEDED`).*
 
 !!! note
 
@@ -89,4 +111,17 @@ For server streaming RPCs, all responses include metadata containing a timestamp
 - **Sequence Number**: The sequence number is guaranteed to be incremental and can be used to detect duplicate responses. Note that the sequence number may reset to 0 at any time, though this should be rare (e.g., only during a service or robot restart).
 
 If strict detection of response duplication is desired, both the sequence number and timestamp should be used together. 
+
+### <a id="consolidated-vs-individual"></a>SubscribeRobotStatus vs. individual endpoints
+
+`SubscribeRobotStatus` provides a consolidated view of all robot state
+in a single stream — including connection, battery, emergency stop,
+mission, pose, and error codes. Use it when you need a general overview
+of the robot (e.g., for a monitoring dashboard) with minimal subscription
+management.
+
+Use individual endpoints (e.g., `SubscribeRobotPose`,
+`SubscribeBatteryStatus`) when you need higher update frequency or only
+a specific subset of data. For example, `SubscribeRobotPose` delivers
+pose at ~10Hz compared to 1Hz in `SubscribeRobotStatus`.
 

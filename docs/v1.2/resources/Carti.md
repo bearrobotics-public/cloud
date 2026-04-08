@@ -181,6 +181,8 @@ List of available conveyor indexes for this robot.
 
 -----------
 ## SubscribeConveyorStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
 A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get conveyor status updates for the robot.
 
 Upon subscription, the latest known conveyor states are sent immediately. Updates are streamed when any conveyor state changes.
