@@ -1954,43 +1954,64 @@ components:
             oneOf:
                 - properties:
                     delivery:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [delivery]
                 - properties:
                     deliveryPatrol:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [deliveryPatrol]
                 - properties:
                     bussing:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [bussing]
                 - properties:
                     bussingPatrol:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [bussingPatrol]
                 - properties:
                     birthday:
-                        $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goal:
+                                $ref: '#/components/schemas/Goal'
                   required: [birthday]
                 - properties:
                     hosting:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [hosting]
                 - properties:
                     hostingPatrol:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [hostingPatrol]
             description: Servi preset workflows. Each type takes only goals (or a single goal for birthday) with no params.
         CartiWorkflow:
@@ -1998,15 +2019,21 @@ components:
             oneOf:
                 - properties:
                     traverse:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [traverse]
                 - properties:
                     traversePatrol:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/Goal'
+                        type: object
+                        properties:
+                            goals:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Goal'
                   required: [traversePatrol]
             description: Carti preset workflows. Each type takes only goals with no params.
         Twist:
