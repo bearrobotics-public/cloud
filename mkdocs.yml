@@ -60,6 +60,18 @@ nav:
       - Authentication: guides/authentication.md
       - Errors and Troubleshooting: guides/errors.md
   - Cloud API Reference:
+      - v1.3:
+          - gRPC API:
+              - Mission: v1.3/resources/Mission.md
+              - Locations & Maps: v1.3/resources/LocationsAndMaps.md
+              - Localization & Navigation: v1.3/resources/LocalizationAndNavigation.md
+              - Robot Status: v1.3/resources/RobotStatus.md
+              - Robot System: v1.3/resources/RobotSystem.md
+              - Fleet Management: v1.3/resources/FleetManagement.md
+              - Webhooks: v1.3/resources/Webhooks.md
+              - Carti: v1.3/resources/Carti.md
+              - Servi: v1.3/resources/Servi.md
+          - REST API: v1.3/resources/RestAPI.md
       - v1.2:
           - gRPC API:
               - Mission: v1.2/resources/Mission.md
@@ -121,6 +133,7 @@ nav:
       - Location: concepts/location.md
       - Status: concepts/status.md
   - Changelog:
+    - v1.3: changelog/v1.3.md
     - v1.2: changelog/v1.2.md
     - v1.1: changelog/v1.1.md
     - v1.0: changelog/v1.0.md
