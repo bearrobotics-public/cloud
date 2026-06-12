@@ -25,6 +25,8 @@ tags:
       description: Carti-specific operations
     - name: Servi
       description: Servi-specific operations
+    - name: Webhooks
+      description: Webhook subscription management for event delivery
 servers:
   - url: https://api.bearrobotics.ai
 security:
@@ -364,6 +366,42 @@ paths:
                     $ref: '#/components/responses/ServiceUnavailable'
                 "504":
                     $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission/append-batch:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Atomically append multiple missions to the end of the mission queue.
+
+                 All missions are appended contiguously in the request order.
+                 Missions can be appended even when other missions are queued.
+
+                 If any mission in the batch fails validation or append, no missions are appended.
+            operationId: APIService_AppendMissionBatch
+            requestBody:
+                description: Robot identifier and ordered list of missions to append
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AppendMissionBatchRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AppendMissionBatchResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
     /v1/mission/create:
         post:
             tags:
@@ -389,6 +427,45 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/CreateMissionResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission/create-batch:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Atomically create multiple missions.
+
+                 The returned mission IDs match the order of the missions in the request.
+
+                 This call will fail if:
+                 - Another mission is running or queued.
+                 - The robot is unable to start a mission.
+
+                 If any mission in the batch fails validation or creation, no missions are created.
+            operationId: APIService_CreateMissionBatch
+            requestBody:
+                description: Robot identifier and ordered list of missions to create
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMissionBatchRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateMissionBatchResponse'
                 "400":
                     $ref: '#/components/responses/BadRequest'
                 "401":
@@ -489,6 +566,39 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/SkipGoalResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/mission-status/clear:
+        post:
+            tags:
+                - Mission
+            description: |-
+                Clears the robot's mission status.
+
+                 The call will fail if the robot is on a running or paused mission.
+            operationId: APIService_ClearMissionStatus
+            requestBody:
+                description: Robot identifier for clearing mission status
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ClearMissionStatusRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ClearMissionStatusResponse'
                 "400":
                     $ref: '#/components/responses/BadRequest'
                 "401":
@@ -749,6 +859,107 @@ paths:
                     $ref: '#/components/responses/ServiceUnavailable'
                 "504":
                     $ref: '#/components/responses/GatewayTimeout'
+    /v1/webhook/create:
+        post:
+            tags:
+                - Webhooks
+            description: |-
+                Creates a new webhook subscription.
+
+                 Once created, a webhook subscription delivers an update via POST request
+                 to the given URL each time an event matching the given type and filter
+                 occurs on any of the selected robots.
+
+                 The delivery request payload content is customizable
+                 via the request template option.
+
+                 The client may also provide custom HTTP headers to include in each
+                 webhook delivery request.
+            operationId: APIService_CreateWebhook
+            requestBody:
+                description: Webhook subscription configuration to create
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateWebhookRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateWebhookResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/webhook/list:
+        post:
+            tags:
+                - Webhooks
+            description: Lists all webhook subscriptions for a distributor (extracted from authentication context).
+            operationId: APIService_ListWebhooks
+            requestBody:
+                description: Distributor identifier for listing webhook subscriptions
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListWebhooksRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListWebhooksResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
+    /v1/webhook/delete:
+        post:
+            tags:
+                - Webhooks
+            description: Deletes an existing webhook subscription by ID (soft delete).
+            operationId: APIService_DeleteWebhook
+            requestBody:
+                description: Webhook subscription identifier to delete
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DeleteWebhookRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteWebhookResponse'
+                "400":
+                    $ref: '#/components/responses/BadRequest'
+                "401":
+                    $ref: '#/components/responses/Unauthorized'
+                "500":
+                    $ref: '#/components/responses/InternalServerError'
+                "503":
+                    $ref: '#/components/responses/ServiceUnavailable'
+                "504":
+                    $ref: '#/components/responses/GatewayTimeout'
 components:
     responses:
         BadRequest:
@@ -994,6 +1205,100 @@ components:
                     type: string
                     description: Unique identifier of the robot
             description: Request object for skipping a goal
+        AppendMissionBatchRequest:
+            type: object
+            required:
+                - robotId
+                - missions
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                missions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Mission'
+                    description: The missions to append, in request order.
+            description: Request object for atomically appending multiple missions
+        CreateMissionBatchRequest:
+            type: object
+            required:
+                - robotId
+                - missions
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+                missions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Mission'
+                    description: The missions to create, in request order.
+            description: Request object for atomically creating multiple missions
+        ClearMissionStatusRequest:
+            type: object
+            required:
+                - robotId
+            properties:
+                robotId:
+                    type: string
+                    description: Unique identifier of the robot
+            description: Request object for clearing the robot's mission status
+        CreateWebhookRequest:
+            type: object
+            required:
+                - url
+                - eventType
+                - selector
+            properties:
+                distributor:
+                    type: string
+                    description: Human-readable identifier code assigned to the distributor.
+                url:
+                    type: string
+                    description: The URL to deliver webhook events to.
+                eventType:
+                    type: string
+                    description: |-
+                        Event type to subscribe to.
+                         Supported event types:
+                         - "mission"
+                         - "battery"
+                selector:
+                    allOf:
+                        - $ref: '#/components/schemas/WebhookRobotSelector'
+                    description: |-
+                        Required robot selector: specifies which robots this webhook targets.
+                         Provide either explicit robot IDs or location IDs (resolved to robots
+                         via Fleet Info).
+                filter:
+                    allOf:
+                        - $ref: '#/components/schemas/FieldFilter'
+                    description: Optional filter to control which events trigger delivery.
+                options:
+                    allOf:
+                        - $ref: '#/components/schemas/WebhookOptions'
+                    description: Optional delivery customizations (template, headers, description).
+            description: Request object for creating a webhook subscription
+        ListWebhooksRequest:
+            type: object
+            properties:
+                distributor:
+                    type: string
+                    description: Human-readable identifier code assigned to the distributor.
+            description: Request object for listing webhook subscriptions
+        DeleteWebhookRequest:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: string
+                    description: Unique identifier of the webhook subscription to delete.
+                distributor:
+                    type: string
+                    description: Human-readable identifier code assigned to the distributor.
+            description: Request object for deleting a webhook subscription
         Mission:
             type: object
             properties:
@@ -1612,11 +1917,15 @@ components:
             properties:
                 checksum:
                     type: integer
-                    description: CRC32C checksum of the map image file.
+                    description: '[Deprecated] CRC32C checksum of the map image file. Use md5Checksum instead.'
                     format: uint32
+                    deprecated: true
                 size:
                     type: string
                     description: Size of the map image file in bytes.
+                md5Checksum:
+                    type: string
+                    description: MD5 checksum represented as a 32-character lowercase hexadecimal string.
             description: MapImageFileInfo contains metadata about the map image file for integrity verification.
         MissionState:
             type: object
@@ -1809,6 +2118,10 @@ components:
                     allOf:
                         - $ref: '#/components/schemas/Twist'
                     description: Current linear and angular velocity of the robot. Omitted when not reported by the robot.
+                navigationState:
+                    allOf:
+                        - $ref: '#/components/schemas/NavigationState'
+                    description: Navigation-related state of the robot, including whether it is currently stuck.
             description: Represents the overall state of the robot.
         RunSystemCommandResponse:
             type: object
@@ -2067,3 +2380,182 @@ components:
                     description: Security requirements for the network.
                     format: enum
             description: Represents the Wifi connection of a robot.
+        AppendMissionBatchResponse:
+            type: object
+            properties:
+                missionIds:
+                    type: array
+                    items:
+                        type: string
+                    description: The IDs of the appended missions, in the same order as the request.
+        CreateMissionBatchResponse:
+            type: object
+            properties:
+                missionIds:
+                    type: array
+                    items:
+                        type: string
+                    description: The IDs of the created missions, in the same order as the request.
+        ClearMissionStatusResponse:
+            type: object
+            properties:
+                missionIds:
+                    type: array
+                    items:
+                        type: string
+                    description: The unique identifiers of the cleared missions.
+        CreateWebhookResponse:
+            type: object
+            properties:
+                webhook:
+                    allOf:
+                        - $ref: '#/components/schemas/WebhookSubscription'
+                    description: The newly created webhook subscription.
+        ListWebhooksResponse:
+            type: object
+            properties:
+                webhooks:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/WebhookSubscription'
+                    description: The list of webhook subscriptions for the distributor.
+        DeleteWebhookResponse:
+            type: object
+            properties: {}
+        WebhookSubscription:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: Unique identifier of the webhook subscription.
+                distributorId:
+                    type: string
+                    description: The distributor (client organization) ID that owns this subscription.
+                description:
+                    type: string
+                    description: Optional human-readable description of the webhook.
+                url:
+                    type: string
+                    description: The URL to deliver webhook events to.
+                headers:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: Optional custom HTTP headers to include in webhook delivery requests.
+                eventType:
+                    type: string
+                    description: Event type subscribed to (e.g., "mission", "battery").
+                selector:
+                    allOf:
+                        - $ref: '#/components/schemas/WebhookRobotSelector'
+                    description: The robot selector that was provided when creating the subscription.
+                filter:
+                    allOf:
+                        - $ref: '#/components/schemas/FieldFilter'
+                    description: Optional filter to control which events trigger delivery.
+                requestTemplate:
+                    type: object
+                    description: |-
+                        Optional request template for customizing the delivered payload.
+                         Keys are output field names; values are template strings with
+                         placeholders referencing event fields using "{{field_path}}" syntax.
+                         If unspecified, the payload is the original message in JSON format.
+                enabled:
+                    type: boolean
+                    description: Whether this subscription is currently active.
+                createdAt:
+                    type: string
+                    description: Timestamp when the subscription was created.
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: Timestamp when the subscription was last updated.
+                    format: date-time
+            description: WebhookSubscription represents a registered webhook configuration.
+        WebhookRobotSelector:
+            type: object
+            oneOf:
+                - properties:
+                    robotIds:
+                        type: object
+                        properties:
+                            ids:
+                                type: array
+                                items:
+                                    type: string
+                        description: Explicit list of robot IDs.
+                  required: [robotIds]
+                - properties:
+                    locationIds:
+                        type: object
+                        properties:
+                            ids:
+                                type: array
+                                items:
+                                    type: string
+                        description: List of location IDs; the server resolves these to robot IDs via Fleet Info.
+                  required: [locationIds]
+            description: |-
+                WebhookRobotSelector specifies which robots a webhook subscription targets.
+                 The caller must provide exactly one of the two options.
+        FieldFilter:
+            type: object
+            properties:
+                field:
+                    type: string
+                    description: |-
+                        Target field path to apply the filter on.
+                         The path should begin with "state", followed by a "."-separated list of
+                         field names determined by the payload structure.
+                operator:
+                    type: integer
+                    format: enum
+                    description: Comparison operator to use.
+                values:
+                    type: array
+                    items:
+                        type: string
+                    description: Values to match against the target field.
+            description: FieldFilter defines a single field-level condition for event filtering.
+        WebhookOptions:
+            type: object
+            properties:
+                description:
+                    type: string
+                    description: Optional human-readable description of the webhook.
+                requestTemplate:
+                    type: object
+                    description: |-
+                        Optional request template for customizing the delivered payload.
+                         Keys are output field names; values are template strings with
+                         placeholders referencing event fields using "{{field_path}}" syntax.
+                         If unspecified, the payload is the original message in JSON format.
+                headers:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: Optional custom HTTP headers to include in webhook delivery requests.
+            description: WebhookOptions contains optional delivery customizations for a webhook subscription.
+        NavigationState:
+            type: object
+            properties:
+                stuckState:
+                    allOf:
+                        - $ref: '#/components/schemas/StuckState'
+                    description: Whether the robot is currently stuck (unable to make navigation progress) and, when known, the reason.
+            description: Represents navigation-related state for the robot.
+        StuckState:
+            type: object
+            properties:
+                state:
+                    type: integer
+                    format: enum
+                    description: Current stuck state of the robot.
+                reason:
+                    type: integer
+                    format: enum
+                    description: Reason the robot is stuck. Only meaningful when state is STATE_STUCK; otherwise expect REASON_UNKNOWN.
+            description: |-
+                Represents whether the robot is currently unable to make navigation
+                 progress, and the reason for it when known. "Stuck" is distinct from a
+                 mission failure: it is a transient, recoverable navigation condition.
