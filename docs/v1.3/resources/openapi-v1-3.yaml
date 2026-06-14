@@ -858,6 +858,12 @@ paths:
                 "504":
                     $ref: '#/components/responses/GatewayTimeout'
 components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+            description: JWT token obtained from the /authorizeApiAccess endpoint
     responses:
         BadRequest:
             description: Bad Request, usually caused by malfored request body.
@@ -1143,11 +1149,6 @@ components:
             description: Request object for clearing the robot's mission status
         Mission:
             type: object
-            properties:
-                extension:
-                    allOf:
-                        - $ref: '#/components/schemas/GoogleProtobufAny'
-                    description: Flexible experimental mission type for experimental APIs.
             oneOf:
                 - properties:
                     baseMission:
