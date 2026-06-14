@@ -2,6 +2,7 @@
 
 Utilities for managing multiple robots within an account or workspace.
 
+-----------
 ## ListRobotIDs 
 Retrieves a list of robot IDs the user has access to, filtered by optional criteria. <br />
 

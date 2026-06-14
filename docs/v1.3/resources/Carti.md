@@ -139,6 +139,69 @@ The ID of the mission created.
 |`FAILED_PRECONDITION`   |  The robot is already executing another mission. <br /> This command is valid if current mission is in [terminal state](Mission.md#state-enum), <br /> e.g Cancelled, Succeeded, Failed. |
 
 -----------
+## ControlConveyor
+
+Controls conveyor motor operations for the specified conveyor indexes. This call allows manual control of conveyor motors for clockwise/counter-clockwise rotation or stop commands.
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot that will receive this command.
+
+##### commands `repeated carti.ConveyorMotorCommand` `required`
+List of conveyor motor commands to execute.
+
+##### ConveyorMotorCommand
+| Field | Message Type | Description |
+|------|------|-------------|
+| `index` | `int32` | The target conveyor to control. |
+| `command` | [`CommandConveyorMotor`](#commandconveyormotor-enum) *enum* | The motor command to execute. |
+
+#### CommandConveyorMotor `enum`
+| Name | Number | Description |
+|------|--------|-------------|
+| COMMAND_CONVEYOR_MOTOR_UNKNOWN | 0 | Default value. This should never be used explicitly. |
+| COMMAND_CONVEYOR_MOTOR_STOP | 1 | Stop the conveyor. |
+| COMMAND_CONVEYOR_MOTOR_CW | 2 | Rotate the conveyor clockwise. |
+| COMMAND_CONVEYOR_MOTOR_CCW | 3 | Rotate the conveyor counter-clockwise. |
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "carti-001",
+        "commands": [
+          {
+            "index": 1,
+            "command": "COMMAND_CONVEYOR_MOTOR_CW"
+          },
+          {
+            "index": 2,
+            "command": "COMMAND_CONVEYOR_MOTOR_STOP"
+          }
+        ]
+      }
+    ```
+
+### Response
+
+*(No fields defined)*
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `INVALID_ARGUMENT` | This command is being sent to a non-Carti family robot, or one or more conveyor indexes are not installed on the robot. |
+| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
+| `INTERNAL` | Internal server error occurred while processing the request. |
+| `FAILED_PRECONDITION` | The robot is in an error state that prevents conveyor control. |
+
+-----------
 ## GetConveyorIndex
 
 Retrieves the configured conveyor indexes for the robot. Indexes represent logical positions, not physical installation:
@@ -271,66 +334,3 @@ Represents the state of a single conveyor.
 |------------|-------------|
 | `PERMISSION_DENIED` | Attempting to request conveyor status for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
 | `INTERNAL` | Internal server error occurred while processing the request. |
-
------------
-## ControlConveyor
-
-Controls conveyor motor operations for the specified conveyor indexes. This call allows manual control of conveyor motors for clockwise/counter-clockwise rotation or stop commands.
-
-### Request
-
-##### robot_id `string` `required`
-The ID of the robot that will receive this command.
-
-##### commands `repeated carti.ConveyorMotorCommand` `required`
-List of conveyor motor commands to execute.
-
-##### ConveyorMotorCommand
-| Field | Message Type | Description |
-|------|------|-------------|
-| `index` | `int32` | The target conveyor to control. |
-| `command` | [`CommandConveyorMotor`](#commandconveyormotor-enum) *enum* | The motor command to execute. |
-
-#### CommandConveyorMotor `enum`
-| Name | Number | Description |
-|------|--------|-------------|
-| COMMAND_CONVEYOR_MOTOR_UNKNOWN | 0 | Default value. This should never be used explicitly. |
-| COMMAND_CONVEYOR_MOTOR_STOP | 1 | Stop the conveyor. |
-| COMMAND_CONVEYOR_MOTOR_CW | 2 | Rotate the conveyor clockwise. |
-| COMMAND_CONVEYOR_MOTOR_CCW | 3 | Rotate the conveyor counter-clockwise. |
-
-##### JSON Request Example
-=== "JSON"
-    ```js
-      {
-        "robotId": "carti-001",
-        "commands": [
-          {
-            "index": 1,
-            "command": "COMMAND_CONVEYOR_MOTOR_CW"
-          },
-          {
-            "index": 2,
-            "command": "COMMAND_CONVEYOR_MOTOR_STOP"
-          }
-        ]
-      }
-    ```
-
-### Response
-
-*(No fields defined)*
-
-##### JSON Response Example
-=== "JSON"
-    ```js
-      {}
-    ```
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `INVALID_ARGUMENT` | This command is being sent to a non-Carti family robot, or one or more conveyor indexes are not installed on the robot. |
-| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
-| `INTERNAL` | Internal server error occurred while processing the request. |
-| `FAILED_PRECONDITION` | The robot is in an error state that prevents conveyor control. |

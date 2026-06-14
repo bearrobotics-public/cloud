@@ -16,7 +16,7 @@ The robot ID used to request the map currently loaded on the robot.
 === "JSON"
     ```js
       {
-        "robot_id": "pennybot-abc123"
+        "robotId": "pennybot-abc123"
       }
     ```
 
@@ -102,7 +102,7 @@ e.g., "3R0A"
 === "JSON"
     ```js
       {
-        "location_id": "3R0A"
+        "locationId": "3R0A"
       }
     ```
 
@@ -189,7 +189,7 @@ The unique identifier of the map to retrieve.
 === "JSON"
     ```js
       {
-        "map_id": "map-001"
+        "mapId": "map-001"
       }
     ```
 
@@ -314,10 +314,10 @@ Specifies which map to switch to.
 === "JSON"
     ```js
       {
-        "robot_id": "pennybot-abc123",
-        "map_selector": {
-          "floor_level": 1,
-          "section_index": 0
+        "robotId": "pennybot-abc123",
+        "mapSelector": {
+          "floorLevel": 1,
+          "sectionIndex": 0
         }
       }
     ```
@@ -331,7 +331,7 @@ The ID of the new map that the robot is now using.
 === "JSON"
     ```js
       {
-        "map_id": "map-lobby-001"
+        "mapId": "map-lobby-001"
       }
     ```
 

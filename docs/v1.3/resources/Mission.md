@@ -164,151 +164,6 @@ The IDs of the missions created, in the same order as the request.
 |`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry creating the batch. |
 
 -----------
-## AppendMission 
-Appends a mission to the end of the [mission queue](../../concepts/mission.md#mission-queue).
-Use this when a mission is currently running; otherwise, prefer [CreateMission](#createmission). 
-Missions are executed in the order they are appended.
-
-### Request / Response
-!!! note 
-    AppendMission request and response message types are the same as [CreateMission](#createmission). See [CreateMission JSON Examples](#json-request-example).
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-|`FAILED_PRECONDITION`   |  There is no mission in the mission queue. Client should first create the initial mission, and only use Append for queuing additional missions. |
-|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |
-|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
-|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the mission. |
-
------------
-## AppendMissionBatch
-Atomically append multiple missions to the end of the [mission queue](../../concepts/mission.md#mission-queue).
-All missions are appended contiguously in the request order. Missions can be
-appended even when other missions are already queued.
-
-!!! note
-    This call is **atomic**: if any mission in the batch fails validation or
-    append, **no** missions are appended.
-
-### Request
-
-##### robot_id `string` `required`
-The ID of the robot that will receive this command.
-
-##### missions `repeated Mission` `required`
-The list of missions to append, in execution order. Each entry is the same
-[`Mission`](#createmission) wrapper used by [CreateMission](#createmission).
-
-##### JSON Request Example
-=== "JSON"
-    ```js
-      {
-        "robotId": "robot-001",
-        "missions": [
-          {
-            "baseMission": {
-              "navigateMission": {
-                "goal": { "destinationId": "table-1" }
-              }
-            }
-          },
-          {
-            "baseMission": {
-              "navigateMission": {
-                "goal": { "destinationId": "table-2" }
-              }
-            }
-          }
-        ]
-      }
-    ```
-
-### Response
-
-##### **mission_ids** `repeated string`
-The IDs of the missions appended, in the same order as the request.
-
-##### JSON Response Example
-=== "JSON"
-    ```js
-      {
-        "missionIds": [
-          "f842c8ac-62de-412e-90fb-bf37022db2f4",
-          "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
-        ]
-      }
-    ```
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-|`FAILED_PRECONDITION`   |  There is no mission in the mission queue. Client should first create the initial mission, and only use Append (or AppendBatch) for queuing additional missions. |
-|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers empty requests, an empty `missions` list, invalid goals, goals that do not match mission type, and other format errors. Since the call is atomic, a single invalid mission causes the entire batch to be rejected. |
-|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the batch. |
-|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the batch. |
-
------------
-## UpdateMission 
-Issues a command to control or update the current mission (e.g., pause, cancel).
-!!! warning
-    We currently do not support updating missions in [mission queue](../../concepts/mission.md#mission-queue). <br/>
-    Attempting to send UpdateMission command to a queued mission will result in `NOT_FOUND` error.
-
-### Request
-##### robot_id `string` `required`
-The ID of the robot that will receive this command.
-
-##### mission_command `MissionCommand` `required`
-[Command](../../concepts/mission.md#command) to update the state of an active mission.
-
-| Field  | Message Type | Description |
-|------------|-------------| ---------|
-| `mission_id` | `string` <br />`required`|  The ID of the mission to control.|
-| `command`    | [`Command`](#command-enum) *enum* <br />`required` | Command to update the state of an active mission. |
-
-
-#### Command `enum`
-
-| Name                   | Number | Description                                      |
-|------------------------|--------|--------------------------------------------------|
-| COMMAND_UNKNOWN        | 0      | Default value. This should never be used explicitly. <br/> It means the `command` field is not set|
-| COMMAND_CANCEL         | 1      | Cancel this mission.                             |
-| COMMAND_PAUSE          | 2      | Pause this mission.                              |
-| COMMAND_RESUME         | 3      | Resume a paused mission.                         |
-| COMMAND_FINISH         | 4      | Mark the mission as completed.                   |
-
-##### JSON Request Example
-=== "JSON"
-    ```js
-      {
-        "robot_id": "pennybot-abc123",
-        "mission_command": {
-          "mission_id": "f842c8ac-62de-412e-90fb-bf37022db2f4",
-          "command": "COMMAND_PAUSE"
-        }
-      }
-    ```
-
-### Response
-
-*(No fields defined)*
-
-##### JSON Response Example
-=== "JSON"
-    ```js
-      {}
-    ```
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `FAILED_PRECONDITION` | The robot is either not on a mission, or the command is invalid for the robot's current state. For example, mission in [terminal state](#state-enum) (Cancelled, Succeeded, Failed) can't be updated. |
-| `INVALID_ARGUMENT`| The client supplied a request with invalid format. This covers sending empty requests, invalid commands, incorrect mission ID, and other format errors. Client should update their usage to have correctly formatted requests with valid commands, and ensure the mission id matches the currently running mission. |
-|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
-|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the mission. |
-
------------
 ## CreateMissionWorkflow
 Create a mission workflow that mirrors touchscreen presets (e.g. automatic return point selection). Exactly one workflow type must be set. The created missions are returned as a list of mission IDs.
 <br/>
@@ -403,6 +258,176 @@ The IDs of the missions created for this workflow.
 | `DEADLINE_EXCEEDED` | The request was accepted but timed out waiting for the robot to confirm. Client should retry creating the workflow. |
 
 -----------
+## AppendMission 
+Appends a mission to the end of the [mission queue](../../concepts/mission.md#mission-queue).
+Use this when a mission is currently running; otherwise, prefer [CreateMission](#createmission). 
+Missions are executed in the order they are appended.
+
+### Request / Response
+!!! note 
+    AppendMission request and response message types are the same as [CreateMission](#createmission). See [CreateMission JSON Examples](#json-request-example).
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+|`FAILED_PRECONDITION`   |  There is no mission in the mission queue. Client should first create the initial mission, and only use Append for queuing additional missions. |
+|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
+|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the mission. |
+
+-----------
+## AppendMissionBatch
+Atomically append multiple missions to the end of the [mission queue](../../concepts/mission.md#mission-queue).
+All missions are appended contiguously in the request order. Missions can be
+appended even when other missions are already queued.
+
+!!! note
+    This call is **atomic**: if any mission in the batch fails validation or
+    append, **no** missions are appended.
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot that will receive this command.
+
+##### missions `repeated Mission` `required`
+The list of missions to append, in execution order. Each entry is the same
+[`Mission`](#createmission) wrapper used by [CreateMission](#createmission).
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "robot-001",
+        "missions": [
+          {
+            "baseMission": {
+              "navigateMission": {
+                "goal": { "destinationId": "table-1" }
+              }
+            }
+          },
+          {
+            "baseMission": {
+              "navigateMission": {
+                "goal": { "destinationId": "table-2" }
+              }
+            }
+          }
+        ]
+      }
+    ```
+
+### Response
+
+##### **mission_ids** `repeated string`
+The IDs of the missions appended, in the same order as the request.
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {
+        "missionIds": [
+          "f842c8ac-62de-412e-90fb-bf37022db2f4",
+          "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
+        ]
+      }
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+|`FAILED_PRECONDITION`   |  There is no mission in the mission queue. Client should first create the initial mission, and only use Append (or AppendBatch) for queuing additional missions. |
+|`INVALID_ARGUMENT`    |   The client supplied a request with invalid format. This covers empty requests, an empty `missions` list, invalid goals, goals that do not match mission type, and other format errors. Since the call is atomic, a single invalid mission causes the entire batch to be rejected. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the batch. |
+|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the batch. |
+
+-----------
+## ChargeRobot
+`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. This command is only supported on robots equipped with a contact-based charging dock.
+You can use [`SubscribeBatteryStatus`](RobotStatus.md#subscribebatterystatus) to monitor the charging process. 
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot that will receive this command.
+
+##### JSON Request Example
+=== "JSON" 
+    ```js
+    {
+      "robotId": "pennybot-abc123"
+    }
+    ```
+
+### Response
+##### **mission_id** `string`
+The ID of the mission created. Since this command is a special type of mission, its execution state is also available in response messages from [`SubscribeMissionStatus`](#subscribemissionstatus). 
+
+##### JSON Response Example
+=== "JSON" 
+    ```js
+    {
+      "missionId": "mission-xyz-001"
+    }
+    ```
+
+### Errors
+
+| ErrorCode  | Description |
+|------------|-------------|
+|`FAILED_PRECONDITION`   |  The robot is already executing a mission. The current mission must be canceled before issuing this command. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry creating the mission.
+|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry creating the mission. |
+
+-----------
+## ClearMissionStatus
+Clears the robot's mission status, removing the missions reported by
+[SubscribeMissionStatus](#subscribemissionstatus). Use this to reset the
+mission queue once all missions have reached a [terminal state](#state-enum).
+
+!!! warning
+    This call will fail if the robot is on a **running** or **paused** mission.
+    Cancel or finish the active mission before clearing.
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot whose mission status will be cleared.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-abc123"
+      }
+    ```
+
+### Response
+
+##### **mission_ids** `repeated string`
+The unique identifiers of the cleared missions.
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {
+        "missionIds": [
+          "f842c8ac-62de-412e-90fb-bf37022db2f4",
+          "d6637a14-5f6b-43f6-bd86-cc1871a8322e"
+        ]
+      }
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `FAILED_PRECONDITION` | The robot is on a running or paused mission. The mission must reach a terminal state (Cancelled, Succeeded, Failed) before its status can be cleared. |
+| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers empty `robot_id` and other format errors. |
+| `PERMISSION_DENIED` | Attempting to clear mission status for a `robot_id` you don't own. |
+| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry. |
+
+-----------
 ## SkipGoal
 Advance the current mission to the next goal, skipping the current one. On success, returns the mission ID of the mission where the goal was skipped.
 <br/>
@@ -441,6 +466,66 @@ The ID of the mission where the goal was skipped.
 | `INTERNAL`    | The request could not be delivered to the robot or the operation failed. Client should retry. |
 
 -----------
+## UpdateMission 
+Issues a command to control or update the current mission (e.g., pause, cancel).
+!!! warning
+    We currently do not support updating missions in [mission queue](../../concepts/mission.md#mission-queue). <br/>
+    Attempting to send UpdateMission command to a queued mission will result in `NOT_FOUND` error.
+
+### Request
+##### robot_id `string` `required`
+The ID of the robot that will receive this command.
+
+##### mission_command `MissionCommand` `required`
+[Command](../../concepts/mission.md#command) to update the state of an active mission.
+
+| Field  | Message Type | Description |
+|------------|-------------| ---------|
+| `mission_id` | `string` <br />`required`|  The ID of the mission to control.|
+| `command`    | [`Command`](#command-enum) *enum* <br />`required` | Command to update the state of an active mission. |
+
+
+#### Command `enum`
+
+| Name                   | Number | Description                                      |
+|------------------------|--------|--------------------------------------------------|
+| COMMAND_UNKNOWN        | 0      | Default value. This should never be used explicitly. <br/> It means the `command` field is not set|
+| COMMAND_CANCEL         | 1      | Cancel this mission.                             |
+| COMMAND_PAUSE          | 2      | Pause this mission.                              |
+| COMMAND_RESUME         | 3      | Resume a paused mission.                         |
+| COMMAND_FINISH         | 4      | Mark the mission as completed.                   |
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-abc123",
+        "missionCommand": {
+          "missionId": "f842c8ac-62de-412e-90fb-bf37022db2f4",
+          "command": "COMMAND_PAUSE"
+        }
+      }
+    ```
+
+### Response
+
+*(No fields defined)*
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `FAILED_PRECONDITION` | The robot is either not on a mission, or the command is invalid for the robot's current state. For example, mission in [terminal state](#state-enum) (Cancelled, Succeeded, Failed) can't be updated. |
+| `INVALID_ARGUMENT`| The client supplied a request with invalid format. This covers sending empty requests, invalid commands, incorrect mission ID, and other format errors. Client should update their usage to have correctly formatted requests with valid commands, and ensure the mission id matches the currently running mission. |
+|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry appending the mission. |
+|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the mission. |
+
+-----------
 ## SubscribeMissionStatus 
 Streaming mode: [`event`](../../index.md#event-based)
 
@@ -461,7 +546,7 @@ A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#s
     ```js
       {
         "selector": {
-          "robot_ids": {
+          "robotIds": {
             "ids": ["pennybot-abc123", "pennybot-123abc"]
           }
         }
@@ -604,11 +689,11 @@ Defines the different types of missions that can be executed.
         "timestamp": "2025-04-01T15:30:00Z",
         "sequenceNumber": 128
       },
-      "robot_id": "pennybot-abc123",
-      "mission_states": {
+      "robotId": "pennybot-abc123",
+      "missionStates": {
         "missions": [
           {
-            "mission_id": "d6637a14-5f6b-43f6-bd86-cc1871a8322e",
+            "missionId": "d6637a14-5f6b-43f6-bd86-cc1871a8322e",
             "state": "STATE_RUNNING",
             "goals": [
               {
@@ -622,19 +707,19 @@ Defines the different types of missions that can be executed.
                 }
               }
             ],
-            "current_goal_index": 1,
-            "mission_feedback": {
+            "currentGoalIndex": 1,
+            "missionFeedback": {
               "baseFeedback": {
                 "status": "STATUS_NAVIGATING"
               }
             },
-            "mission_type": {
+            "missionType": {
               "baseType": "BASE_TYPE_NAVIGATE"
             },
             "owner": "api"
           }
         ],
-        "current_mission_index": 0
+        "currentMissionIndex": 0
       }
     }
     ```
@@ -646,87 +731,3 @@ Defines the different types of missions that can be executed.
 | `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values.|
 | `INVALID_ARGUMENT`| One or more request parameters are malformed or logically incorrect. <br /> Example: Using an invalid robot ID format. |
     
------------
-## ClearMissionStatus
-Clears the robot's mission status, removing the missions reported by
-[SubscribeMissionStatus](#subscribemissionstatus). Use this to reset the
-mission queue once all missions have reached a [terminal state](#state-enum).
-
-!!! warning
-    This call will fail if the robot is on a **running** or **paused** mission.
-    Cancel or finish the active mission before clearing.
-
-### Request
-
-##### robot_id `string` `required`
-The ID of the robot whose mission status will be cleared.
-
-##### JSON Request Example
-=== "JSON"
-    ```js
-      {
-        "robotId": "pennybot-abc123"
-      }
-    ```
-
-### Response
-
-##### **mission_ids** `repeated string`
-The unique identifiers of the cleared missions.
-
-##### JSON Response Example
-=== "JSON"
-    ```js
-      {
-        "missionIds": [
-          "f842c8ac-62de-412e-90fb-bf37022db2f4",
-          "d6637a14-5f6b-43f6-bd86-cc1871a8322e"
-        ]
-      }
-    ```
-
-### Errors
-| ErrorCode  | Description |
-|------------|-------------|
-| `FAILED_PRECONDITION` | The robot is on a running or paused mission. The mission must reach a terminal state (Cancelled, Succeeded, Failed) before its status can be cleared. |
-| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers empty `robot_id` and other format errors. |
-| `PERMISSION_DENIED` | Attempting to clear mission status for a `robot_id` you don't own. |
-| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry. |
-
------------
-## ChargeRobot
-`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. This command is only supported on robots equipped with a contact-based charging dock.
-You can use [`SubscribeBatteryStatus`](RobotStatus.md#subscribebatterystatus) to monitor the charging process. 
-
-### Request
-
-##### robot_id `string` `required`
-The ID of the robot that will receive this command.
-
-##### JSON Request Example
-=== "JSON" 
-    ```js
-    {
-      "robot_id": "pennybot-abc123"
-    }
-    ```
-
-### Response
-##### **mission_id** `string`
-The ID of the mission created. Since this command is a special type of mission, its execution state is also avaiable in response messages from [`SubscribeMissionStatus`](#subscribemissionstatus). 
-
-##### JSON Response Example
-=== "JSON" 
-    ```js
-    {
-      "mission_id": "mission-xyz-001"
-    }
-    ```
-
-### Errors
-
-| ErrorCode  | Description |
-|------------|-------------|
-|`FAILED_PRECONDITION`   |  The robot is already executing a mission. The current mission must be canceled before issuing this command. |
-|`INTERNAL`    |   The request failed to execute due to internal error in mission system. Client should retry creating the mission.
-|`DEADLINE_EXCEEDED`    |  The request was accepted but timed out waiting for the robot to confirm. Client should retry creating the mission. |

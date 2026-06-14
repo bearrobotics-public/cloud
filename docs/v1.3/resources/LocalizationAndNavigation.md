@@ -61,6 +61,51 @@ The ID of the robot that the localization command is sent to.
 | `INTERNAL` | Communication failure with the robot. |
 
 -----------
+## SetPose
+
+Sets the robot's current pose to a specified position and orientation.
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot to set the pose for.
+
+##### pose `Pose` `required`
+The new [`pose`](#pose) for the robot.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-abc123",
+        "pose": {
+          "xMeters": 2.5,
+          "yMeters": 3.0,
+          "headingRadians": 1.57
+        }
+      }
+    ```
+
+### Response
+
+*(No fields defined)*
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to set pose for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
+| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
+| `INVALID_ARGUMENT` | The specified pose is invalid or out of bounds. |
+| `UNAVAILABLE` | The robot is offline and cannot set pose. |
+
+-----------
 
 ## SubscribeEmergencyStopStatus
 Streaming mode: [`event`](../../index.md#event-based)
@@ -130,6 +175,11 @@ The current emergency stop state of the robot.
 | EMERGENCY_ENGAGED          | 1      | Triggers an emergency stop. <br/> Overrides and sets navigation-related velocity command to 0 to the motor.  |
 | EMERGENCY_DISENGAGED       | 2      | Wheels will resume acting upon software navigation commands.    |
 
+##### robot_id `string`
+ID of the robot this event pertains to. E.g. "pennybot-abc123". <br />
+Always set, including for single-robot subscriptions made via the deprecated `robot_id` request field. <br />
+Note that each robot maintains its own metadata, so messages should be correlated if and only if they correspond to the same robot ID.
+
 ##### JSON Response Example
 === "JSON"
     ```json
@@ -141,7 +191,8 @@ The current emergency stop state of the robot.
       "eStopState": {
         "emergency": "EMERGENCY_ENGAGED",
         "buttonPressed": "EMERGENCY_DISENGAGED"
-      }
+      },
+      "robotId": "pennybot-abc123"
     }
     ```
 
@@ -229,7 +280,7 @@ Use this to track the robot's position in real time.
     ```js
       {
         "selector": {
-          "robot_ids": {
+          "robotIds": {
             "ids": ["pennybot-abc123", "pennybot-123abc"]
           }
         }
@@ -284,48 +335,3 @@ A mapping of robot IDs to their current pose estimates. Each entry pairs a robot
 |------------|-------------|
 | `PERMISSION_DENIED` | Attempting to request status for a `robot_id`  or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values. |
 | `INTERNAL` | Failed to subscribe to robot pose updates. |
-
------------
-## SetPose
-
-Sets the robot's current pose to a specified position and orientation.
-
-### Request
-
-##### robot_id `string` `required`
-The ID of the robot to set the pose for.
-
-##### pose `Pose` `required`
-The new [`pose`](#pose) for the robot.
-
-##### JSON Request Example
-=== "JSON"
-    ```js
-      {
-        "robotId": "pennybot-abc123",
-        "pose": {
-          "xMeters": 2.5,
-          "yMeters": 3.0,
-          "headingRadians": 1.57
-        }
-      }
-    ```
-
-### Response
-
-*(No fields defined)*
-
-##### JSON Response Example
-=== "JSON"
-    ```js
-      {}
-    ```
-
-### Errors
-
-| ErrorCode  | Description |
-|------------|-------------|
-| `PERMISSION_DENIED` | Attempting to set pose for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
-| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
-| `INVALID_ARGUMENT` | The specified pose is invalid or out of bounds. |
-| `UNAVAILABLE` | The robot is offline and cannot set pose. |
