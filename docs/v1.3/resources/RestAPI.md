@@ -19,4 +19,30 @@ curl -X POST https://api-auth.bearrobotics.ai/authorizeApiAccess \
     -d $(cat /path/to/credentials.json)'
 ```
 
+## Postman Collection
+
+A Postman collection covering all unary (non-streaming) REST endpoints in v1.3 is available
+for quick, code-free testing.
+
+[:material-open-in-new: View published documentation](https://documenter.getpostman.com/view/44195110/2sBXwto8ex){ .md-button .md-button--primary }
+[:material-download: Download the collection](bear-public-rest-api-v1.3.postman_collection.json){ .md-button download="bear-public-rest-api-v1.3.postman_collection.json" }
+
+**To use it:**
+
+1. In Postman, choose **Import** and select the downloaded
+   `bear-public-rest-api-v1.3.postman_collection.json` file.
+2. Open the collection's **Variables** tab and set:
+    - `base_url` — e.g. `https://api.bearrobotics.ai`
+    - `auth_url` — e.g. `https://api-auth.bearrobotics.ai`
+    - `api_key`, `api_secret`, `scope` — the values from your credentials JSON file
+    - `robot_id` (and `location_id` / `map_id` as needed)
+3. Run **Authentication → Get JWT Token (API Key)**. The returned token is saved automatically
+   to the `bearer_token` variable and reused by all other requests.
+
+!!! note
+
+    Streaming RPCs (`SubscribeMissionStatus`, `SubscribeNavigationStatus`,
+    `SubscribeOnlineStatus`, `SubscribeEmergencyStopStatus`, etc.) are not part of the Postman
+    collection — see the gRPC API reference for those.
+
 !!swagger openapi-v1-3.yaml!!
