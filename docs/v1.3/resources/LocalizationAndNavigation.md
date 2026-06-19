@@ -1,0 +1,337 @@
+Provides controls and subscriptions related to a robot’s position within its environment, including localization and pose tracking.
+
+-----------
+## LocalizeRobot 
+Localizes the robot to a known pose or destination.
+
+If the request is accepted, subscribe to [**SubscribeLocalizationStatus**](#subscribelocalizationstatus) 
+to track localization progress. <br />
+
+### Request
+##### robot_id `string` `required`
+The ID of the robot that the localization command is sent to.
+
+##### goal `Goal` `required`
+[Goal](../../concepts/mission.md#goals) represents a target destination or pose for the robot to localize to.
+
+| Field  | Message Type | Description |
+|------------|-------------| ---|
+|[destination_id](LocationsAndMaps.md#destination) | `string` | Unique identifier for the destination.|
+|[Pose](../../concepts/localization.md)| [`Pose`](#pose) | Pose of the robot on the map.|
+
+##### Pose
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `x_meters` | `float` | X-coordinate in meters within the map. |
+| `y_meters` | `float` | Y-coordinate in meters within the map. |
+| `heading_radians` | `float` | The heading of the robot in radians.<br>Ranges from -π to π, where 0.0 points along the positive x-axis. |
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-123123",
+        "goal": {
+          "pose": {
+            "xMeters": 1.5,
+            "yMeters": 2.8,
+            "headingRadians": -0.52
+          }
+        }
+      }
+    ```
+
+### Response
+
+*(No fields defined)* 
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `INVALID_ARGUMENT` | Invalid request parameters. <br /> Tips: check that `robot_id` is not empty and `goal` is not nil. |
+| `PERMISSION_DENIED` | Attempting to localize a `robot_id` you don't own. <br /> Tips: check the spelling of the `robot_id`. |
+| `FAILED_PRECONDITION` | While the robot is localizing, any subsequent requests <br /> to localize the robot will return a error until the process is completed. |
+| `INTERNAL` | Communication failure with the robot. |
+
+-----------
+## SetPose
+
+Sets the robot's current pose to a specified position and orientation.
+
+### Request
+
+##### robot_id `string` `required`
+The ID of the robot to set the pose for.
+
+##### pose `Pose` `required`
+The new [`pose`](#pose) for the robot.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-abc123",
+        "pose": {
+          "xMeters": 2.5,
+          "yMeters": 3.0,
+          "headingRadians": 1.57
+        }
+      }
+    ```
+
+### Response
+
+*(No fields defined)*
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+      {}
+    ```
+
+### Errors
+
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to set pose for a `robot_id` you don't own. <br /> Tip: check the spelling of the `robot_id` value. |
+| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |
+| `INVALID_ARGUMENT` | The specified pose is invalid or out of bounds. |
+| `UNAVAILABLE` | The robot is offline and cannot set pose. |
+
+-----------
+
+## SubscribeEmergencyStopStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
+A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to Subscribe to the software emergency stop state.
+
+Upon subscription, the latest emergency stop state is sent immediately. State updates are streamed whenever the emergency stop state changes.
+
+As of v1.3, this endpoint supports **fleet-level** subscriptions through `selector`, allowing you to subscribe by a list of robot IDs or by location.
+
+### Request
+
+##### selector `RobotSelector` `required`
+`RobotSelector` is used to select specific robots. <br/>
+ It supports selection by a list of robot IDs **OR** all robots at a given location.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`robot_ids`| `RobotIDs`| Selects robots by their specific IDs. <br/> Example: `["pennybot-123abc", "pennybot-abc123"]` |
+|`location_id`|`string` |  Selects all robots at the specified location. |
+
+##### robot_id `string` `deprecated`
+The ID of the robot that the emergency stop subscription request is sent to.
+
+!!! warning
+    `robot_id` is **deprecated**; use `selector` instead. Setting `robot_id` is equivalent to setting `selector.robot_ids` with a single ID, and remains supported for backwards compatibility. Exactly one of `robot_id` or `selector` must be set; setting both (or neither) returns an `INVALID_ARGUMENT` error.
+
+##### JSON Request Example
+=== "Selector (recommended)"
+    ```js
+      {
+        "selector": {
+          "robotIds": {
+            "ids": ["pennybot-abc123", "pennybot-123abc"]
+          }
+        }
+      }
+    ```
+=== "Single robot (deprecated)"
+    ```js
+      {
+        "robotId": "pennybot-123123"
+      }
+    ```
+
+### Response
+
+##### metadata `EventMetadata`
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `timestamp` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | The time when the event was recorded. |
+| `sequence_number` | `int64` | An incremental sequence number generated by the robot.<br />The sequence number should never be negative and can be reset to 0.<br />i.e. sequence is valid if it is larger than the previous number or 0. |
+
+##### e_stop_state `EmergencyStopState`
+The current emergency stop state of the robot.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `emergency` | [`Emergency`](#emergency-enum) *enum* | Whether the software level emergency stop is engaged. |
+| `button_pressed` | [`Emergency`](#emergency-enum) *enum* | Whether the physical emergency stop button is engaged. |
+
+#### Emergency `enum`
+| Name                   | Number | Description                                      |
+|------------------------|--------|--------------------------------------------------|
+| EMERGENCY_UNKNOWN          | 0      | Default value. It means the `state` field is not returned. |
+| EMERGENCY_ENGAGED          | 1      | Triggers an emergency stop. <br/> Overrides and sets navigation-related velocity command to 0 to the motor.  |
+| EMERGENCY_DISENGAGED       | 2      | Wheels will resume acting upon software navigation commands.    |
+
+##### robot_id `string`
+ID of the robot this event pertains to. E.g. "pennybot-abc123". <br />
+Always set, including for single-robot subscriptions made via the deprecated `robot_id` request field. <br />
+Note that each robot maintains its own metadata, so messages should be correlated if and only if they correspond to the same robot ID.
+
+##### JSON Response Example
+=== "JSON"
+    ```json
+    {
+      "metadata": {
+        "timestamp": "2025-04-01T17:30:00Z",
+        "sequenceNumber": 42
+      },
+      "eStopState": {
+        "emergency": "EMERGENCY_ENGAGED",
+        "buttonPressed": "EMERGENCY_DISENGAGED"
+      },
+      "robotId": "pennybot-abc123"
+    }
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `INVALID_ARGUMENT` | Invalid request parameters. <br /> Tips: set exactly one of `robot_id` or `selector` (not both, not neither); check that `robot_ids` or `location_id` is not empty. |
+| `NOT_FOUND` | No robots found for the specified `location_id`. |
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` or `location_id` you don't own. <br /> Tips: check the spelling of all `robot_id` or `location_id` values.|
+
+-----------
+## SubscribeLocalizationStatus
+Streaming mode: [`event`](../../index.md#event-based)
+
+A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to get the robot’s localization state. Upon subscription, the latest localization state is sent immediately. State updates are streamed while localization is active.
+
+### Request
+##### robot_id `string` `required`
+The ID of the robot that subscription request is sent to.
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "robotId": "pennybot-123123"
+      }
+    ```
+
+### Response
+
+##### metadata `EventMetadata`
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `timestamp` | [`Timestamp`](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/timestamp.proto) | The time when the event was recorded. |
+| `sequence_number` | `int64` | An incremental sequence number generated by the robot.<br />The sequence number should never be negative and can be reset to 0.<br />i.e. sequence is valid if it is larger than the previous number or 0. |
+
+##### LocalizationState `enum`
+| Name                   | Number | Description                                      |
+|------------------------|--------|--------------------------------------------------|
+| STATE_UNKNOWN          | 0      | Default value. It means the `state` field is not returned. |
+| STATE_FAILED          | 1      |  Localization failed.  |
+| STATE_SUCCEEDED          | 2      | Localization completed successfully.     |
+| STATE_LOCALIZING           | 3      | The robot is actively attempting to localize.  |
+
+##### JSON Response Example
+=== "JSON"
+    ```json
+    {
+      "metadata": {
+        "timestamp": "2025-04-01T17:30:00Z",
+        "sequenceNumber": 98
+      },
+      "localizationState": {
+        "state": "STATE_LOCALIZING"
+      }
+    }
+    ```
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `INVALID_ARGUMENT` | Invalid request parameters. <br /> Tips: check that `robot_id` is not empty. |
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id` you don't own. <br /> Tips: check the spelling of all `robot_id` values.|
+
+-----------
+## SubscribeRobotPose
+Streaming mode: [`frequency`](../../index.md#frequency-based)
+
+A [server side streaming RPC](https://grpc.io/docs/what-is-grpc/core-concepts/#server-streaming-rpc) endpoint to subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
+
+Use this to track the robot's position in real time.
+
+### Request
+##### selector `RobotSelector` `required`
+`RobotSelector` is used to select specific robots. <br/>
+ It supports selection by a list of robot IDs **OR** all robots at a given location.
+
+| Field | Message Type | Description |
+|------|------|-------------|
+|`robot_ids`| `RobotIDs`| Selects robots by their specific IDs. <br/> Example: `["pennybot-123abc", "pennybot-abc123"]` |
+|`location_id`|`string` |  Selects all robots at the specified location. |
+
+##### JSON Request Example
+=== "JSON"
+    ```js
+      {
+        "selector": {
+          "robotIds": {
+            "ids": ["pennybot-abc123", "pennybot-123abc"]
+          }
+        }
+      }
+    ```
+
+### Response
+##### poses `map<string, PoseWithMetadata>`
+A mapping of robot IDs to their current pose estimates. Each entry pairs a robot ID (key) with its corresponding pose estimate and metadata.
+
+##### PoseWithMetadata
+
+| Field | Message Type | Description |
+|------|------|-------------|
+| `metadata` | [`EventMetadata`](RobotStatus.md#metadata-eventmetadata) | Metadata associated with the event. |
+| `pose` | [`Pose`](#pose) | Pose of the robot on the map. |
+
+
+##### JSON Response Example
+=== "JSON"
+    ```js
+    {
+      "poses": {
+        "pennybot-abc123": {
+          "metadata": {
+            "timestamp": "2025-04-01T17:45:00Z",
+            "sequenceNumber": 201
+          },
+          "pose": {
+            "xMeters": 1.5,
+            "yMeters": 3.2,
+            "headingRadians": 0.78
+          }
+        },
+        "pennybot-123abc": {
+          "metadata": {
+            "timestamp": "2025-04-01T17:45:02Z",
+            "sequenceNumber": 202
+          },
+          "pose": {
+            "xMeters": 0.0,
+            "yMeters": 0.0,
+            "headingRadians": -3.14
+          }
+        }
+      }
+    }
+    ```
+
+### Errors
+| ErrorCode  | Description |
+|------------|-------------|
+| `PERMISSION_DENIED` | Attempting to request status for a `robot_id`  or `location_id` you don't own. <br /> Tip: check the spelling of all `robot_id` or `location_id` values. |
+| `INTERNAL` | Failed to subscribe to robot pose updates. |
