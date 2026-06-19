@@ -41,8 +41,20 @@ for quick, code-free testing.
 
 !!! note
 
-    Streaming RPCs (`SubscribeMissionStatus`, `SubscribeNavigationStatus`,
-    `SubscribeOnlineStatus`, `SubscribeEmergencyStopStatus`, etc.) are not part of the Postman
+    Streaming RPCs (`SubscribeMissionStatus`, `SubscribeOnlineStatus`,
+    `SubscribeEmergencyStopStatus`, etc.) are not part of the Postman
     collection — see the gRPC API reference for those.
+
+## Webhooks
+
+Webhook subscriptions are managed over REST as well — `POST /v1/webhook/create`,
+`POST /v1/webhook/list`, and `POST /v1/webhook/delete`. The request and response
+bodies use the same JSON format shown elsewhere on this page.
+
+These endpoints are **not** part of the Swagger explorer or Postman collection
+below. They are documented in full on the dedicated **[Webhooks](Webhooks.md)**
+page, which also covers what only applies to webhooks: robot selection, event
+filtering, payload templating, custom headers, the delivered request format, and
+automatic deactivation after repeated delivery failures.
 
 !!swagger openapi-v1-3.yaml!!
