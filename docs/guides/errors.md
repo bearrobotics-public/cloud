@@ -1,6 +1,6 @@
 
 ## Common Errors 
-These are common error types you might encounter when using the Bear API. We follow gRPC status codes, and where applicable, include structured error details using google.rpc.Status and related types (e.g., BadRequest, ErrorInfo).
+These are common error types you might encounter when using the Bear Cloud API. We follow gRPC status codes, and where applicable, include structured error details using google.rpc.Status and related types (e.g., BadRequest, ErrorInfo).
 <br />
 <br />
 
