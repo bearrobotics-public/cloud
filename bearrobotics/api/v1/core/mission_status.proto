@@ -1,6 +1,6 @@
 // File: mission_status.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,6 @@ import "bearrobotics/api/v1/carti/mission.proto";
 import "bearrobotics/api/v1/core/annotation.proto";
 import "bearrobotics/api/v1/core/mission.proto";
 import "bearrobotics/api/v1/servi/mission.proto";
-
 
 // BaseFeedback provides status updates on mission progress,
 // specific to base missions.

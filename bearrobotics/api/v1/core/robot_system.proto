@@ -1,6 +1,6 @@
 // File: robot_system.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,6 @@
 syntax = "proto3";
 
 package bearrobotics.api.v1.core;
-
 
 // Robot-level system operation to be executed.
 message SystemCommand {
@@ -27,9 +26,14 @@ message SystemCommand {
     Type type = 1;
   }
 
+  // Shuts down the robot system.
+  // Pass in an empty Shutdown message to initiate a shutdown.
+  message Shutdown {}
+
   // Client-specified system command to be executed.
   oneof command {
     Reboot reboot = 1;
+    Shutdown shutdown = 2;
   }
 }
 
@@ -48,6 +52,7 @@ message SystemInfo {
     ROBOT_FAMILY_SERVI_LIFT = 4;
     ROBOT_FAMILY_CARTI_100 = 5;
     ROBOT_FAMILY_CARTI_600 = 6;
+    ROBOT_FAMILY_SERVI_Q = 7;
   }
   RobotFamily robot_family = 2;
 

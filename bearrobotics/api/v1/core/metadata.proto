@@ -1,6 +1,6 @@
 // File: metadata.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,6 @@ syntax = "proto3";
 package bearrobotics.api.v1.core;
 
 import "google/protobuf/timestamp.proto";
-
 
 // EventMetadata is a message returned by streaming endpoints.
 message EventMetadata {

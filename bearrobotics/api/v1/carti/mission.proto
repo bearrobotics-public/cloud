@@ -1,6 +1,6 @@
 // File: mission.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,6 @@ syntax = "proto3";
 package bearrobotics.api.v1.carti;
 
 import "bearrobotics/api/v1/core/annotation.proto";
-
 
 // Feedback provides status updates on mission progress,
 // specific to Carti Family robot missions.
@@ -102,5 +101,28 @@ message Mission {
 
     // An automated navigation mission that selects the best available goal from a list.
     NavigateAutoMission navigate_auto_mission = 4;
+  }
+}
+
+message TraverseWorkflow {
+  // Workflow for traverse missions.
+  // Corresponds to Touchscreen UI:
+  // - Table option
+  repeated core.Goal goals = 1;
+}
+
+message TraversePatrolWorkflow {
+  // Workflow for traverse patrol missions.
+  // Corresponds to Touchscreen UI:
+  // - Patrol option
+  repeated core.Goal goals = 1;
+}
+
+// Carti workflows are specific to the Carti family and mirror touchscreen
+// behavior.
+message MissionWorkflow {
+  oneof workflow {
+    TraverseWorkflow traverse = 1;
+    TraversePatrolWorkflow traverse_patrol = 2;
   }
 }

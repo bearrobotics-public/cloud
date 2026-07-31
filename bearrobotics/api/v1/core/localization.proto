@@ -1,6 +1,6 @@
 // File: localization.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,21 +10,27 @@ syntax = "proto3";
 
 package bearrobotics.api.v1.core;
 
-
 // Represents the current state of the localization process.
 message LocalizationState {
   // Current state of the localization process.
   enum State {
     STATE_UNKNOWN = 0;
 
-    // Localization failed.
+    // Localization failed (service error, timeout, or initialization
+    // failure).
     STATE_FAILED = 1;
 
-    // Localization completed successfully.
+    // Localization completed successfully and the pose is trusted.
     STATE_SUCCEEDED = 2;
 
     // The robot is actively attempting to localize.
     STATE_LOCALIZING = 3;
+
+    // The robot believes it has lost its pose and needs relocalization
+    // (e.g., scan-matching confidence has dropped below threshold).
+    // Distinct from STATE_FAILED: localization is still running but its
+    // current estimate is no longer trusted.
+    STATE_MISLOCALIZED = 4;
   }
   State state = 2;
 }

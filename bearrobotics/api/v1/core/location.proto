@@ -1,6 +1,6 @@
 // File: location.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,15 +12,15 @@ package bearrobotics.api.v1.core;
 
 import "google/protobuf/timestamp.proto";
 
-
 // Location represents a physical location with multiple floors and sections,
 // including metadata such as creation and modification timestamps.
 message Location {
-  // A 4 character alphanumeric identifier for the location. This is unique
-  // among all locations in a Universe.
-  // Example: "3R0A"
+  // A unique identifier for the location, scoped to a Universe. Up to 36
+  // characters of [A-Z0-9]; newly generated IDs are 4-6 character uppercase
+  // alphanumeric.
+  // Examples: "LOCA", "WGXIQ", "ABC123"
   // Legacy locations may use the display_name as the identifier, in which case
-  // the identifier may be longer or shorter than 4 characters.
+  // the identifier may use other formats.
   string location_id = 1;
 
   // Timestamp indicating when the location was created.

@@ -1,6 +1,6 @@
 // File: robot_status.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,12 @@ package bearrobotics.api.v1.core;
 
 import "bearrobotics/api/v1/carti/conveyor.proto";
 import "bearrobotics/api/v1/core/errors.proto";
+import "bearrobotics/api/v1/core/localization.proto";
+import "bearrobotics/api/v1/core/metadata.proto";
 import "bearrobotics/api/v1/core/mission_status.proto";
 import "bearrobotics/api/v1/core/pose.proto";
+import "bearrobotics/api/v1/core/twist.proto";
 import "bearrobotics/api/v1/servi/tray_status.proto";
-
 
 // Represents the state of the robot's battery system.
 message BatteryState {
@@ -88,6 +90,15 @@ message RobotConnection {
   State state = 1;
 }
 
+// Represents the current online connection state of the robot.
+message RobotConnectionWithMetadata {
+  // Metadata associated with the event.
+  core.EventMetadata metadata = 1;
+
+  // Connection state of the robot.
+  RobotConnection connection = 2;
+}
+
 // Represents the set of robot states specifically for Servi robots.
 message ServiState {
   // A collection of individual tray states from different trays.
@@ -98,6 +109,67 @@ message ServiState {
 message CartiState {
   // Conveyor state, only available for robots with a conveyor installed.
   optional carti.ConveyorState conveyor_state = 1;
+}
+
+// Represents whether the robot is currently unable to make navigation
+// progress, and the reason for it when known.
+//
+// "Stuck" is distinct from a mission failure: it is a transient,
+// recoverable navigation condition (e.g., obstruction, restricted area)
+// in which the robot has stopped moving but is otherwise healthy.
+message StuckState {
+  // High-level stuck state of the robot.
+  enum State {
+    // Default unset value. Treat as an error if received.
+    STATE_UNKNOWN = 0;
+
+    // The robot is operating normally and not stuck.
+    STATE_NOT_STUCK = 1;
+
+    // The robot is unable to make navigation progress.
+    // See `reason` for the cause when available.
+    STATE_STUCK = 2;
+  }
+
+  // Current stuck state of the robot.
+  State state = 1;
+
+  // Reason the robot is stuck.
+  //
+  // Only meaningful when state == STATE_STUCK; otherwise expect
+  // REASON_UNKNOWN. Some reasons may be REASON_UNKNOWN even when stuck
+  // because the upstream navigation stack does not always surface a
+  // discrete cause.
+  enum Reason {
+    // No reason reported. Set when state != STATE_STUCK, or when the
+    // upstream stack did not provide a discrete cause.
+    REASON_UNKNOWN = 0;
+
+    // The planned path is blocked at runtime by a dynamic obstacle.
+    REASON_PATH_BLOCKED = 1;
+
+    // The destination cell is occupied by an obstacle. Reserved for
+    // future use; not currently emitted by the robot.
+    REASON_DESTINATION_OBSTRUCTED = 2;
+
+    // No feasible path exists to the destination. Reserved for future
+    // use; not currently emitted by the robot.
+    REASON_DESTINATION_UNREACHABLE = 3;
+
+    // The robot is inside a restricted/annotated area it cannot leave
+    // (e.g., a no-go zone it was placed into).
+    REASON_INSIDE_RESTRICTED_AREA = 4;
+  }
+
+  // Reason the robot is stuck. See `Reason` for semantics.
+  Reason reason = 2;
+}
+
+// Represents navigation-related state for the robot.
+message NavigationState {
+  // Whether the robot is currently stuck (unable to make navigation
+  // progress) and, when known, the reason.
+  StuckState stuck_state = 1;
 }
 
 // Represents the overall state of the robot.
@@ -126,4 +198,13 @@ message RobotState {
     // Populated when the robot type is a Carti.
     CartiState carti_state = 8;
   }
+
+  // Linear and angular velocity of the robot.
+  core.Twist twist = 9;
+
+  // Localization state of the robot.
+  core.LocalizationState localization_state = 10;
+
+  // Navigation-related state of the robot.
+  NavigationState navigation_state = 11;
 }

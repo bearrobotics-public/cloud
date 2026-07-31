@@ -1,6 +1,6 @@
 // File: map.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,6 @@ package bearrobotics.api.v1.core;
 
 import "bearrobotics/api/v1/core/annotation.proto";
 import "google/protobuf/timestamp.proto";
-
 
 // Origin represents the starting point of the map in terms of its coordinates and orientation.
 message Origin {
@@ -28,10 +27,12 @@ message Origin {
 
 // MapImageFileInfo contains metadata about the map image file for integrity verification.
 message MapImageFileInfo {
-  // CRC32C checksum of the map image file.
+  // [Deprecated] CRC32C checksum. Use md5_checksum instead.
   uint32 checksum = 1;
   // Size of the map image file in bytes.
   int64 size = 2;
+  // MD5 checksum represented as a 32-character lowercase hexadecimal string.
+  string md5_checksum = 3;
 }
 
 // SignedURL represents a signed URL for file access with expiration.

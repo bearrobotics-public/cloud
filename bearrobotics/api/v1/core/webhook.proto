@@ -1,0 +1,151 @@
+// File: webhook.proto
+//
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+syntax = "proto3";
+
+package bearrobotics.api.v1.core;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+// WebhookOptions contains optional delivery customizations for a webhook
+// subscription.
+message WebhookOptions {
+  // Optional human-readable description of the webhook.
+  optional string description = 1;
+
+  // Optional request template for customizing the delivered payload.
+  // Keys are output field names; values are template strings with
+  // placeholders referencing event fields using "{{field_path}}" syntax.
+  //
+  // Example JSON:
+  //   {
+  //     "robot": "{{robot_id}}",
+  //     "mission": "{{state.current_mission.mission_id}}",
+  //     "outcome": "{{state.current_mission.state}}"
+  //   }
+  //
+  // If unspecified, the payload would simply be the original message in JSON format.
+  google.protobuf.Struct request_template = 2;
+
+  // Optional custom HTTP headers to include in webhook delivery requests.
+  map<string, string> headers = 3;
+}
+
+// FilterOperator defines the comparison operators available for event
+// filtering.
+enum FilterOperator {
+  FILTER_OPERATOR_UNKNOWN = 0;
+  // Matches when the field value is contained in the provided values list.
+  FILTER_OPERATOR_IN = 1;
+}
+
+// FieldFilter defines a single field-level condition for event filtering.
+//
+// Example JSON:
+//   {
+//     "field": "state.current_mission.state",
+//     "operator": "FILTER_OPERATOR_IN",
+//     "values": ["STATE_SUCCEEDED", "STATE_FAILED", "STATE_CANCELED"]
+//   }
+message FieldFilter {
+  // Target field path to apply the filter on.
+  // The path should begin with "state", followed by a "."-separated list of field names
+  // determined by the payload structure.
+  string field = 1;
+
+  // Comparison operator to use.
+  FilterOperator operator = 2;
+
+  // Values to match against the target field.
+  repeated string values = 3;
+}
+
+// RobotIdList is a list of robot IDs for use inside a WebhookRobotSelector
+// oneof.
+message RobotIdList {
+  repeated string ids = 1;
+}
+
+// LocationIdList is a list of location IDs for use inside a
+// WebhookRobotSelector oneof.
+message LocationIdList {
+  repeated string ids = 1;
+}
+
+// WebhookRobotSelector specifies which robots a webhook subscription targets.
+// The caller must provide exactly one of the two options.
+message WebhookRobotSelector {
+  oneof selector {
+    // Explicit list of robot IDs.
+    RobotIdList robot_ids = 1;
+    // List of location IDs; the server resolves these to robot IDs via Fleet Info.
+    LocationIdList location_ids = 2;
+  }
+}
+
+// WebhookSubscription represents a registered webhook configuration.
+message WebhookSubscription {
+  // Unique identifier of the webhook subscription.
+  string id = 1;
+
+  // The distributor (client organization) ID that owns this subscription.
+  string distributor_id = 2;
+
+  // Optional human-readable description of the webhook.
+  optional string description = 3;
+
+  // The URL to deliver webhook events to.
+  string url = 4;
+
+  // Optional custom HTTP headers to include in webhook delivery requests.
+  map<string, string> headers = 5;
+
+  // Event type subscribed to (e.g., "mission", "battery").
+  string event_type = 6;
+
+  // The robot selector that was provided when creating the subscription.
+  WebhookRobotSelector selector = 7;
+
+  // Optional filter to control which events trigger delivery.
+  FieldFilter filter = 8;
+
+  // Optional request template for customizing the delivered payload.
+  // Keys are output field names; values are template strings with
+  // placeholders referencing event fields using "{{field_path}}" syntax.
+  // Only robot_id and scalar fields under state.*
+  // (e.g., state.current_mission.mission_id) may be referenced.
+  //
+  // Example JSON:
+  //   {
+  //     "robot": "{{robot_id}}",
+  //     "mission": "{{state.current_mission.mission_id}}",
+  //     "outcome": "{{state.current_mission.state}}"
+  //   }
+  //
+  // If unspecified, the payload would simply be the original message in JSON format.
+  google.protobuf.Struct request_template = 9;
+
+  // Whether this subscription is currently active.
+  bool enabled = 10;
+
+  // Timestamp when the subscription was created.
+  google.protobuf.Timestamp created_at = 11;
+
+  // Timestamp when the subscription was last updated.
+  google.protobuf.Timestamp updated_at = 12;
+
+  // Reason the subscription was automatically disabled after sustained
+  // delivery failures. Set on deactivation and cleared when the
+  // subscription is re-enabled.
+  optional string disabled_reason = 13;
+
+  // Timestamp when the subscription was disabled.
+  // Set and cleared together with disabled_reason.
+  google.protobuf.Timestamp disabled_at = 14;
+}
