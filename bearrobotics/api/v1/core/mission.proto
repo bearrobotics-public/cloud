@@ -1,6 +1,6 @@
 // File: mission.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,6 @@ import "bearrobotics/api/v1/carti/mission.proto";
 import "bearrobotics/api/v1/core/annotation.proto";
 import "bearrobotics/api/v1/servi/mission.proto";
 import "google/protobuf/any.proto";
-
 
 // A mission that automatically selects the first unoccupied and unclaimed goal
 // from the provided list, preferring goals with lower index values.
@@ -93,4 +92,16 @@ message MissionCommand {
     COMMAND_FINISH = 4;
   }
   Command command = 2;
+}
+
+// Workflows mirror touchscreen behavior and presets (including automatic
+// return selection).
+message MissionWorkflow {
+  oneof workflow {
+    // Servi workflow
+    servi.MissionWorkflow servi_workflow = 1;
+
+    // Carti workflow
+    carti.MissionWorkflow carti_workflow = 2;
+  }
 }

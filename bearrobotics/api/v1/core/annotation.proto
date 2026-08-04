@@ -1,6 +1,6 @@
 // File: annotation.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,6 @@ package bearrobotics.api.v1.core;
 
 import "bearrobotics/api/v1/core/pose.proto";
 import "google/protobuf/timestamp.proto";
-
 
 // Destination represents a single point of interest on the map
 // that a robot can navigate to and align itself with.

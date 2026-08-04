@@ -1,6 +1,6 @@
 // File: api_service.proto
 //
-// Copyright 2025 Bear Robotics, Inc. All rights reserved.
+// Copyright 2026 Bear Robotics, Inc. All rights reserved.
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,6 +24,7 @@ import "bearrobotics/api/v1/core/network_status.proto";
 import "bearrobotics/api/v1/core/pose.proto";
 import "bearrobotics/api/v1/core/robot_status.proto";
 import "bearrobotics/api/v1/core/robot_system.proto";
+import "bearrobotics/api/v1/core/webhook.proto";
 import "bearrobotics/api/v1/servi/tray_status.proto";
 import "google/api/annotations.proto";
 
@@ -45,6 +46,16 @@ service APIService {
     option (google.api.http) = {post: "/v1/mission/append"};
   }
 
+  // Atomically append multiple missions to the end of the mission queue.
+  //
+  // All missions are appended contiguously in the request order.
+  // Missions can be appended even when other missions are queued.
+  //
+  // If any mission in the batch fails validation or append, no missions are appended.
+  rpc AppendMissionBatch(AppendMissionBatchRequest) returns (AppendMissionBatchResponse) {
+    option (google.api.http) = {post: "/v1/mission/append-batch"};
+  }
+
   // Instruct the robot to begin charging, regardless of its current battery
   // level.
   //
@@ -61,6 +72,13 @@ service APIService {
     option (google.api.http) = {post: "/v1/robot/charge"};
   }
 
+  // Clears the robot's mission status.
+  //
+  // The call will fail if the robot is on a running or paused mission.
+  rpc ClearMissionStatus(ClearMissionStatusRequest) returns (ClearMissionStatusResponse) {
+    option (google.api.http) = {post: "/v1/mission-status/clear"};
+  }
+
   // Create a new mission of a specified type.
   //
   // This call will fail if:
@@ -68,6 +86,46 @@ service APIService {
   // - The requested mission is not compatible with the robot's current state.
   rpc CreateMission(CreateMissionRequest) returns (CreateMissionResponse) {
     option (google.api.http) = {post: "/v1/mission/create"};
+  }
+
+  // Atomically create multiple missions.
+  //
+  // The returned mission IDs match the order of the missions in the request.
+  //
+  // This call will fail if:
+  // - Another mission is running or queued.
+  // - The robot is unable to start a mission.
+  //
+  // If any mission in the batch fails validation or creation, no missions are created.
+  rpc CreateMissionBatch(CreateMissionBatchRequest) returns (CreateMissionBatchResponse) {
+    option (google.api.http) = {post: "/v1/mission/create-batch"};
+  }
+
+  // Creates a new mission workflow that mirrors touchscreen presets,
+  // including automatic return point selection.
+  //
+  // This call will fail if:
+  // - The robot is already executing another mission.
+  //   Returns a FAILED_PRECONDITION error.
+  // - The requested workflow is not compatible with the robot's type or current state.
+  //   Returns an INVALID_ARGUMENT error.
+  //
+  // Returns the list of mission_ids for the created missions if successful.
+  rpc CreateMissionWorkflow(CreateMissionWorkflowRequest) returns (CreateMissionWorkflowResponse) {
+    option (google.api.http) = {post: "/v1/mission-workflow/create"};
+  }
+
+  // Moves to the next destination in the current mission.
+  //
+  // This call will fail if:
+  // - The robot is not on a mission.
+  //   Returns a FAILED_PRECONDITION error.
+  // - The skip goal request could not be delivered to the robot.
+  //   Returns an INTERNAL error.
+  //
+  // Returns the mission_id of the current mission where the goal was skipped.
+  rpc SkipGoal(SkipGoalRequest) returns (SkipGoalResponse) {
+    option (google.api.http) = {post: "/v1/goal/skip"};
   }
 
   // Subscribe to updates on the robot's mission status.
@@ -160,8 +218,14 @@ service APIService {
 
   // Subscribe to the software emergency stop state.
   //
-  // Upon subscription, the server sends the current emergency stop state,
-  // followed by updates whenever the emergency stop state changes.
+  // Upon subscription, the server sends the current emergency stop state of
+  // each selected robot, followed by updates whenever an emergency stop state
+  // changes. Each response carries the state of a single robot, identified by
+  // its robot_id.
+  //
+  // Errors:
+  //   - INVALID_ARGUMENT: Both robot_id and selector are set, neither is set,
+  //     or the selector does not select any robot.
   rpc SubscribeEmergencyStopStatus(SubscribeEmergencyStopStatusRequest) returns (stream SubscribeEmergencyStopStatusResponse);
 
   // Subscribe to the robot’s localization status.
@@ -172,9 +236,6 @@ service APIService {
   rpc SubscribeLocalizationStatus(SubscribeLocalizationStatusRequest) returns (stream SubscribeLocalizationStatusResponse);
 
   // Subscribe to the robot's pose estimates at a regular frequency. (~10Hz)
-  //
-  // Current implementation supports up to 5 robots. Requests with more than 5
-  // robots will return a INVALID_ARGUMENT error.
   //
   // Use this to track the robot's estimated position in real time.
   rpc SubscribeRobotPose(SubscribeRobotPoseRequest) returns (stream SubscribeRobotPoseResponse);
@@ -196,6 +257,24 @@ service APIService {
   // - The latest battery state is sent immediately.
   // - Updates are streamed whenever the state changes.
   rpc SubscribeBatteryStatus(SubscribeBatteryStatusRequest) returns (stream SubscribeBatteryStatusResponse);
+
+  // Subscribe to the navigation status of the selected robots.
+  //
+  // Upon subscription:
+  // - The latest known navigation status is sent immediately.
+  // - Updates are streamed when the navigation state changes.
+  //
+  // Each response carries the state of a single robot, identified by its
+  // robot_id.
+  //
+  // The stuck state indicates the robot is unable to make navigation progress
+  // (e.g., blocked by an obstacle or inside a restricted area) and is
+  // distinct from a mission failure.
+  //
+  // Prefer this RPC over SubscribeRobotStatus when only the navigation signal
+  // is of interest; the full robot status carries more data and updates
+  // more frequently.
+  rpc SubscribeNavigationStatus(SubscribeNavigationStatusRequest) returns (stream SubscribeNavigationStatusResponse);
 
   // Subscribe to the robot's connectivity and operational state.
   //
@@ -226,6 +305,13 @@ service APIService {
   //
   // Network status will include Wi-Fi and connectivity info.
   rpc SubscribeNetworkStatus(SubscribeNetworkStatusRequest) returns (stream SubscribeNetworkStatusResponse);
+
+  // Subscribe to the cloud-to-robot connection state for a fleet of robots.
+  //
+  // Upon subscription:
+  // - The latest known connection state for each selected robot is sent immediately.
+  // - Updates are streamed as robots connect or disconnect.
+  rpc SubscribeOnlineStatus(SubscribeOnlineStatusRequest) returns (stream SubscribeOnlineStatusResponse);
 
   // === Errors ===============================================================
 
@@ -327,6 +413,45 @@ service APIService {
   // - Payload detection may have false positives due to beam sensor
   //   limitations.
   rpc SubscribeConveyorStatus(SubscribeConveyorStatusRequest) returns (stream SubscribeConveyorStatusResponse);
+
+  // === Webhook ==============================================================
+  // These endpoints define the API for managing webhooks.
+  // They provide clients with a RESTful way of receiving streaming updates,
+  // serving as an alternative to gRPC streaming endpoints.
+
+  // Creates a new webhook subscription.
+  //
+  // Once created, a webhook subscription delivers an update via POST request
+  // to the given URL each time an event matching the given type and filter
+  // occurs on any of the selected robots.
+  //
+  // The delivery request payload content is customizable
+  // via the request template option.
+  //
+  // The client may also provide custom HTTP headers to include in each
+  // webhook delivery request.
+  rpc CreateWebhook(CreateWebhookRequest) returns (CreateWebhookResponse) {
+    option (google.api.http) = {post: "/v1/webhook/create"};
+  }
+
+  // Deletes an existing webhook subscription by ID (soft delete).
+  rpc DeleteWebhook(DeleteWebhookRequest) returns (DeleteWebhookResponse) {
+    option (google.api.http) = {post: "/v1/webhook/delete"};
+  }
+
+  // Lists all webhook subscriptions owned by the authenticated distributor.
+  rpc ListWebhooks(ListWebhooksRequest) returns (ListWebhooksResponse) {
+    option (google.api.http) = {post: "/v1/webhook/list"};
+  }
+}
+
+message AppendMissionBatchRequest {
+  string robot_id = 1;
+  repeated core.Mission missions = 2;
+}
+
+message AppendMissionBatchResponse {
+  repeated string mission_ids = 1;
 }
 
 message AppendMissionRequest {
@@ -353,12 +478,30 @@ message ChargeRobotResponse {
   string mission_id = 1;
 }
 
+message ClearMissionStatusRequest {
+  string robot_id = 1;
+}
+
+message ClearMissionStatusResponse {
+  // The unique identifiers of the cleared missions.
+  repeated string mission_ids = 1;
+}
+
 message ControlConveyorRequest {
   string robot_id = 1;
   repeated carti.ConveyorMotorCommand commands = 2;
 }
 
 message ControlConveyorResponse {}
+
+message CreateMissionBatchRequest {
+  string robot_id = 1;
+  repeated core.Mission missions = 2;
+}
+
+message CreateMissionBatchResponse {
+  repeated string mission_ids = 1;
+}
 
 message CreateMissionRequest {
   string robot_id = 1;
@@ -368,6 +511,49 @@ message CreateMissionRequest {
 message CreateMissionResponse {
   string mission_id = 1;
 }
+
+message CreateMissionWorkflowRequest {
+  string robot_id = 1;
+  core.MissionWorkflow mission_workflow = 2;
+}
+
+message CreateMissionWorkflowResponse {
+  repeated string mission_ids = 1;
+}
+
+message CreateWebhookRequest {
+  // The URL to deliver webhook events to.
+  string url = 2;
+
+  // Event type to subscribe to.
+  // Supported event types:
+  // - "mission"
+  // - "battery"
+  string event_type = 3;
+
+  // Required robot selector: specifies which robots this webhook targets.
+  // Provide either explicit robot IDs or location IDs (resolved to robots
+  // via Fleet Info).
+  core.WebhookRobotSelector selector = 4;
+
+  // Optional filter to control which events trigger delivery.
+  core.FieldFilter filter = 5;
+
+  // Optional delivery customizations (template, headers, description).
+  core.WebhookOptions options = 6;
+}
+
+message CreateWebhookResponse {
+  // The newly created webhook subscription.
+  core.WebhookSubscription webhook = 1;
+}
+
+message DeleteWebhookRequest {
+  // Unique identifier of the webhook subscription to delete.
+  string id = 1;
+}
+
+message DeleteWebhookResponse {}
 
 message GetAvailableLocationsRequest {}
 
@@ -395,8 +581,10 @@ message GetCurrentMapResponse {
 }
 
 message GetLocationInfoRequest {
-  // The location_id is a 4 character alphanumeric identifier for the location.
-  // Example: "3R0A"
+  // A unique identifier for the location, scoped to a Universe. Up to 36
+  // characters of [A-Z0-9]; newly generated IDs are 4-6 character uppercase
+  // alphanumeric.
+  // Examples: "LOCA", "WGXIQ", "ABC123"
   string location_id = 1;
 }
 
@@ -441,6 +629,13 @@ message ListRobotIDsResponse {
   repeated string robot_ids = 2;
 }
 
+message ListWebhooksRequest {}
+
+message ListWebhooksResponse {
+  // The list of webhook subscriptions owned by the authenticated distributor.
+  repeated core.WebhookSubscription webhooks = 1;
+}
+
 message LocalizeRobotRequest {
   string robot_id = 1;
   core.Goal goal = 2;
@@ -462,6 +657,15 @@ message SetPoseRequest {
 
 message SetPoseResponse {}
 
+message SkipGoalRequest {
+  string robot_id = 1;
+}
+
+message SkipGoalResponse {
+  // The unique identifier of the mission where the goal was skipped.
+  string mission_id = 1;
+}
+
 message SubscribeBatteryStatusRequest {
   core.RobotSelector selector = 1;
 }
@@ -481,12 +685,30 @@ message SubscribeConveyorStatusResponse {
 }
 
 message SubscribeEmergencyStopStatusRequest {
-  string robot_id = 1;
+  // The unique robot identifier. E.g. "pennybot-abc123"
+  //
+  // Deprecated: use selector instead. Setting robot_id is equivalent to
+  // setting selector.robot_ids with a single ID. It remains supported for
+  // backwards compatibility.
+  string robot_id = 1 [deprecated = true];
+
+  // Selects the robots to subscribe to, by explicit robot IDs or by location.
+  //
+  // Exactly one of robot_id or selector must be set; setting both (or
+  // neither) returns an INVALID_ARGUMENT error.
+  core.RobotSelector selector = 2;
 }
 
 message SubscribeEmergencyStopStatusResponse {
   core.EventMetadata metadata = 1;
   core.EmergencyStopState e_stop_state = 2;
+
+  // ID of the robot this event pertains to. E.g. "pennybot-abc123"
+  // Always set, including for single-robot subscriptions made via the
+  // deprecated robot_id request field.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
+  string robot_id = 3;
 }
 
 message SubscribeErrorCodesRequest {
@@ -525,6 +747,22 @@ message SubscribeMissionStatusResponse {
   core.MissionStates mission_states = 4;
 }
 
+message SubscribeNavigationStatusRequest {
+  // Selects the robots to subscribe to, by explicit robot IDs or by location.
+  core.RobotSelector selector = 1;
+}
+
+message SubscribeNavigationStatusResponse {
+  core.EventMetadata metadata = 1;
+
+  // ID of the robot this event pertains to. E.g. "pennybot-abc123"
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
+  string robot_id = 2;
+
+  core.NavigationState navigation_state = 3;
+}
+
 message SubscribeNetworkStatusRequest {
   core.RobotSelector selector = 1;
 }
@@ -536,6 +774,19 @@ message SubscribeNetworkStatusResponse {
   // Note that each robot maintains its own metadata, so messages should be
   // correlated if and only if they correspond to the same robot ID.
   map<string, core.NetworkStateWithMetadata> network_states = 1;
+}
+
+message SubscribeOnlineStatusRequest {
+  core.RobotSelector selector = 1;
+}
+
+message SubscribeOnlineStatusResponse {
+  // A mapping of online states reported by individual robots.
+  // Each entry pairs a robot ID (key) with its corresponding connection state
+  // and metadata.
+  // Note that each robot maintains its own metadata, so messages should be
+  // correlated if and only if they correspond to the same robot ID.
+  map<string, core.RobotConnectionWithMetadata> online_states = 1;
 }
 
 message SubscribeRobotPoseRequest {
