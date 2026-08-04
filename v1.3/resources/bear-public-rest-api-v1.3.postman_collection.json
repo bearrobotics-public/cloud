@@ -1,0 +1,1109 @@
+{
+  "info": {
+    "_postman_id": "7f764b48-965f-4aeb-a728-dc08c6bd9306",
+    "name": "Bear Robotics Public REST API v1.3",
+    "description": "Postman collection for Bear Robotics Public REST API v1.3. This collection includes all unary (non-streaming) endpoints defined in the BearAPI v1.3 service.\n\n### API Version Information\n\n- **API Version**: v1.3\n    \n- **Endpoints**: 23 endpoints (7 endpoints from v1.0 + 11 additional endpoints in v1.1 + 2 additional endpoints in v1.2 + 3 additional endpoints in v1.3)\n    \n\nBear Cloud API v1.3 is designed to be **backward compatible** with v1.2, v1.1, and v1.0. However, some endpoints require specific robot software versions (Servi 26.02, Carti 26.02, AMR 26.02 for full support).\n\n### v1.3 Changes\n\n**New Endpoints (3):**\n\n- `CreateMissionBatch` - Atomically create multiple missions in a single request\n    \n- `AppendMissionBatch` - Atomically append multiple missions to the end of the mission queue\n    \n- `ClearMissionStatus` - Clear the robot's mission status\n    \n\n**Updated Endpoints:**\n\n- `GetRobotStatus` - Added `navigation_state` field (carries the robot's stuck state)\n    \n- `GetMap` - Added `md5_checksum` field in `MapImageFileInfo` for integrity verification (CRC32C `checksum` is deprecated)\n    \n\n**Streaming RPCs (not included in this collection):** `SubscribeOnlineStatus` and the now fleet-capable `SubscribeEmergencyStopStatus` are streaming endpoints and are documented in the API reference rather than this REST collection.\n\n### Overview\n\nThis collection provides a comprehensive set of endpoints for interacting with Bear Robotics robots via REST API v1.3. It covers:\n\n- **Mission Commands**: Create, append, update, and manage robot missions (includes v1.3 additions: CreateMissionBatch, AppendMissionBatch, ClearMissionStatus)\n    \n- **Maps & Locations**: Retrieve maps, locations, and destination information\n    \n- **Localization & Navigation**: Control robot positioning and navigation\n    \n- **Robot Status**: Monitor robot connectivity and operational states (includes v1.3 addition: navigation_state on GetRobotStatus)\n    \n- **Robot System**: System information and OS-level commands\n    \n- **Fleet Management**: Manage multiple robots and locations\n    \n- **Servi-Specific Extensions**: Tray calibration for Servi robots\n    \n- **Carti-Specific Extensions**: Conveyor control for Carti robots\n    \n\n### Included Endpoints\n\n**v1.0 endpoints (7 endpoints):**\n\n- `/v1/mission/append` - AppendMission\n    \n- `/v1/mission/create` - CreateMission\n    \n- `/v1/mission/update` - UpdateMission\n    \n- `/v1/robot/charge` - ChargeRobot\n    \n- `/v1/current-map/get` - GetCurrentMap\n    \n- `/v1/robot/localize` - LocalizeRobot\n    \n- `/v1/robot-ids/list` - ListRobotIDs\n    \n\n**v1.1 additional endpoints (11 endpoints):**\n\n- `/v1/location-info/get` - GetLocationInfo\n    \n- `/v1/map/get` - GetMap\n    \n- `/v1/map/switch` - SwitchMap\n    \n- `/v1/pose/set` - SetPose\n    \n- `/v1/robot-state/get` - GetRobotStatus\n    \n- `/v0/robot-system-info/get` - GetRobotSystemInfo\n    \n- `/v1/system-command/run` - RunSystemCommand\n    \n- `/v1/available-locations/get` - GetAvailableLocations\n    \n- `/v1/trays/calibrate` - CalibrateTrays\n    \n- `/v1/conveyor-index/get` - GetConveyorIndex\n    \n- `/v1/conveyor/control` - ControlConveyor\n    \n\n**v1.2 additional endpoints (2 endpoints):**\n\n- `/v1/mission-workflow/create` - CreateMissionWorkflow\n    \n- `/v1/goal/skip` - SkipGoal\n    \n\n**v1.3 additional endpoints (3 endpoints):**\n\n- `/v1/mission/create-batch` - CreateMissionBatch\n    \n- `/v1/mission/append-batch` - AppendMissionBatch\n    \n- `/v1/mission-status/clear` - ClearMissionStatus\n    \n\n### Important Setup\n\n**Required Collection Variables:**\n\n- `base_url`: API Base URL (e.g., [https://api.bearrobotics.ai](https://api.bearrobotics.ai))\n    \n- `auth_url`: Authentication server URL (e.g., [https://api-auth.bearrobotics.ai](https://api-auth.bearrobotics.ai))\n    \n- `robot_id`: Robot ID to use for API requests\n    \n\n**Authentication Variables:**\n\n- **API Key Method**: `api_key`, `api_secret`, `scope`\n    \n\n### Getting Started\n\n1. Set the required Collection Variables in the Collection Variables tab\n    \n2. Call the authentication endpoint to obtain a JWT token (token is automatically saved to `bearer_token`)\n    \n3. Use the `bearer_token` in subsequent API requests\n    \n\n### Documentation\n\nFor detailed API documentation, refer to the Bear Robotics API documentation:\n\n- Public API Documentation: [https://cloud.api.bearrobotics.ai/](https://cloud.api.bearrobotics.ai/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Get JWT Token (API Key)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Debug: Check if required variables are set",
+                  "const apiKey = pm.collectionVariables.get('api_key');",
+                  "const apiSecret = pm.collectionVariables.get('api_secret');",
+                  "const scope = pm.collectionVariables.get('scope');",
+                  "const authUrl = pm.collectionVariables.get('auth_url');",
+                  "",
+                  "console.log('=== Authentication Debug Info ===');",
+                  "console.log('auth_url:', authUrl || 'NOT SET');",
+                  "console.log('api_key:', apiKey ? apiKey.substring(0, 10) + '...' : 'NOT SET');",
+                  "console.log('api_secret:', apiSecret ? '***SET***' : 'NOT SET');",
+                  "console.log('scope:', scope);",
+                  "",
+                  "if (!apiKey || !apiSecret) {",
+                  "    console.error('ERROR: api_key or api_secret is not set in Collection Variables!');",
+                  "    console.error('Please set these variables in the Collection Variables tab.');",
+                  "}",
+                  "if (!authUrl) {",
+                  "    console.error('ERROR: auth_url is not set!');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Automatically save token to collection variable",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.token) {",
+                  "        pm.collectionVariables.set('bearer_token', response.token);",
+                  "        console.log('Token saved to collection variable: bearer_token');",
+                  "        console.log('Token preview:', response.token.substring(0, 50) + '...');",
+                  "    } else {",
+                  "        // If response is plain text token",
+                  "        const token = pm.response.text();",
+                  "        pm.collectionVariables.set('bearer_token', token);",
+                  "        console.log('Token saved to collection variable: bearer_token');",
+                  "        console.log('Token preview:', token.substring(0, 50) + '...');",
+                  "    }",
+                  "} else {",
+                  "    // Error handling",
+                  "    console.error('Authentication failed with status:', pm.response.code);",
+                  "    const responseText = pm.response.text();",
+                  "    console.error('Response:', responseText);",
+                  "    ",
+                  "    if (pm.response.code === 401) {",
+                  "        console.error('');",
+                  "        console.error('Possible causes:');",
+                  "        console.error('1. Invalid API Key or Secret');",
+                  "        console.error('2. API Key/Secret not set in Collection Variables');",
+                  "        console.error('3. Wrong scope (must match the scope issued with your API key)');",
+                  "        console.error('4. API Key account not properly configured');",
+                  "        console.error('');",
+                  "        console.error('Check the following:');",
+                  "        console.error('- Collection Variables > api_key');",
+                  "        console.error('- Collection Variables > api_secret');",
+                  "        console.error('- Collection Variables > scope (the scope issued with your API key)');",
+                  "        console.error('- Collection Variables > auth_url (should be https://api-auth.bearrobotics.ai)');",
+                  "    } else if (pm.response.code === 400) {",
+                  "        console.error('');",
+                  "        console.error('Possible causes:');",
+                  "        console.error('1. Missing required fields (api_key, secret, or scope)');",
+                  "        console.error('2. Malformed request body');",
+                  "    } else if (pm.response.code === 429) {",
+                  "        console.error('');",
+                  "        console.error('Rate limit exceeded. Please wait before trying again.');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"api_key\": \"{{api_key}}\",\n  \"secret\": \"{{api_secret}}\",\n  \"scope\": \"{{scope}}\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/authorizeApiAccess",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "authorizeApiAccess"
+              ]
+            },
+            "description": "Get JWT token using API Key and Secret.\n\nThe `api_key`, `secret`, and `scope` are all issued together with your Bear Robotics credentials JSON file. Use the exact values provided to you — `scope` is a fixed value tied to your credentials and is **not** a literal like \"Bear\".\n\n### Request\n\n##### Required Variables (set in Collection Variables tab)\n\n| Variable | Type | Description |\n| --- | --- | --- |\n| `api_key` | `string` | Your API key (required) |\n| `api_secret` | `string` | Your API secret (required) |\n| `scope` | `string` | The scope issued with your API key (required) |\n| `auth_url` | `string` | Authentication server URL (default: \"[https://api-auth.bearrobotics.ai\"](https://api-auth.bearrobotics.ai)) |\n\n##### Request Body\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `api_key` | `string` | Your API key |\n| `secret` | `string` | Your API secret |\n| `scope` | `string` | The scope issued with your API key |\n\n##### JSON Request Example\n\n``` json\n{\n  \"api_key\": \"your-api-key\",\n  \"secret\": \"your-api-secret\",\n  \"scope\": \"your-scope\"\n}\n\n ```\n\n### Response\n\n##### Response Body\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `token` | `string` | JWT bearer token for API authentication |\n\n##### JSON Response Example\n\n``` json\n{\n  \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}\n\n ```\n\n**Note**: The token will be automatically saved to the `bearer_token` collection variable upon successful response.\n\n### How API Key Authentication Works\n\n- The API key, secret, and scope are submitted to the authentication server\n    \n- The server validates the credentials\n    \n- A JWT token is returned upon successful authentication\n    \n- Tokens typically expire after 1 hour. Cache and reuse the token across requests; refresh it periodically (e.g., every 30 minutes) rather than requesting a new token per API call.\n    \n\n### Errors\n\n| HTTP Status | Error Code | Description |\n| --- | --- | --- |\n| 400 | `INVALID_ARGUMENT` | Missing required fields (api_key, secret, or scope), or a malformed request body. |\n| 401 | `UNAUTHENTICATED` | Invalid API Key or Secret. Verify credentials are correctly set in Collection Variables. |\n| 401 | `UNAUTHENTICATED` | Wrong scope. Ensure the scope matches the value issued with your API key. |\n| 401 | `UNAUTHENTICATED` | API Key account not properly configured. |\n| 429 | `RESOURCE_EXHAUSTED` | Rate limit exceeded for **token issuance** (this `authorizeApiAccess` endpoint only): 20 requests per 5 minutes per API key + IP, and 100 requests per 10 minutes per IP. Cache and reuse the JWT instead of requesting a new token on every call. |\n\n### Troubleshooting\n\n**For 401 errors:**\n\n1. Verify `api_key` and `api_secret` are correctly set in Collection Variables\n    \n2. Ensure the `scope` matches the value issued with your API key (it is a fixed credential value, not a literal like \"Bear\")\n    \n3. Confirm your API key and secret are correct\n    \n4. Verify the auth_url is correct ([https://api-auth.bearrobotics.ai](https://api-auth.bearrobotics.ai) for production)\n    \n5. Check the Postman Console (View > Show Postman Console) for detailed error messages"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for obtaining JWT tokens.\n\n### Authentication Method\n\n**API Key/Secret**: Use `api_key` and `secret` to obtain JWT tokens for Bear Robotics Public REST API.\n\n### Important Notes\n\n- Set the required variables (`api_key`, `api_secret`, `scope`, `auth_url`) in the Collection Variables tab before using the authentication endpoint\n- The token will be automatically saved to `bearer_token` variable after successful authentication\n- Tokens typically expire after 1 hour\n\n### How API Key Authentication Works\n\nThe API key, secret, and scope are submitted to the authentication server. The server validates the credentials. A JWT token is returned upon successful authentication."
+    },
+    {
+      "name": "Mission",
+      "item": [
+        {
+          "name": "AppendMission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"mission\": {\n    \"baseMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/append",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "append"
+              ]
+            },
+            "description": "Appends a mission to the end of the mission queue.\n\nUse this when a mission is currently running; otherwise, prefer CreateMission. Missions are executed in the order they are appended.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### mission `Mission` `required`\nUniversal wrapper for mission types. Only one mission type may be set at a time.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `base_mission` | `BaseMission` | Base missions are applicable to all robot families |\n| `servi_mission` | `servi.Mission` | Servi missions are specific to the Servi robot family |\n| `carti_mission` | `carti.Mission` | Carti missions are specific to the Carti robot family |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"mission\": {\n    \"baseMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}\n```\n\n### Response\n\n##### mission_id `string`\nThe ID of the mission created.\n\n##### JSON Response Example\n```json\n{\n  \"missionId\": \"cbd47ab1-df21-479e-9f72-677b81ab55b0\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | There is no mission in the mission queue. Client should first create the initial mission, and only use Append for queuing additional missions. |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry appending the mission. |\n| `DEADLINE_EXCEEDED` | The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry appending the mission. |"
+          },
+          "response": []
+        },
+        {
+          "name": "AppendMissionBatch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"missions\": [\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"table-1\"\n          }\n        }\n      }\n    },\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"table-2\"\n          }\n        }\n      }\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/append-batch",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "append-batch"
+              ]
+            },
+            "description": "Atomically appends multiple missions to the end of the mission queue.\n\nAll missions are appended contiguously in the request order. Missions can be appended even when other missions are already queued.\n\n**Note**: This call is **atomic** — if any mission in the batch fails validation or append, **no** missions are appended.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### missions `repeated Mission` `required`\nThe list of missions to append, in execution order. Each entry is the same `Mission` wrapper used by CreateMission. Only one mission type may be set per entry.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `base_mission` | `BaseMission` | Base missions are applicable to all robot families |\n| `servi_mission` | `servi.Mission` | Servi missions are specific to the Servi robot family |\n| `carti_mission` | `carti.Mission` | Carti missions are specific to the Carti robot family |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"missions\": [\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"table-1\"\n          }\n        }\n      }\n    },\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"table-2\"\n          }\n        }\n      }\n    }\n  ]\n}\n```\n\n### Response\n\n##### mission_ids `repeated string`\nThe IDs of the missions appended, in the same order as the request.\n\n##### JSON Response Example\n```json\n{\n  \"missionIds\": [\n    \"f842c8ac-62de-412e-90fb-bf37022db2f4\",\n    \"a1b2c3d4-5e6f-7890-abcd-ef1234567890\"\n  ]\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | There is no mission in the mission queue. Client should first create the initial mission, and only use Append (or AppendBatch) for queuing additional missions. |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers empty requests, an empty `missions` list, invalid goals, goals that do not match mission type, and other format errors. Since the call is atomic, a single invalid mission causes the entire batch to be rejected. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry appending the batch. |\n| `DEADLINE_EXCEEDED` | The request was accepted but timed out waiting for the robot to confirm. Client should retry appending the batch. |"
+          },
+          "response": []
+        },
+        {
+          "name": "ChargeRobot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/robot/charge",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "robot",
+                "charge"
+              ]
+            },
+            "description": "Create a mission to go charge a robot regardless of battery state.\n\n`ChargeRobot` is a special type of mission. Use this command to instruct the robot to begin charging, regardless of its current battery level. This command is only supported on robots equipped with a contact-based charging dock.\n\nYou can use SubscribeBatteryStatus to monitor the charging process.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### mission_id `string`\nThe ID of the mission created. Since this command is a special type of mission, its execution state is also available in response messages from SubscribeMissionStatus.\n\n##### JSON Response Example\n```json\n{\n  \"missionId\": \"mission-xyz-001\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is already executing a mission. The current mission must be canceled before issuing this command. |\n| `INVALID_ARGUMENT` | Robots without a compatible dock will return an INVALID_ARGUMENT error. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry creating the mission. |\n| `DEADLINE_EXCEEDED` | The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry creating the mission. |"
+          },
+          "response": []
+        },
+        {
+          "name": "CreateMission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"mission\": {\n    \"baseMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "create"
+              ]
+            },
+            "description": "Send a robot on a mission of specified type.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### mission `Mission` `required`\nUniversal wrapper for mission types. Only one mission type may be set at a time.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `base_mission` | `BaseMission` | Base missions are applicable to all robot families |\n| `servi_mission` | `servi.Mission` | Servi missions are specific to the Servi robot family |\n| `carti_mission` | `carti.Mission` | Carti missions are specific to the Carti robot family |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"mission\": {\n    \"baseMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}\n```\n\n### Response\n\n##### mission_id `string`\nThe ID of the mission created.\n\n##### JSON Response Example\n```json\n{\n  \"missionId\": \"cbd47ab1-df21-479e-9f72-677b81ab55b0\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is already executing another mission. `CreateMission` is only valid if there is no running mission on the target robot, with its state in one of the terminal states (Cancelled, Succeeded, Failed, Default). |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers sending empty requests, invalid goals, goals that do not match mission type, and other format errors. Client should update their usage to have correctly formatted requests with valid goals for the missions as defined in documentation. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry creating the mission. |\n| `DEADLINE_EXCEEDED` | The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry creating the mission. |"
+          },
+          "response": []
+        },
+        {
+          "name": "CreateMissionBatch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"missions\": [\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"pickup_zone\"\n          }\n        }\n      }\n    },\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"drop_zone\"\n          }\n        }\n      }\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/create-batch",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "create-batch"
+              ]
+            },
+            "description": "Atomically creates multiple missions in a single request.\n\nThe created missions are queued contiguously in the order they appear in the request, and the returned mission IDs match that order.\n\n**Note**: This call is **atomic** — if any mission in the batch fails validation or creation, **no** missions are created.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### missions `repeated Mission` `required`\nThe list of missions to create, in execution order. Each entry is the same `Mission` wrapper used by CreateMission. Only one mission type may be set per entry.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `base_mission` | `BaseMission` | Base missions are applicable to all robot families |\n| `servi_mission` | `servi.Mission` | Servi missions are specific to the Servi robot family |\n| `carti_mission` | `carti.Mission` | Carti missions are specific to the Carti robot family |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"missions\": [\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"pickup_zone\"\n          }\n        }\n      }\n    },\n    {\n      \"baseMission\": {\n        \"navigateMission\": {\n          \"goal\": {\n            \"destinationId\": \"drop_zone\"\n          }\n        }\n      }\n    }\n  ]\n}\n```\n\n### Response\n\n##### mission_ids `repeated string`\nThe IDs of the missions created, in the same order as the request.\n\n##### JSON Response Example\n```json\n{\n  \"missionIds\": [\n    \"cbd47ab1-df21-479e-9f72-677b81ab55b0\",\n    \"d6637a14-5f6b-43f6-bd86-cc1871a8322e\"\n  ]\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | Another mission is running or queued, or the robot is unable to start a mission. `CreateMissionBatch` is only valid if there is no running or queued mission on the target robot. |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers empty requests, an empty `missions` list, invalid goals, goals that do not match mission type, and other format errors. Since the call is atomic, a single invalid mission causes the entire batch to be rejected. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry creating the batch. |\n| `DEADLINE_EXCEEDED` | The request was accepted but timed out waiting for the robot to confirm. Client should retry creating the batch. |"
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateMission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"missionCommand\": {\n    \"missionId\": \"f842c8ac-62de-412e-90fb-bf37022db2f4\",\n    \"command\": \"COMMAND_CANCEL\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/update",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "update"
+              ]
+            },
+            "description": "Issues a command to control or update the current mission (e.g., pause, cancel).\n\nWe currently do not support updating missions in mission queue. Attempting to send UpdateMission command to a queued mission will result in `NOT_FOUND` error.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### mission_command `MissionCommand` `required`\nCommand to update the state of an active mission.\n\n| Field | Message Type | Description |\n|-------|-------------| ---------|\n| `mission_id` | `string` `required`|  The ID of the mission to control.|\n| `command`    | `Command` *enum* `required` | Command to update the state of an active mission. |\n\n#### Command `enum`\n\n| Name | Number | Description |\n|------|--------|-------------|\n| COMMAND_UNKNOWN | 0 | Default value. This should never be used explicitly. It means the `command` field is not set |\n| COMMAND_CANCEL | 1 | Cancel this mission. |\n| COMMAND_PAUSE | 2 | Pause this mission. |\n| COMMAND_RESUME | 3 | Resume a paused mission. |\n| COMMAND_FINISH | 4 | Mark the mission as completed. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"missionCommand\": {\n    \"missionId\": \"f842c8ac-62de-412e-90fb-bf37022db2f4\",\n    \"command\": \"COMMAND_PAUSE\"\n  }\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is either not on a mission, or the command is invalid for the robot's current state. For example, mission in terminal state (Cancelled, Succeeded, Failed) can't be updated. |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers sending empty requests, invalid commands, incorrect mission ID, and other format errors. Client should update their usage to have correctly formatted requests with valid commands, and ensure the mission id matches the currently running mission. |\n| `NOT_FOUND` | Attempting to send UpdateMission command to a queued mission will result in NOT_FOUND error. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry. |\n| `DEADLINE_EXCEEDED` | The request was sent internally, but timed out waiting for confirmation response of request being accepted. Client should retry. |"
+          },
+          "response": []
+        },
+        {
+          "name": "CreateMissionWorkflow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"missionWorkflow\": {\n    \"serviWorkflow\": {\n      \"delivery\": {\n        \"goals\": [\n          {\n            \"destinationId\": \"table-1\"\n          },\n          {\n            \"destinationId\": \"table-2\"\n          }\n        ]\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission-workflow/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission-workflow",
+                "create"
+              ]
+            },
+            "description": "Creates a new mission workflow that mirrors touchscreen presets, including automatic return point selection.\n\nThis call will fail if:\n- The robot is already executing another mission. Returns a FAILED_PRECONDITION error.\n- The requested workflow is not compatible with the robot's type or current state. Returns an INVALID_ARGUMENT error.\n\nReturns the list of mission_ids for the created missions if successful.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### mission_workflow `MissionWorkflow` `required`\nWorkflows mirror touchscreen behavior and presets (including automatic return selection).\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `servi_workflow` | `servi.MissionWorkflow` | Servi workflows are specific to the Servi robot family. |\n| `carti_workflow` | `carti.MissionWorkflow` | Carti workflows are specific to the Carti robot family. |\n\n##### Servi Workflow Types\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `delivery` | `DeliveryWorkflow` | Workflow for delivery missions (Serving, Table option) |\n| `delivery_patrol` | `DeliveryPatrolWorkflow` | Workflow for delivery patrol missions (Serving, Patrol option) |\n| `bussing` | `BussingWorkflow` | Workflow for bussing missions (Bussing, Table option) |\n| `bussing_patrol` | `BussingPatrolWorkflow` | Workflow for bussing patrol missions (Bussing, Patrol option) |\n| `birthday` | `BirthdayWorkflow` | Workflow for Birthday Mission (Birthday Mode) |\n| `hosting` | `HostingWorkflow` | Workflow for hosting missions (Hosting, Restaurant option) |\n| `hosting_patrol` | `HostingPatrolWorkflow` | Workflow for hosting patrol missions (Hosting, Patrol option) |\n\n##### Carti Workflow Types\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `traverse` | `TraverseWorkflow` | Workflow for traverse missions (Table option) |\n| `traverse_patrol` | `TraversePatrolWorkflow` | Workflow for traverse patrol missions (Patrol option) |\n\n##### JSON Request Example (Servi Delivery Workflow)\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"missionWorkflow\": {\n    \"serviWorkflow\": {\n      \"delivery\": {\n        \"goals\": [\n          {\n            \"destinationId\": \"table-1\"\n          },\n          {\n            \"destinationId\": \"table-2\"\n          }\n        ]\n      }\n    }\n  }\n}\n```\n\n##### JSON Request Example (Carti Traverse Workflow)\n```json\n{\n  \"robotId\": \"carti-001\",\n  \"missionWorkflow\": {\n    \"cartiWorkflow\": {\n      \"traverse\": {\n        \"goals\": [\n          {\n            \"destinationId\": \"room-a\"\n          },\n          {\n            \"pose\": {\n              \"xMeters\": 5.2,\n              \"yMeters\": 3.1,\n              \"headingRadians\": 1.57\n            }\n          }\n        ]\n      }\n    }\n  }\n}\n```\n\n### Response\n\n##### mission_ids `repeated string`\nList of mission IDs for the created missions.\n\n##### JSON Response Example\n```json\n{\n  \"missionIds\": [\n    \"mission-001\",\n    \"mission-002\"\n  ]\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is already executing another mission. |\n| `INVALID_ARGUMENT` | The requested workflow is not compatible with the robot's type or current state. |\n| `PERMISSION_DENIED` | Attempting to create a workflow for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        },
+        {
+          "name": "SkipGoal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/goal/skip",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "goal",
+                "skip"
+              ]
+            },
+            "description": "Moves to the next destination in the current mission.\n\nThis call will fail if:\n- The robot is not on a mission. Returns a FAILED_PRECONDITION error.\n- The request could not be delivered to the robot or the operation failed. Returns an INTERNAL error.\n\nReturns the mission_id of the current mission where the goal was skipped.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will skip the current goal.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### mission_id `string`\nThe unique identifier of the mission where the goal was skipped.\n\n##### JSON Response Example\n```json\n{\n  \"missionId\": \"mission-xyz-001\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is not on a mission. |\n| `INTERNAL` | The request could not be delivered to the robot or the operation failed. |\n| `PERMISSION_DENIED` | Attempting to skip goal for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |"
+          },
+          "response": []
+        },
+        {
+          "name": "ClearMissionStatus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission-status/clear",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission-status",
+                "clear"
+              ]
+            },
+            "description": "Clears the robot's mission status, removing the missions reported by SubscribeMissionStatus.\n\nUse this to reset the mission queue once all missions have reached a terminal state.\n\n**Warning**: This call will fail if the robot is on a **running** or **paused** mission. Cancel or finish the active mission before clearing.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot whose mission status will be cleared.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### mission_ids `repeated string`\nThe unique identifiers of the cleared missions.\n\n##### JSON Response Example\n```json\n{\n  \"missionIds\": [\n    \"f842c8ac-62de-412e-90fb-bf37022db2f4\",\n    \"d6637a14-5f6b-43f6-bd86-cc1871a8322e\"\n  ]\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `FAILED_PRECONDITION` | The robot is on a running or paused mission. The mission must reach a terminal state (Cancelled, Succeeded, Failed) before its status can be cleared. |\n| `INVALID_ARGUMENT` | The client supplied a request with invalid format. This covers empty `robot_id` and other format errors. |\n| `PERMISSION_DENIED` | Attempting to clear mission status for a `robot_id` you don't own. |\n| `INTERNAL` | The request failed to execute due to internal error in mission system. Client should retry. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Basic mission-related operations (includes v1.3 additions: CreateMissionBatch, AppendMissionBatch, ClearMissionStatus)"
+    },
+    {
+      "name": "Locations & Map",
+      "item": [
+        {
+          "name": "GetCurrentMap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/current-map/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "current-map",
+                "get"
+              ]
+            },
+            "description": "Retrieves the current map used by the robot.\n\nThe returned map includes annotations and destinations, which can be used in mission destination, localization goals, and navigation.\n\n### Request\n\n##### robot_id `string` `required`\nThe robot ID used to request the map currently loaded on the robot.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### map `Map`\nMap represents a navigable map used by robots, including metadata and associated annotations.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `map_id` | `string` | Unique identifier for the map. e.g., \"9578\" |\n| `created_time` | `Timestamp` | Indicating when the map was created. |\n| `modified_time` | `Timestamp` | Indicating the last time the map was modified. |\n| `display_name` | `string` | Display name of the map, matching the name used in Bear Universe. e.g., \"ITCT SEOUL\" |\n| `annotation` | `Annotation` | Annotation associated with this map, defining specific areas and destinations. |\n\n##### JSON Response Example\n```json\n{\n  \"map\": {\n    \"mapId\": \"map-01\",\n    \"createdTime\": \"2025-03-28T12:00:00Z\",\n    \"modifiedTime\": \"2025-04-01T09:45:00Z\",\n    \"displayName\": \"Main Floor Map\",\n    \"annotation\": {\n      \"annotationId\": \"annot-123\",\n      \"displayName\": \"Service Area Zones\",\n      \"createdTime\": \"2025-03-30T10:15:00Z\",\n      \"destinations\": {\n        \"Loading Dock 1\": {\n          \"destinationId\": \"Loading Dock 1\",\n          \"displayName\": \"Loading Dock 1\"\n        }\n      }\n    }\n  }\n}\n```\n\n**Note**: This API communicates directly with the robot. image_url may be empty, as the robot does not serve rendered images.\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `NOT_FOUND` | The annotation (of the requested map) does not exist. |\n| `INTERNAL` | Communication failure with the robot. |"
+          },
+          "response": []
+        },
+        {
+          "name": "GetLocationInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationId\": \"{{location_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/location-info/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "location-info",
+                "get"
+              ]
+            },
+            "description": "Retrieves information about a specific location by its ID.\n\nThe location includes metadata such as floors, sections, and their associated maps.\n\n**Note**: This does not require robot connectivity.\n\n### Request\n\n##### location_id `string` `required`\nThe location_id is a 4 character alphanumeric identifier for the location. e.g., \"3R0A\"\n\n##### JSON Request Example\n```json\n{\n  \"locationId\": \"3R0A\"\n}\n```\n\n### Response\n\n##### location `Location`\nLocation represents a physical space where robots operate, containing floors, sections, and maps.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `location_id` | `string` | A 4 character alphanumeric identifier for the location. e.g., \"3R0A\" |\n| `created_time` | `Timestamp` | Timestamp indicating when the location was created. |\n| `modified_time` | `Timestamp` | Timestamp indicating the last time the location was modified. |\n| `display_name` | `string` | Display name of the location, matching the name shown in Universe. e.g., \"City Deli & Grill\", \"KNTH\" |\n| `floors` | map<`int32`, `Floor`> | Map of floors in the location, keyed by their floor level. The floor level is any non-negative integer starting from 0. |\n\n##### JSON Response Example\n```json\n{\n  \"location\": {\n    \"locationId\": \"3R0A\",\n    \"createdTime\": \"2025-03-28T12:00:00Z\",\n    \"modifiedTime\": \"2025-04-01T09:45:00Z\",\n    \"displayName\": \"Main Office Building\",\n    \"floors\": {\n      \"0\": {\n        \"displayName\": \"Ground Floor\",\n        \"sections\": [\n          {\n            \"displayName\": \"Lobby Area\",\n            \"currentMapId\": \"map-lobby-001\"\n          }\n        ]\n      }\n    }\n  }\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `NOT_FOUND` | The location with the specified ID does not exist. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        },
+        {
+          "name": "GetMap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mapId\": \"{{map_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/map/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "map",
+                "get"
+              ]
+            },
+            "description": "Retrieves a saved map by map_id from the cloud.\n\nUse this to fetch a stored map from the cloud database.\n\n**Note**: This does not require robot connectivity.\n\n### Request\n\n##### map_id `string` `required`\nThe unique identifier of the map to retrieve.\n\n##### JSON Request Example\n```json\n{\n  \"mapId\": \"map-001\"\n}\n```\n\n### Response\n\n##### map `Map`\nMap represents a navigable map used by robots, including metadata and associated annotations.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `map_id` | `string` | Unique identifier for the map. e.g., \"9578\" |\n| `created_time` | `Timestamp` | Indicating when the map was created. |\n| `modified_time` | `Timestamp` | Indicating the last time the map was modified. |\n| `display_name` | `string` | Display name of the map, matching the name used in Bear Universe. e.g., \"ITCT SEOUL\" |\n| `annotation` | `Annotation` | Annotation associated with this map, defining specific areas and destinations. |\n| `image_download_info` | `MapImageDownloadInfo` | Information for downloading the map image, including signed URL and file metadata. This field is typically populated by the cloud service. |\n| `origin` | `Origin` | Origin of the map relative to the map frame. |\n| `resolution` | `float` | Resolution of the map in meters per pixel. |\n\n##### MapImageFileInfo\nContains metadata about the map image file for integrity verification (nested under `image_download_info.file_info`).\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `checksum` | `uint32` | **[Deprecated]** CRC32C checksum of the map image file. Use `md5_checksum` instead. |\n| `size` | `int64` | Size of the map image file in bytes. |\n| `md5_checksum` | `string` | **(v1.3)** MD5 checksum represented as a 32-character lowercase hexadecimal string. Use this to verify the integrity of the downloaded map image. |\n\n##### JSON Response Example\n```json\n{\n  \"map\": {\n    \"mapId\": \"map-001\",\n    \"createdTime\": \"2025-03-28T12:00:00Z\",\n    \"modifiedTime\": \"2025-04-01T09:45:00Z\",\n    \"displayName\": \"Office Floor Plan\",\n    \"annotation\": {\n      \"annotationId\": \"annot-001\",\n      \"displayName\": \"Office Zones\",\n      \"destinations\": {}\n    },\n    \"imageDownloadInfo\": {\n      \"fileInfo\": {\n        \"checksum\": 1234567890,\n        \"size\": 2048576,\n        \"md5Checksum\": \"9e107d9d372bb6826bd81d3542a419d6\"\n      },\n      \"downloadUrl\": {\n        \"url\": \"https://storage.googleapis.com/maps/map-001.png?signature=...\",\n        \"expiresAt\": \"2025-04-01T12:00:00Z\"\n      }\n    },\n    \"origin\": {\n      \"xM\": 0.0,\n      \"yM\": 0.0,\n      \"yawRadians\": 0.0\n    },\n    \"resolution\": 0.05\n  }\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `NOT_FOUND` | The map with the specified ID does not exist. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        },
+        {
+          "name": "SwitchMap",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"mapSelector\": {\n    \"floorLevel\": 1,\n    \"sectionIndex\": 0\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/map/switch",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "map",
+                "switch"
+              ]
+            },
+            "description": "Switch the robot's current map to a specified map.\n\nThe request must specify the floor level and section index of the desired map.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will switch maps.\n\n##### map_selector `MapSelector` `required`\nSpecifies which map to switch to.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `floor_level` | `int32` | Positive integer floor level begins at 1. |\n| `section_index` | `int32` | Non-negative integer section index begins at 0. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"mapSelector\": {\n    \"floorLevel\": 1,\n    \"sectionIndex\": 0\n  }\n}\n```\n\n### Response\n\n##### map_id `string`\nThe ID of the new map that the robot is now using.\n\n##### JSON Response Example\n```json\n{\n  \"mapId\": \"map-lobby-001\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | No matching map found for the specified floor level and section index. |\n| `NOT_FOUND` | The robot with the specified ID does not exist. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations for fetching and setting location and map settings"
+    },
+    {
+      "name": "Localization & Navigation",
+      "item": [
+        {
+          "name": "LocalizeRobot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"goal\": {\n    \"destinationId\": \"dest-123\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/robot/localize",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "robot",
+                "localize"
+              ]
+            },
+            "description": "Localizes the robot to a known pose or destination.\n\nIf the request is accepted, subscribe to SubscribeLocalizationStatus to track localization progress.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that the localization command is sent to.\n\n##### goal `Goal` `required`\nGoal represents a target destination or pose for the robot to localize to.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `destination_id` | `string` | Unique identifier for the destination. |\n| `pose` | `Pose` | Pose of the robot on the map. |\n\n##### Pose\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `x_meters` | `float` | X-coordinate in meters within the map. |\n| `y_meters` | `float` | Y-coordinate in meters within the map. |\n| `heading_radians` | `float` | The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"goal\": {\n    \"destinationId\": \"dest-123\"\n  }\n}\n```\n\nor\n\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"goal\": {\n    \"pose\": {\n      \"xMeters\": 2.5,\n      \"yMeters\": 1.8,\n      \"headingRadians\": 1.57\n    }\n  }\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Invalid request parameters. Tips: check that `robot_id` is not empty and `goal` is not nil. |\n| `PERMISSION_DENIED` | Attempting to localize a `robot_id` you don't own. Tips: check the spelling of the `robot_id`. |\n| `FAILED_PRECONDITION` | While the robot is localizing, any subsequent requests to localize the robot will return an error until the process is completed. |\n| `INTERNAL` | Communication failure with the robot. |"
+          },
+          "response": []
+        },
+        {
+          "name": "SetPose",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"pose\": {\n    \"xMeters\": 2.5,\n    \"yMeters\": 1.8,\n    \"headingRadians\": 1.57\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/pose/set",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "pose",
+                "set"
+              ]
+            },
+            "description": "Sets the robot's current pose to a specified position and orientation.\n\nUnlike LocalizeRobot, the robot will not attempt to verify whether the pose that is set aligns with its camera view.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot to set the pose for.\n\n##### pose `Pose` `required`\nThe new pose for the robot.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `x_meters` | `float` | X-coordinate in meters within the map. |\n| `y_meters` | `float` | Y-coordinate in meters within the map. |\n| `heading_radians` | `float` | The heading of the robot in radians. Ranges from -π to π, where 0.0 points along the positive x-axis. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"pose\": {\n    \"xMeters\": 2.5,\n    \"yMeters\": 3.0,\n    \"headingRadians\": 1.57\n  }\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `PERMISSION_DENIED` | Attempting to set pose for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INVALID_ARGUMENT` | The specified pose is invalid or out of bounds. |\n| `UNAVAILABLE` | The robot is offline and cannot set pose. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Low-level endpoints for robot pose and localization"
+    },
+    {
+      "name": "Robot Status",
+      "item": [
+        {
+          "name": "GetRobotStatus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/robot-state/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "robot-state",
+                "get"
+              ]
+            },
+            "description": "Get the latest robot state.\n\nRobot state includes connectivity and operational states.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot to get status for.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### robot_state `RobotState`\nThe current robot state including connectivity, battery, emergency stop, mission, pose, error information, velocity, navigation state, and type-specific states.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `connection` | `RobotConnection` | Connection state of the robot. |\n| `battery` | `BatteryState` | Battery state of the robot. |\n| `emergency_stop` | `EmergencyStopState` | Emergency stop state of the robot. |\n| `mission` | `MissionState` | Mission state of the robot. |\n| `pose` | `Pose` | Current pose of the robot. |\n| `error_codes` | `ErrorCodes` | Error codes returned by the robot. |\n| `typed_status` | *oneof* | Robot type-specific state information. Only one type may be set at a time. |\n| `twist` | `Twist` | Linear and angular velocity of the robot. Omitted when not reported by the robot. |\n| `navigation_state` | `NavigationState` | **(v1.3)** Navigation-related state of the robot, including whether it is currently stuck. |\n\n##### typed_status `oneof`\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `servi_state` | `ServiState` | Populated when the robot type is a Servi. Contains tray states. |\n| `carti_state` | `CartiState` | Populated when the robot type is a Carti. Contains optional conveyor state. |\n\n##### Twist\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `linear_velocity` | `float` | The desired speed to drive up to in meters-per-second (m/s). Positive value for forward, negative for reverse. |\n| `angular_velocity` | `float` | The desired rate of rotation in radians-per-second (rad/s). Positive for clockwise, negative for counter-clockwise. |\n\n##### NavigationState `(v1.3)`\nRepresents navigation-related state for the robot.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `stuck_state` | `StuckState` | Whether the robot is currently stuck (unable to make navigation progress) and, when known, the reason. |\n\n##### StuckState `(v1.3)`\nWhether the robot is currently unable to make navigation progress, and the reason for it when known. \"Stuck\" is a transient, recoverable navigation condition (e.g., obstruction, restricted area), distinct from a mission failure.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `state` | `State` *enum* | Current stuck state of the robot. |\n| `reason` | `Reason` *enum* | Reason the robot is stuck. Only meaningful when `state` is `STATE_STUCK`; otherwise expect `REASON_UNKNOWN`. |\n\n###### StuckState.State `enum`\n\n| Name | Number | Description |\n|------|--------|-------------|\n| STATE_UNKNOWN | 0 | Default unset value. Treat as an error if received. |\n| STATE_NOT_STUCK | 1 | The robot is operating normally and not stuck. |\n| STATE_STUCK | 2 | The robot is unable to make navigation progress. See `reason` for the cause when available. |\n\n###### StuckState.Reason `enum`\n\n| Name | Number | Description |\n|------|--------|-------------|\n| REASON_UNKNOWN | 0 | No reason reported. Set when `state` != `STATE_STUCK`, or when the upstream stack did not provide a discrete cause. |\n| REASON_PATH_BLOCKED | 1 | The planned path is blocked at runtime by a dynamic obstacle. |\n| REASON_DESTINATION_OBSTRUCTED | 2 | The destination cell is occupied by an obstacle. Reserved for future use; not currently emitted by the robot. |\n| REASON_DESTINATION_UNREACHABLE | 3 | No feasible path exists to the destination. Reserved for future use; not currently emitted by the robot. |\n| REASON_INSIDE_RESTRICTED_AREA | 4 | The robot is inside a restricted/annotated area it cannot leave (e.g., a no-go zone it was placed into). |\n\n##### JSON Response Example\n```json\n{\n  \"robotState\": {\n    \"connection\": {\n      \"state\": \"STATE_CONNECTED\"\n    },\n    \"battery\": {\n      \"chargePercent\": 85,\n      \"state\": \"STATE_CHARGING\",\n      \"chargeMethod\": \"CHARGE_METHOD_CONTACT\"\n    },\n    \"emergencyStop\": {\n      \"emergency\": \"EMERGENCY_DISENGAGED\",\n      \"buttonPressed\": \"EMERGENCY_DISENGAGED\"\n    },\n    \"mission\": {\n      \"missionId\": \"mission-123\",\n      \"state\": \"STATE_RUNNING\"\n    },\n    \"pose\": {\n      \"xMeters\": 1.5,\n      \"yMeters\": 2.8,\n      \"headingRadians\": 0.78\n    },\n    \"errorCodes\": {\n      \"codes\": [\"E001\", \"E042\"]\n    },\n    \"twist\": {\n      \"linearVelocity\": 0.5,\n      \"angularVelocity\": 0.1\n    },\n    \"navigationState\": {\n      \"stuckState\": {\n        \"state\": \"STATE_NOT_STUCK\",\n        \"reason\": \"REASON_UNKNOWN\"\n      }\n    },\n    \"serviState\": {\n      \"trayStates\": {}\n    }\n  }\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Invalid request parameters. Tips: check that `robot_id` is not empty. |\n| `PERMISSION_DENIED` | Attempting to get status for a `robot_id` you don't own. Tip: check the spelling of the `robot_id` value. |\n| `INTERNAL` | Communication failure with the robot. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Queries for real-time robot status data (includes v1.3 addition: navigation_state on GetRobotStatus)"
+    },
+    {
+      "name": "Robot System",
+      "item": [
+        {
+          "name": "GetRobotSystemInfo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v0/robot-system-info/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v0",
+                "robot-system-info",
+                "get"
+              ]
+            },
+            "description": "Get the overall robot system information, including software version, robot family, robot ID, and display name.\n\nThe system info tends to be static and does not change often.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot to retrieve system information for.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-abc123\"\n}\n```\n\n### Response\n\n##### system_info `SystemInfo`\nContains system-level information about the robot.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `software_version` | `string` | The distribution version currently installed and running on the robot. |\n| `robot_family` | `RobotFamily` *enum* | The classification or family of the robot. |\n| `robot_id` | `string` | Unique identifier for the robot. |\n| `display_name` | `string` | A user-friendly name for the robot, typically used for display purposes. |\n\n##### JSON Response Example\n```json\n{\n  \"systemInfo\": {\n    \"softwareVersion\": \"servi-24.03\",\n    \"robotFamily\": \"ROBOT_FAMILY_SERVI_PLUS\",\n    \"robotId\": \"pennybot-abc123\",\n    \"displayName\": \"Main Kitchen\"\n  }\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Invalid request parameters. Tips: check that `robot_id` is not empty. |\n| `PERMISSION_DENIED` | Attempting to retrieve system information for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        },
+        {
+          "name": "RunSystemCommand",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"systemCommand\": {\n    \"reboot\": {\n      \"type\": \"TYPE_SOFTWARE_ONLY\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/system-command/run",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "system-command",
+                "run"
+              ]
+            },
+            "description": "Execute a OS-level command on a robot.\n\nNote: When rebooting or shutting down the robot, a response will return immediately to acknowledge the request but may take several minutes before the robot reconnects (for reboot) or powers off (for shutdown).\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### system_command `SystemCommand` `required`\nThe system command to execute on the robot.\n\n| Field (*oneof*) | Message Type | Description |\n|------------|-------------| ---|\n| `reboot` | `Reboot` | Reboot the robot with specified type. |\n| `shutdown` | `Shutdown` | Shut down the robot system. Pass in an empty Shutdown message to initiate a shutdown. |\n\n#### Reboot\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `type` | `Type` *enum* | The type of reboot to perform. |\n\n#### Type `enum`\n\n| Name | Number | Description |\n|------|--------|-------------|\n| TYPE_UNKNOWN | 0 | Default value. This should never be used explicitly. |\n| TYPE_SOFTWARE_ONLY | 1 | Perform an OS-level reboot without powering off hardware devices. |\n| TYPE_WITH_HARDWARE | 2 | Perform a full power-cycle including hardware devices. |\n\n#### Shutdown\n\nEmpty message. Pass an empty object `{}` to initiate a shutdown.\n\n##### JSON Request Example (Reboot)\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"systemCommand\": {\n    \"reboot\": {\n      \"type\": \"TYPE_SOFTWARE_ONLY\"\n    }\n  }\n}\n```\n\n##### JSON Request Example (Shutdown)\n```json\n{\n  \"robotId\": \"pennybot-abc123\",\n  \"systemCommand\": {\n    \"shutdown\": {}\n  }\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `PERMISSION_DENIED` | Attempting to execute system command for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INVALID_ARGUMENT` | The system command is invalid or not supported. |\n| `INTERNAL` | The request failed to execute due to internal error. Client should retry the command. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "System-level operations and Queries for static robot configurations"
+    },
+    {
+      "name": "Fleet Management",
+      "item": [
+        {
+          "name": "ListRobotIDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filter\": {\n    \"locationId\": \"{{location_id}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/robot-ids/list",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "robot-ids",
+                "list"
+              ]
+            },
+            "description": "Retrieves a list of robot IDs the user has access to, filtered by optional criteria.\n\nThe list includes all known robots, regardless of their current connection state.\n\n### Request\n\n##### filter `RobotFilter` `required`\n`RobotFilter` defines the conditions for selecting robots. All specified fields are combined using an **AND** condition.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `location_id` | `string` | An empty location_id returns all robots assigned to all locations created and owned by API key user. |\n\n##### JSON Request Example\n```json\n{\n  \"filter\": {\n    \"locationId\": \"1D9X\"\n  }\n}\n```\n\n### Response\n\nA response message has 2 fields:\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `total_robots` | `int32` | Total number of robots. |\n| `robot_ids` | List of `string` | This might not have all the robot IDs if there are too many. It will have all the robot IDs if the number of `robot_ids` is same as `total_robots`. |\n\n##### JSON Response Example\n```json\n{\n  \"totalRobots\": 5,\n  \"robotIds\": [\n    \"pennybot-abc123\",\n    \"pennybot-def456\",\n    \"pennybot-ghi789\",\n    \"pennybot-jkl012\",\n    \"pennybot-mno345\"\n  ]\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Invalid API key or request parameters. |\n| `PERMISSION_DENIED` | Attempting to retrieve Robot IDs with a `location_id` you don't own. Tips: check the spelling of all `location_id` values. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        },
+        {
+          "name": "GetAvailableLocations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/available-locations/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "available-locations",
+                "get"
+              ]
+            },
+            "description": "Returns a map of locations the user has access to.\n\nThe map consists of the location ID (key) paired with its human-readable name (value).\n\n### Request\n\n*(No fields required)*\n\n##### JSON Request Example\n```json\n{}\n```\n\n### Response\n\n##### locations `map<string, string>`\nA mapping of location ID (key) with its corresponding, human-readable location name. e.g. { \"1D9X\": \"785_Platform\" }\n\n##### JSON Response Example\n```json\n{\n  \"locations\": {\n    \"1D9X\": \"785_Platform\",\n    \"3R0A\": \"Main Office Building\",\n    \"5K2B\": \"Warehouse Facility\"\n  }\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Fleet-level operations"
+    },
+    {
+      "name": "Servi",
+      "item": [
+        {
+          "name": "CreateMission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"mission\": {\n    \"serviMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "create"
+              ]
+            },
+            "description": "Use the shared `CreateMission` endpoint to send missions for Servi robots. Servi-specific missions must be sent using the appropriate request message format.\n\nNote: When sending a Servi mission, `servi.Feedback` and `ServiType` are returned in SubscribeMissionStatus response message.\n\n### Request\n\n##### robot_id `string` `required`\n\nThe ID of the robot that will receive this command.\n\n##### mission `Mission` `required`\n\nUniversal wrapper for mission types. Only one mission type may be set at a time.\n\n| Field (_oneof_) | Message Type | Description |\n| --- | --- | --- |\n| `servi_mission` | `servi.Mission` | Servi missions are specific to the Servi robot family. |\n\n##### servi_mission `servi.Mission`\n\nUse the field `servi_mission` to create and send a servi mission. Current API version supports 6 types of Servi mission.\n\n| Field (_oneof_) | Message Type | Description |\n| --- | --- | --- |\n| `delivery_mission` | `DeliveryMission` | Create a servi mission of type `Delivery`. |\n| `bussing_mission` | `BussingMission` | Create a servi mission of type `Bussing`. |\n| `delivery_patrol_mission` | `DeliveryPatrolMission` | Create a servi mission of type `DeliveryPatrol`. |\n| `bussing_patrol_mission` | `BussingPatrolMission` | Create a servi mission of type `BussingPatrol`. |\n| `navigate_mission` | `NavigateMission` | Create a servi mission of type `Navigate`. |\n| `navigate_auto_mission` | `NavigateAutoMission` | Create a servi mission of type `NavigateAuto`. |\n\n##### JSON Request Example\n\n``` json\n{\n  \"robotId\": \"pennybot-456efg\",\n  \"mission\": {\n    \"serviMission\": {\n      \"navigateMission\": {\n        \"goal\": {\n          \"destinationId\": \"dest-123\"\n        }\n      }\n    }\n  }\n}\n\n ```\n\n### Response\n\n##### mission_id `string`\n\nThe ID of the mission created.\n\n##### JSON Response Example\n\n``` json\n{\n  \"missionId\": \"cbd47ab1-df21-479e-9f72-677b81ab55b0\"\n}\n\n ```\n\n### Errors\n\n| ErrorCode | Description |\n| --- | --- |\n| `INVALID_ARGUMENT` | Invalid request parameters or this command is being sent to a non-Servi family robot. Tips: check that `robot_id` is not empty, `mission` is not null, or the robot is a Servi family robot. |\n| `PERMISSION_DENIED` | Attempting to create a mission for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INTERNAL` | Internal server error occurred while processing the request. |\n| `FAILED_PRECONDITION` | The robot is already executing another mission. This command is valid if current mission is in terminal state (Cancelled, Succeeded, Failed). |"
+          },
+          "response": []
+        },
+        {
+          "name": "CalibrateTrays",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"selector\": {\n    \"trayNames\": [\"top\", \"middle\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/trays/calibrate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "trays",
+                "calibrate"
+              ]
+            },
+            "description": "Calibrates the trays on the robot.\n\nOnly applicable for tray-equipped robots (e.g., Servi, Servi Plus).\n\nCalibrates all trays if no tray names are provided.\nReturns an INVALID_ARGUMENT error and rejects the request if any tray name is invalid.\nReturns an empty response on success.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot to calibrate trays on.\n\n##### selector `servi.TraySelector` `required`\nSelector to specify which trays to calibrate.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `tray_names` | *repeated* `string` | List of tray names to calibrate. If empty, calibrates all trays. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"pennybot-456efg\",\n  \"selector\": {\n    \"trayNames\": [\"top\", \"middle\"]\n  }\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | This command is being sent to a non-Servi robot, or any tray name is invalid. |\n| `PERMISSION_DENIED` | Attempting to calibrate trays for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist. |\n| `INTERNAL` | Internal server error occurred while processing the request. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Servi-specific operations"
+    },
+    {
+      "name": "Carti",
+      "item": [
+        {
+          "name": "CreateMission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"mission\": {\n    \"cartiMission\": {\n      \"traverseMission\": {\n        \"goals\": [\n          {\n            \"destinationId\": \"room-a\"\n          },\n          {\n            \"pose\": {\n              \"xMeters\": 5.2,\n              \"yMeters\": 3.1,\n              \"headingRadians\": 1.57\n            }\n          }\n        ],\n        \"params\": {}\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/mission/create",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "mission",
+                "create"
+              ]
+            },
+            "description": "Use the shared `CreateMission` endpoint to send missions for Carti robots. Carti-specific missions must be sent using the appropriate request message format.\n\nNote: When sending a Carti mission, `carti.Feedback` and `CartiType` are returned in SubscribeMissionStatus response message.\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### mission `Mission` `required`\nUniversal wrapper for mission types. Only one mission type may be set at a time.\n\n| Field (*oneof*) | Message Type | Description |\n|----------------|--------------|-------------|\n| `carti_mission` | `carti.Mission` | Carti missions are specific to the Carti robot family. |\n\n##### carti_mission `carti.Mission`\nUse the field `carti_mission` to create and send a mission. Current API version supports 4 types of Carti missions.\n\n| Field (*oneof*) | Message Type | Description |\n|------------|-------------| ---|\n| `traverse_mission` | `TraverseMission` | Create a carti mission of type `Traverse`. |\n| `traverse_patrol_mission` | `TraversePatrolMission` | Create a carti mission of type `TraversePatrol`. |\n| `navigate_mission` | `NavigateMission` | Create a carti mission of type `Navigate`. |\n| `navigate_auto_mission` | `NavigateAutoMission` | Create a carti mission of type `NavigateAuto`. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"carti-001\",\n  \"mission\": {\n    \"cartiMission\": {\n      \"traverseMission\": {\n        \"goals\": [\n          {\n            \"destinationId\": \"room-a\"\n          },\n          {\n            \"pose\": {\n              \"xMeters\": 5.2,\n              \"yMeters\": 3.1,\n              \"headingRadians\": 1.57\n            }\n          }\n        ],\n        \"params\": {}\n      }\n    }\n  }\n}\n```\n\n### Response\n\n##### mission_id `string`\nThe ID of the mission created.\n\n##### JSON Response Example\n```json\n{\n  \"missionId\": \"mission-abc123\"\n}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Invalid request parameters or this command is being sent to a non-Carti family robot. Tips: check that `robot_id` is not empty, `mission` is not null, or the robot is a Carti family robot. |\n| `PERMISSION_DENIED` | Attempting to create a mission for a `robot_id` you don't own. Tips: check the spelling of the `robot_id` value. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INTERNAL` | Internal server error occurred while processing the request. |\n| `FAILED_PRECONDITION` | The robot is already executing another mission. This command is valid if current mission is in terminal state (Cancelled, Succeeded, Failed). |"
+          },
+          "response": []
+        },
+        {
+          "name": "GetConveyorIndex",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/conveyor-index/get",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "conveyor-index",
+                "get"
+              ]
+            },
+            "description": "Retrieves the configured conveyor indexes for the robot.\n\nIndexes represent logical positions, not physical installation:\n- Carti 100 (vertical): INDEX_1ST = uppermost conveyor\n- Carti 600 (horizontal): INDEX_1ST = front facing conveyor\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot.\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"{{robot_id}}\"\n}\n```\n\n### Response\n\n##### indexes `repeated int32`\nList of conveyor indexes.\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | Robot is not a Carti family robot. |"
+          },
+          "response": []
+        },
+        {
+          "name": "ControlConveyor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{bearer_token}}",
+                "description": "Bearer token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"robotId\": \"{{robot_id}}\",\n  \"commands\": [\n    {\n      \"index\": 1,\n      \"command\": \"COMMAND_CONVEYOR_MOTOR_STOP\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/conveyor/control",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "conveyor",
+                "control"
+              ]
+            },
+            "description": "Controls conveyor motor operations for the specified conveyor indexes.\n\nThis call allows manual control of conveyor motors for clockwise/counter-clockwise rotation or stop commands.\n\n**Note**: These endpoints are only available for Carti robot family. Attempting to run conveyor commands on a non-Carti robot will result in an INVALID_ARGUMENT error.\n\n- Carti 100: CW = right, CCW = left (X-axis rotation)\n- Carti 600: CW = front→rear, CCW = rear→front (Y-axis rotation)\n\n### Request\n\n##### robot_id `string` `required`\nThe ID of the robot that will receive this command.\n\n##### commands `repeated carti.ConveyorMotorCommand` `required`\nList of conveyor motor commands to execute.\n\n| Field | Message Type | Description |\n|------|------|-------------|\n| `index` | `int32` | The target conveyor to control. |\n| `command` | `CommandConveyorMotor` *enum* | The motor command to execute. |\n\n#### CommandConveyorMotor `enum`\n\n| Name | Number | Description |\n|------|--------|-------------|\n| COMMAND_CONVEYOR_MOTOR_UNKNOWN | 0 | Default value. This should never be used explicitly. |\n| COMMAND_CONVEYOR_MOTOR_STOP | 1 | Stop the conveyor. |\n| COMMAND_CONVEYOR_MOTOR_CW | 2 | Rotate the conveyor clockwise. |\n| COMMAND_CONVEYOR_MOTOR_CCW | 3 | Rotate the conveyor counter-clockwise. |\n\n##### JSON Request Example\n```json\n{\n  \"robotId\": \"carti-001\",\n  \"commands\": [\n    {\n      \"index\": 1,\n      \"command\": \"COMMAND_CONVEYOR_MOTOR_CW\"\n    },\n    {\n      \"index\": 2,\n      \"command\": \"COMMAND_CONVEYOR_MOTOR_STOP\"\n    }\n  ]\n}\n```\n\n### Response\n\n*(No fields defined)*\n\n##### JSON Response Example\n```json\n{}\n```\n\n### Errors\n\n| ErrorCode | Description |\n|-----------|-------------|\n| `INVALID_ARGUMENT` | This command is being sent to a non-Carti family robot, or one or more conveyor indexes are not installed on the robot. |\n| `NOT_FOUND` | The specified robot ID does not exist or is not accessible. |\n| `INTERNAL` | Internal server error occurred while processing the request. |\n| `FAILED_PRECONDITION` | The robot is in an error state that prevents conveyor control. |"
+          },
+          "response": []
+        }
+      ],
+      "description": "Carti-specific operations"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearer_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// Optional: Auto-refresh token if expired",
+          "// Uncomment the following code to enable automatic token refresh",
+          "// Note: This requires api_key, api_secret, and scope to be set",
+          "",
+          "/*",
+          "const bearerToken = pm.collectionVariables.get('bearer_token');",
+          "const apiKey = pm.collectionVariables.get('api_key');",
+          "const apiSecret = pm.collectionVariables.get('api_secret');",
+          "const scope = pm.collectionVariables.get('scope');",
+          "",
+          "// Only auto-refresh if using API key method and token is missing/expired",
+          "if (apiKey && apiSecret && (!bearerToken || bearerToken === '')) {",
+          "    // Token refresh logic would go here",
+          "    // For now, user should manually call the authentication endpoint",
+          "}",
+          "*/"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "",
+      "description": "API Base URL (e.g., https://api.bearrobotics.ai for Production)"
+    },
+    {
+      "key": "auth_url",
+      "value": "",
+      "description": "API Authentication Server URL (e.g., https://api-auth.bearrobotics.ai for Production)"
+    },
+    {
+      "key": "robot_id",
+      "value": "",
+      "description": "Robot ID to use for API requests (set this once and it will be used across all requests)"
+    },
+    {
+      "key": "location_id",
+      "value": "",
+      "description": "Location ID to use for location-related requests (e.g., GetLocationInfo)"
+    },
+    {
+      "key": "map_id",
+      "value": "",
+      "description": "Map ID to use for map-related requests (e.g., GetMap)"
+    },
+    {
+      "key": "bearer_token",
+      "value": "",
+      "description": "JWT Bearer token (automatically set after authentication, or set manually)"
+    },
+    {
+      "key": "api_key",
+      "value": "",
+      "description": "API Key for authentication (optional, if using API Key method)"
+    },
+    {
+      "key": "api_secret",
+      "value": "",
+      "description": "API Secret for authentication (required for API Key method)"
+    },
+    {
+      "key": "scope",
+      "value": "",
+      "description": "Authentication scope issued with your API key (a fixed credential value, e.g., \"your-scope\")"
+    }
+  ]
+}
